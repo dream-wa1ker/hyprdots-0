@@ -16,6 +16,8 @@ alias cdir='cd ~/Workspace/c'
 alias git_downloads='cd ~/Downloads/git'
 alias workspace='cd ~/Workspace'
 alias github='cd ~/Workspace/github'
+alias profiles='cd ~/Workspace/profiles'
+alias pydir='cd ~/Workspace/python'
 
 # git aliases
 alias gs='git switch'
