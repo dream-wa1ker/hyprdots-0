@@ -399,18 +399,18 @@
                     "inhibitWhenAudio": false,
                     "inhibitWhenCharging": false,
                     "respectInhibitors": true,
-                    "timeout": 180
+                    "timeout": 300
                 },
                 {
                     "idleAction": "dpms off",
                     "returnAction": "dpms on",
-                    "timeout": 300
+                    "timeout": 500
                 },
                 {
                     "idleAction": [
                         "suspendThenHibernate"
                     ],
-                    "timeout": 600
+                    "timeout": 1000
                 }
             ]
         },
@@ -615,8 +615,8 @@
         "wallpaperDir": "~/Pictures/Wallpapers"
     },
     "services": {
-        "audioIncrement": 0.05,
-        "brightnessIncrement": 0.05,
+        "audioIncrement": 0.01,
+        "brightnessIncrement": 0.01,
         "defaultPlayer": "MPD",
         "gpuType": "",
         "lyricsBackend": "Auto",
