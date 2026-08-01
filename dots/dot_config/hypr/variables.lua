@@ -47,7 +47,7 @@ return {
 
     -- Window styling — transparency for everything (opacity < 1 globally);
     -- opaque-app exceptions get overridden per-window in rules.lua, not here.
-    windowOpacity              = 0.90,
+    windowOpacity              = 0.85,
     windowRounding             = 15,
     windowBorderSize           = 1,
     activeWindowBorderColour   = "rgba(" .. scheme.primary .. "e6)",
