@@ -22,4 +22,10 @@ hl.config({
         smart_split    = false,
         smart_resizing = true,
     },
+
+    scrolling = {
+        direction = "down",
+        focus_fit_method = 1,
+        column_width = 0.8,
+    },
 })
