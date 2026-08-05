@@ -86,6 +86,79 @@ local window_rules = {
     -- Communication -> special workspace (element-desktop is your matrix client)
     { match = { class = "dev.geopjr.Tuba|Element" }, workspace = "special:communication" },
     { match = { class = "org.kde.plasma-systemmonitor" }, workspace = "special:sysmon" },
+
+    {match = {title = "^(Open File)(.*)$" },                      center = true},
+	{match = {title = "^(Open File)(.*)$" },                      float = true},
+	{match = {title = "^(Select a File)(.*)$" },                  center = true},
+	{match = {title = "^(Select a File)(.*)$" },                  float = true},
+	{match = {title = "^(Choose wallpaper)(.*)$" },               center = true},
+	{match = {title = "^(Choose wallpaper)(.*)$" },               float = true},
+	{match = {title = "^(Choose wallpaper)(.*)$" },               size = {"(monitor_w*0.60)", "(monitor_h*0.65)"} },
+	{match = {title = "^(Open Folder)(.*)$" },                    center = true},
+	{match = {title = "^(Open Folder)(.*)$" },                    float = true},
+	{match = {title = "^(Save As)(.*)$" },                        center = true},
+	{match = {title = "^(Save As)(.*)$" },                        float = true},
+	{match = {title = "^(Library)(.*)$" },                        center = true},
+	{match = {title = "^(Library)(.*)$" },                        float = true},
+	{match = {title = "^(File Upload)(.*)$" },                    center = true},
+	{match = {title = "^(File Upload)(.*)$" },                    float = true},
+	{match = {title = "^(.*)(wants to save)$" },                  center = true},
+	{match = {title = "^(.*)(wants to save)$" },                  float = true},
+	{match = {title = "^(.*)(wants to open)$" },                  center = true},
+	{match = {title = "^(.*)(wants to open)$" },                  float = true},
+	{match = {class = "^(blueberry\\.py)$" },                     float = true},
+	{match = {class = "^(guifetch)$" },                           float = true}, -- FlafyDev/guifetch
+	{match = {class = "^(pavucontrol)$" },                        float = true},
+	{match = {class = "^(pavucontrol)$" },                        size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} },
+	{match = {class = "^(pavucontrol)$" },                        center = true},
+	{match = {class = "^(org.pulseaudio.pavucontrol)$" },         float = true},
+	{match = {class = "^(org.pulseaudio.pavucontrol)$" },         size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} },
+	{match = {class = "^(org.pulseaudio.pavucontrol)$" },         center = true},
+	{match = {class = "^(nm-connection-editor)$" },               float = true},
+	{match = {class = "^(nm-connection-editor)$" },               size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} },
+	{match = {class = "^(nm-connection-editor)$" },               center = true},
+	{match = {class = ".*plasmawindowed.*" },                     float = true},
+	{match = {class = "kcm_.*" },                                  float = true},
+	{match = {class = ".*bluedevilwizard" },                      float = true},
+	{match = {title = ".*Welcome" },                              float = true},
+	{match = {title = "^(illogical-impulse Settings)$" },         float = true},
+	{match = {title = ".*Shell conflicts.*" },                    float = true},
+	{match = {class = "org.freedesktop.impl.portal.desktop.kde" }, float = true},
+	{match = {class = "org.freedesktop.impl.portal.desktop.kde" }, size = {"(monitor_w*0.60)", "(monitor_h*0.65)"} },
+	{match = {class = "^(Zotero)$" },                             float = true},
+	{match = {class = "^(Zotero)$" },                             size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} },
+
+-- Move
+-- kde-material-you-colors spawns a window when changing dark/light theme. This is to make sure it doesn't interfere at all.
+	{match = {class = "^(plasma-changeicons)$" }, float = true},
+	{match = {class = "^(plasma-changeicons)$" }, no_initial_focus = true},
+	{match = {class = "^(plasma-changeicons)$" }, move = {999999, 999999}},
+-- stupid dolphin copy
+	{match = {title = "^(Copying — Dolphin)$" }, move = {40, 80}},
+
+-- Tiling
+	{match = {class = "^dev\\.warp\\.Warp$" }, tile = true},
+
+-- Picture-in-Picture
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, float = true},
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, keep_aspect_ratio = true},
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, move = {"(monitor_w*0.73)", "(monitor_h*0.72)"} },
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, size = {"(monitor_w*0.25)", "(monitor_h*0.25)"} },
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, float = true},
+	{match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, pin = true},
+
+-- Screen sharing
+	{match = {title = ".*is sharing (a window|your screen).*" }, float = true},
+	{match = {title = ".*is sharing (a window|your screen).*" }, pin = true},
+	{match = {title = ".*is sharing (a window|your screen).*" }, move = {"(monitor_w*.5-window_w*.5)", "(monitor_h-window_h-12)"} },
+
+-- --- Tearing ---
+	{match = {title = ".*\\.exe" }, immediate = true},
+	{match = {title = ".*minecraft.*" }, immediate = true},
+	{match = {class = "^(steam_app).*" }, immediate = true},
+
+-- No shadow for tiled windows
+	{match = {float = 0 }, no_shadow = true},
 }
 
 boot.apply_all(hl.window_rule, window_rules, "rules.window")
@@ -112,6 +185,8 @@ local workspace_rules = {
             direction = "right",
         },
     },
+
+    { workspace = "special:special", gaps_out = 30 },
 }
 
 boot.apply_all(hl.workspace_rule, workspace_rules, "rules.workspace")
@@ -135,81 +210,6 @@ local layer_rules = {
 boot.apply_all(hl.layer_rule, layer_rules, "rules.layer")
 
 
-hl.window_rule({match = {title = "^(Open File)(.*)$" },                      center = true})
-hl.window_rule({match = {title = "^(Open File)(.*)$" },                      float = true})
-hl.window_rule({match = {title = "^(Select a File)(.*)$" },                  center = true})
-hl.window_rule({match = {title = "^(Select a File)(.*)$" },                  float = true})
-hl.window_rule({match = {title = "^(Choose wallpaper)(.*)$" },               center = true})
-hl.window_rule({match = {title = "^(Choose wallpaper)(.*)$" },               float = true})
-hl.window_rule({match = {title = "^(Choose wallpaper)(.*)$" },               size = {"(monitor_w*0.60)", "(monitor_h*0.65)"} })
-hl.window_rule({match = {title = "^(Open Folder)(.*)$" },                    center = true})
-hl.window_rule({match = {title = "^(Open Folder)(.*)$" },                    float = true})
-hl.window_rule({match = {title = "^(Save As)(.*)$" },                        center = true})
-hl.window_rule({match = {title = "^(Save As)(.*)$" },                        float = true})
-hl.window_rule({match = {title = "^(Library)(.*)$" },                        center = true})
-hl.window_rule({match = {title = "^(Library)(.*)$" },                        float = true})
-hl.window_rule({match = {title = "^(File Upload)(.*)$" },                    center = true})
-hl.window_rule({match = {title = "^(File Upload)(.*)$" },                    float = true})
-hl.window_rule({match = {title = "^(.*)(wants to save)$" },                  center = true})
-hl.window_rule({match = {title = "^(.*)(wants to save)$" },                  float = true})
-hl.window_rule({match = {title = "^(.*)(wants to open)$" },                  center = true})
-hl.window_rule({match = {title = "^(.*)(wants to open)$" },                  float = true})
-hl.window_rule({match = {class = "^(blueberry\\.py)$" },                     float = true})
-hl.window_rule({match = {class = "^(guifetch)$" },                           float = true}) -- FlafyDev/guifetch
-hl.window_rule({match = {class = "^(pavucontrol)$" },                        float = true})
-hl.window_rule({match = {class = "^(pavucontrol)$" },                        size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} })
-hl.window_rule({match = {class = "^(pavucontrol)$" },                        center = true})
-hl.window_rule({match = {class = "^(org.pulseaudio.pavucontrol)$" },         float = true})
-hl.window_rule({match = {class = "^(org.pulseaudio.pavucontrol)$" },         size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} })
-hl.window_rule({match = {class = "^(org.pulseaudio.pavucontrol)$" },         center = true})
-hl.window_rule({match = {class = "^(nm-connection-editor)$" },               float = true})
-hl.window_rule({match = {class = "^(nm-connection-editor)$" },               size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} })
-hl.window_rule({match = {class = "^(nm-connection-editor)$" },               center = true})
-hl.window_rule({match = {class = ".*plasmawindowed.*" },                     float = true})
-hl.window_rule({match = {class = "kcm_.*" },                                  float = true})
-hl.window_rule({match = {class = ".*bluedevilwizard" },                      float = true})
-hl.window_rule({match = {title = ".*Welcome" },                              float = true})
-hl.window_rule({match = {title = "^(illogical-impulse Settings)$" },         float = true})
-hl.window_rule({match = {title = ".*Shell conflicts.*" },                    float = true})
-hl.window_rule({match = {class = "org.freedesktop.impl.portal.desktop.kde" }, float = true})
-hl.window_rule({match = {class = "org.freedesktop.impl.portal.desktop.kde" }, size = {"(monitor_w*0.60)", "(monitor_h*0.65)"} })
-hl.window_rule({match = {class = "^(Zotero)$" },                             float = true})
-hl.window_rule({match = {class = "^(Zotero)$" },                             size = {"(monitor_w*0.45)", "(monitor_h*0.45)"} })
-
--- Move
--- kde-material-you-colors spawns a window when changing dark/light theme. This is to make sure it doesn't interfere at all.
-hl.window_rule({match = {class = "^(plasma-changeicons)$" }, float = true})
-hl.window_rule({match = {class = "^(plasma-changeicons)$" }, no_initial_focus = true})
-hl.window_rule({match = {class = "^(plasma-changeicons)$" }, move = {999999, 999999}})
--- stupid dolphin copy
-hl.window_rule({match = {title = "^(Copying — Dolphin)$" }, move = {40, 80}})
-
--- Tiling
-hl.window_rule({match = {class = "^dev\\.warp\\.Warp$" }, tile = true})
-
--- Picture-in-Picture
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, float = true})
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, keep_aspect_ratio = true})
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, move = {"(monitor_w*0.73)", "(monitor_h*0.72)"} })
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, size = {"(monitor_w*0.25)", "(monitor_h*0.25)"} })
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, float = true})
-hl.window_rule({match = {title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, pin = true})
-
--- Screen sharing
-hl.window_rule({match = {title = ".*is sharing (a window|your screen).*" }, float = true})
-hl.window_rule({match = {title = ".*is sharing (a window|your screen).*" }, pin = true})
-hl.window_rule({match = {title = ".*is sharing (a window|your screen).*" }, move = {"(monitor_w*.5-window_w*.5)", "(monitor_h-window_h-12)"} })
-
--- --- Tearing ---
-hl.window_rule({match = {title = ".*\\.exe" }, immediate = true})
-hl.window_rule({match = {title = ".*minecraft.*" }, immediate = true})
-hl.window_rule({match = {class = "^(steam_app).*" }, immediate = true})
-
--- No shadow for tiled windows
-hl.window_rule({match = {float = 0 }, no_shadow = true})
-
--- ######## Workspace rules ########
-hl.workspace_rule({ workspace = "special:special", gaps_out = 30 })
 
 -- ######## Layer rules ########
 hl.layer_rule({ match = { namespace = ".*" }, xray = true})
