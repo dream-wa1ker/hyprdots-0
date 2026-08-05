@@ -253,12 +253,34 @@ hl.bind(vars.kbToggleWsLayout, boot.safe_call(function ()
 end))
 
 -- dwindle <-> scrolling only
-hl.bind(vars.kbToggleWsScrollLayout, boot.safe_call(function()
-    local ws = hl.get_active_workspace()
-    if not ws then return end
-    local order = { dwindle = "scrolling", scrolling = "dwindle" }
-    hl.workspace_rule({ workspace = tostring(ws.id), layout = order[ws.tiled_layout] or "dwindle" })
-end, "kbToggleWsScrollLayout"))
+hl.bind(vars.kbToggleWsScrollLayout, boot.safe_call(function ()
+    local layouts     = { "scrolling", "dwindle" }
+    local workspace   = hl.get_active_workspace()
+	if hl.get_active_special_workspace() then
+		workspace = hl.get_active_special_workspace()
+	end
+
+    local next_layout = "dwindle"
+
+    if not workspace then
+        return
+    end
+
+    for i = 1, #layouts do
+        if layouts[i] == workspace.tiled_layout then
+            local next_layout_idx = (i % #layouts) + 1
+            next_layout = layouts[next_layout_idx]
+            break
+        end
+    end
+
+	if workspace.special then
+		hl.workspace_rule({ workspace = tostring(workspace.name), layout = next_layout })
+	else
+		hl.workspace_rule({ workspace = tostring(workspace.id), layout = next_layout })
+	end
+end))
+
 
 hl.bind(vars.kbSpecialWs, hl.dsp.workspace.toggle_special("special"))
 hl.bind(vars.kbSystemMonitorWs, hl.dsp.workspace.toggle_special("sysmon"))
