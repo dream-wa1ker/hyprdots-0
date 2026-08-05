@@ -283,7 +283,7 @@ end))
 
 
 hl.bind(vars.kbSpecialWs, hl.dsp.workspace.toggle_special("special"))
-hl.bind(vars.kbSystemMonitorWs, hl.dsp.workspace.toggle_special("sysmon"))
+hl.bind(vars.kbSysmonWs, hl.dsp.workspace.toggle_special("sysmon"))
 hl.bind(vars.kbCommunicationWs, hl.dsp.workspace.toggle_special("communication"))
 
 

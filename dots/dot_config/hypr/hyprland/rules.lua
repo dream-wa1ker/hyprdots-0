@@ -85,6 +85,7 @@ local window_rules = {
 
     -- Communication -> special workspace (element-desktop is your matrix client)
     { match = { class = "dev.geopjr.Tuba|Element" }, workspace = "special:communication" },
+    { match = { class = "org.kde.plasma-systemmonitor" }, workspace = "special:sysmon" },
 }
 
 boot.apply_all(hl.window_rule, window_rules, "rules.window")
@@ -108,6 +109,7 @@ local workspace_rules = {
             column_width      = 1.0, -- 1.0 = full monitor width per column
             focus_fit_method  = 1,   -- 1 = fit (scroll the focused column fully into view, not just centered)
             follow_focus      = true,
+            direction = "right",
         },
     },
 }

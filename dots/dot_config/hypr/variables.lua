@@ -95,10 +95,9 @@ return {
 
     -- Special workspace toggles
     kbSpecialWs       = "SUPER + S",
-    kbSystemMonitorWs = "CTRL + SHIFT + Escape",
+    kbSysmonWs        = "SUPER + E",
     kbMusicWs         = "SUPER + M",
     kbCommunicationWs = "SUPER + D",
-    kbTodoWs          = "SUPER + R",
 
     -- Apps
     kbTerminal     = "SUPER + Return",
