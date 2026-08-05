@@ -71,19 +71,19 @@ hl.bind("SUPER + SHIFT + A", hl.dsp.global("quickshell:regionSearch"))
 hl.bind("SUPER + SHIFT + X", hl.dsp.global("quickshell:regionOcr"))
 hl.bind("SUPER + ALT + T", hl.dsp.global("quickshell:screenTranslate"))
 
-hl.bind("SUPER + SHIFT + R", hl.dsp.global("quickshell:regionRecord"), { mouse = false })
+hl.bind("SUPER + CTRL + R", hl.dsp.global("quickshell:regionRecord"), { mouse = false })
 hl.bind("SUPER + ALT + R", hl.dsp.global("quickshell:regionRecord"))
-hl.bind("CTRL + ALT + R", hl.dsp.exec_cmd(
+hl.bind("SUPER + R", hl.dsp.exec_cmd(
     "~/.config/quickshell/" .. qsConfig .. "/scripts/videos/record.sh --fullscreen"
 ))
-hl.bind("SUPER + SHIFT + ALT + R", hl.dsp.exec_cmd(
+hl.bind("SUPER + SHIFT + R", hl.dsp.exec_cmd(
     "~/.config/quickshell/" .. qsConfig .. "/scripts/videos/record.sh --fullscreen --sound"
 ))
 
-hl.bind("Print", hl.dsp.exec_cmd(
+hl.bind("CTRL + Print", hl.dsp.exec_cmd(
     'grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" - | wl-copy'
 ), { locked = true })
-hl.bind("CTRL + Print", hl.dsp.exec_cmd(
+hl.bind("Print", hl.dsp.exec_cmd(
     'mkdir -p $(xdg-user-dir PICTURES)/Screenshots && grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" '
     .. '$(xdg-user-dir PICTURES)/Screenshots/Screenshot_"$(date \'+%Y-%m-%d_%H.%M.%S\')".png'
 ))

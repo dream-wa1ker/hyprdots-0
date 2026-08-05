@@ -31,12 +31,13 @@ ARGS=("$@")
 MANUAL_REGION=""
 SOUND_FLAG=0
 FULLSCREEN_FLAG=0
-for ((i=0;i<${#ARGS[@]};i++)); do
+for ((i = 0; i < ${#ARGS[@]}; i++)); do
     if [[ "${ARGS[i]}" == "--region" ]]; then
-        if (( i+1 < ${#ARGS[@]} )); then
-            MANUAL_REGION="${ARGS[i+1]}"
+        if ((i + 1 < ${#ARGS[@]})); then
+            MANUAL_REGION="${ARGS[i + 1]}"
         else
-            notify-send "Recording cancelled" "No region specified for --region" -a 'Recorder' & disown
+            notify-send "Recording cancelled" "No region specified for --region" -a 'Recorder' &
+            disown
             exit 1
         fi
     elif [[ "${ARGS[i]}" == "--sound" ]]; then
@@ -46,14 +47,16 @@ for ((i=0;i<${#ARGS[@]};i++)); do
     fi
 done
 
-if pgrep wf-recorder > /dev/null; then
+if pgrep wf-recorder >/dev/null; then
     notify-send "Recording Stopped" "Stopped" -a 'Recorder' &
     pkill wf-recorder &
 else
     if [[ $FULLSCREEN_FLAG -eq 1 ]]; then
-        notify-send "Starting recording" 'recording_'"$(getdate)"'.mp4' -a 'Recorder' & disown
+        notify-send "Starting recording" 'recording_'"$(getdate)"'.mp4' -a 'Recorder' &
+        disown
         if [[ $SOUND_FLAG -eq 1 ]]; then
-            wf-recorder -o "$(getactivemonitor)" --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --audio="$(getaudiooutput)"
+            #wf-recorder -o "$(getactivemonitor)" --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --audio="$(getaudiooutput)"
+            wf-recorder -o "$(getactivemonitor)" --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --audio
         else
             wf-recorder -o "$(getactivemonitor)" --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t
         fi
@@ -63,14 +66,18 @@ else
             region="$MANUAL_REGION"
         else
             if ! region="$(slurp 2>&1)"; then
-                notify-send "Recording cancelled" "Selection was cancelled" -a 'Recorder' & disown
+                notify-send "Recording cancelled" "Selection was cancelled" -a 'Recorder' &
+                disown
                 exit 1
             fi
         fi
 
-        notify-send "Starting recording" 'recording_'"$(getdate)"'.mp4' -a 'Recorder' & disown
+        notify-send "Starting recording" 'recording_'"$(getdate)"'.mp4' -a 'Recorder' &
+        disown
         if [[ $SOUND_FLAG -eq 1 ]]; then
-            wf-recorder --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --geometry "$region" --audio="$(getaudiooutput)"
+            #wf-recorder --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --geometry "$region" --audio="$(getaudiooutput)"
+            # without the getaudiooutput, it falls back to default : that is whatever we have selected.
+            wf-recorder --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --geometry "$region" --audio
         else
             wf-recorder --pixel-format yuv420p -f './recording_'"$(getdate)"'.mp4' -t --geometry "$region"
         fi

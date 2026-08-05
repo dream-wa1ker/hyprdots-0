@@ -193,9 +193,9 @@
   "battery": {
     "automaticSuspend": true,
     "critical": 15,
-    "full": 96,
+    "full": 99,
     "low": 25,
-    "suspend": 3
+    "suspend": 10
   },
   "calendar": {
     "locale": "en-GB"
@@ -360,10 +360,10 @@
     "updateInterval": 3000
   },
   "screenRecord": {
-    "savePath": "/home/rev/Videos"
+    "savePath": "/home/rev/Videos/Recordings"
   },
   "screenSnip": {
-    "savePath": ""
+    "savePath": "/home/rev/Pictures/Screenshots"
   },
   "search": {
     "engineBaseUrl": "https://www.google.com/search?q=",
