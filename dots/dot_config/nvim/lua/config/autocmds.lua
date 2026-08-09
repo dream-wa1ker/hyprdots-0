@@ -8,29 +8,41 @@
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
 
+local function load_template(buf, template_path)
+  local full_path = vim.fn.stdpath("config") .. "/templates/" .. template_path
+  if vim.fn.filereadable(full_path) == 0 then return end
+
+  local lines = vim.fn.readfile(full_path)
+  local cursor_pos = nil
+
+  for i, line in ipairs(lines) do
+    lines[i] = line:gsub("//FILENAME//", vim.fn.expand("%:t"))
+                   :gsub("//DATE//", os.date("%Y-%m-%d"))
+
+    if lines[i]:find("//CURSOR//") then
+      local indent = #(lines[i]:match("^(%s*)") or "")
+      cursor_pos = { i, indent }
+      lines[i] = lines[i]:gsub("//CURSOR//", "")
+    end
+  end
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  if cursor_pos then
+    vim.api.nvim_win_set_cursor(0, cursor_pos)
+  end
+end
+
+local template_group = vim.api.nvim_create_augroup("CodeTemplates", { clear = true })
+
 vim.api.nvim_create_autocmd("BufNewFile", {
-  group = vim.api.nvim_create_augroup("CTemplate", { clear = true }),
+  group = template_group,
   pattern = "*.c",
-  callback = function(args)
-    local template = vim.fn.stdpath("config") .. "/templates/skeleton.c"
-    if vim.fn.filereadable(template) == 0 then return end
+  callback = function(args) load_template(args.buf, "skeleton.c") end,
+})
 
-    local lines = vim.fn.readfile(template)
-    local cursor_pos = nil
-
-    for i, line in ipairs(lines) do
-      lines[i] = line:gsub("//FILENAME//", vim.fn.expand("%:t"))
-                      :gsub("//DATE//", os.date("%Y-%m-%d"))
-      if lines[i]:find("//CURSOR//") then
-        cursor_pos = i
-        lines[i] = lines[i]:gsub("//CURSOR//", "")
-      end
-    end
-
-    vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
-
-    if cursor_pos then
-      vim.api.nvim_win_set_cursor(0, { cursor_pos, 0 })
-    end
-  end,
-});
+vim.api.nvim_create_autocmd("BufNewFile", {
+  group = template_group,
+  pattern = { "*.s", "*.asm" },
+  callback = function(args) load_template(args.buf, "skeleton.s") end,
+})
