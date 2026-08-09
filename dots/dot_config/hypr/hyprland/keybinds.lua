@@ -1,31 +1,7 @@
 -- ~/.config/hypr/hyprland/keybinds.lua
 --
--- Shell integration now targets quickshell (global dispatchers named
--- "quickshell:*"), not caelestia. Mappings below were pulled 1:1 from
--- the old hyprlang hyprland/keybinds.conf. Where that .conf paired a
--- `global` dispatch with a plain-exec fallback on the same key (so the
--- key still does something if quickshell isn't alive), both binds are
--- kept here, mirroring the .conf structure.
---
--- DROPPED — no "global, quickshell:..." equivalent existed in the .conf
--- I was given, so these caelestia-only binds were removed rather than
--- guessed at. Re-add manually (target key in parens) if quickshell has
--- an actual dispatcher for these elsewhere in your config:
---   - clearNotifs            (was vars.kbClearNotifs)
---   - showall                (was vars.kbShowPanels — overlayToggle on
---                              Super+G is close but not the same thing,
---                              wired that one up separately below)
---   - clipboard detach mode  (was SUPER+ALT+V)
---   - non-freeze screenshot  (was SUPER+SHIFT+ALT+S)
---   - special/sysmon/music/communication/todo workspace toggles
---     (was vars.kbSpecialWs / kbSystemMonitorWs / kbMusicWs /
---      kbCommunicationWs / kbTodoWs — these vars are now orphaned in
---      variables.lua, safe to remove there too)
---   - the searchToggleReleaseInterrupt / bindit workspaceNumber binds
---     (skipped — too many edge-case mouse binds to safely guess the
---     right hl.bind option names for; add by hand if you rely on them)
 
-local vars = require("variables")
+local vars = require("hyprland.variables")
 local fn   = require("hyprland.functions")
 local boot = require("core.bootstrap")
 

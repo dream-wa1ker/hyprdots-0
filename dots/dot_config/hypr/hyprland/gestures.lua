@@ -1,5 +1,5 @@
 -- ~/.config/hypr/hyprland/gestures.lua
-local vars = require("variables")
+local vars = require("hyprland.variables")
 
 hl.config({
     gestures = {

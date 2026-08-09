@@ -1,8 +1,5 @@
 -- ~/.config/hypr/core/bootstrap.lua
 --
--- Loaded first, by nothing but itself. Every other module goes through
--- M.safe_require instead of raw `require`, so one broken file logs a
--- notification instead of silently killing every module that loads after it.
 
 local M = {}
 
@@ -19,8 +16,6 @@ function M.safe_require(name)
     return mod_or_err
 end
 
--- Wrap a function that runs later (keybind, gesture, event callback) so a
--- runtime bug inside it logs instead of erroring mid-interaction.
 function M.safe_call(fn, label)
     return function(...)
         local ok, err = pcall(fn, ...)
@@ -30,7 +25,6 @@ function M.safe_call(fn, label)
     end
 end
 
--- Recursive merge: overrides win, nested tables merge instead of replacing.
 function M.deep_merge(base, overrides)
     for k, v in pairs(overrides or {}) do
         if type(v) == "table" and type(base[k]) == "table" then
@@ -42,9 +36,6 @@ function M.deep_merge(base, overrides)
     return base
 end
 
--- Apply a list of {fn, spec} pairs through pcall, logging failures by index
--- instead of aborting the whole batch. Used later by rules.lua/keybinds.lua
--- for the declarative table+applier pattern.
 function M.apply_all(fn, specs, label)
     for i, spec in ipairs(specs) do
         local ok, err = pcall(fn, spec)

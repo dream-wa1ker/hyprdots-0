@@ -1,5 +1,5 @@
 -- ~/.config/hypr/hyprland/group.lua
-local vars = require("variables")
+local vars = require("hyprland.variables")
 
 -- No scheme system in new — these are new's actual colors:
 -- accent teal (0DB7D4), dark bg for text-on-accent (131315),

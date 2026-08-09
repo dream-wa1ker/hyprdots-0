@@ -1,5 +1,5 @@
 -- ~/.config/hypr/hyprland/input.lua
-local vars = require("variables")
+local vars = require("hyprland.variables")
 
 hl.config({
     input = {

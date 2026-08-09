@@ -1,4 +1,4 @@
-local vars = require("variables")
+local vars = require("hyprland.variables")
 hl.env("qsConfig", "ii")
 
 -- Themes

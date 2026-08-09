@@ -1,5 +1,5 @@
 -- ~/.config/hypr/hyprland/rules.lua
-local vars = require("variables")
+local vars = require("hyprland.variables")
 local boot = require("core.bootstrap")
 
 ----------------------

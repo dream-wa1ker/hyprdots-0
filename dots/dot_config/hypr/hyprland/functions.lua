@@ -1,8 +1,6 @@
 -- ~/.config/hypr/hyprland/functions.lua
 
--- Turn an HL.Window into the address-selector string dispatchers expect.
--- (hl.dsp.* window fields want a selector string, not the window table itself —
--- see keybinds usage elsewhere for the pattern this codifies.)
+
 local function addr(win)
     return win and win.address and ("address:" .. win.address) or nil
 end
@@ -87,7 +85,7 @@ local function move_actions(win)
 end
 
 local function floatSpawnRule(appKey, extra)
-    local vars = require("variables")
+    local vars = require("hyprland.variables")
     local r = vars.floatRules[appKey] or vars.defaultRule
     local eff = { size = r.w .. " " .. r.h }
 
