@@ -11,10 +11,6 @@ hl.config({
         gaps_out        = vars.windowGapsOut,
         border_size     = vars.windowBorderSize,
 
-        col = {
-            active_border   = vars.activeWindowBorderColour,
-            inactive_border = vars.inactiveWindowBorderColour,
-        },
     },
 
     dwindle = {

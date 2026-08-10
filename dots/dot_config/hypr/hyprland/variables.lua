@@ -54,8 +54,6 @@ return {
     windowOpacity              = 0.90,
     windowRounding             = 15,
     windowBorderSize           = 1,
-    activeWindowBorderColour   = "rgba(47464877)",   -- new's colors.lua general.col.active_border
-    inactiveWindowBorderColour = "rgba(1b1b1d33)",   -- new's colors.lua general.col.inactive_border
 
     -- Misc
     volumeStep      = 10,
