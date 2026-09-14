@@ -80,7 +80,7 @@
             "workspaceZoom": 1.1
         },
         "thumbnailPath": "",
-        "wallpaperPath": "/home/rev/Pictures/Wallpapers/ign_batman.png",
+        "wallpaperPath": "/home/rev/Pictures/Wallpapers/nord_lake.png",
         "widgets": {
             "clock": {
                 "cookie": {
@@ -119,14 +119,14 @@
                 "showOnlyWhenLocked": false,
                 "style": "digital",
                 "styleLocked": "digital",
-                "x": 1458.01171875,
-                "y": 883.28125
+                "x": 441.78125,
+                "y": 222.5625
             },
             "weather": {
                 "enable": true,
                 "placementStrategy": "free",
-                "x": 1265.59375,
-                "y": 926.578125
+                "x": 826.01953125,
+                "y": 245.2578125
             }
         }
     },
