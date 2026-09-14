@@ -19,7 +19,7 @@
     },
     "appearance": {
         "extraBackgroundTint": true,
-        "fakeScreenRounding": 2,
+        "fakeScreenRounding": 1,
         "fonts": {
             "expressive": "Space Grotesk",
             "iconNerd": "JetBrains Mono NF",
@@ -73,14 +73,14 @@
         "hideWhenFullscreen": true,
         "parallax": {
             "autoVertical": false,
-            "enableSidebar": false,
+            "enableSidebar": true,
             "enableWorkspace": false,
             "vertical": false,
             "widgetsFactor": 1.2,
-            "workspaceZoom": 1.07
+            "workspaceZoom": 1.1
         },
         "thumbnailPath": "",
-        "wallpaperPath": "/home/rev/Pictures/Wallpapers/nord_lake.png",
+        "wallpaperPath": "/home/rev/Pictures/Wallpapers/ign_batman.png",
         "widgets": {
             "clock": {
                 "cookie": {
@@ -99,7 +99,7 @@
                 },
                 "digital": {
                     "adaptiveAlignment": true,
-                    "animateChange": true,
+                    "animateChange": false,
                     "font": {
                         "family": "Google Sans Flex",
                         "roundness": 26.5625,
@@ -119,14 +119,14 @@
                 "showOnlyWhenLocked": false,
                 "style": "digital",
                 "styleLocked": "digital",
-                "x": 509.171875,
-                "y": 187.0625
+                "x": 1458.01171875,
+                "y": 883.28125
             },
             "weather": {
-                "enable": false,
-                "placementStrategy": "leastBusy",
-                "x": 400,
-                "y": 100
+                "enable": true,
+                "placementStrategy": "free",
+                "x": 1265.59375,
+                "y": 926.578125
             }
         }
     },
@@ -175,9 +175,9 @@
         "verbose": true,
         "vertical": false,
         "weather": {
-            "city": "",
-            "enable": false,
-            "enableGPS": true,
+            "city": "Chennai, Tamilnadu",
+            "enable": true,
+            "enableGPS": false,
             "fetchInterval": 10,
             "useUSCS": false
         },
@@ -215,7 +215,7 @@
     },
     "conflictKiller": {
         "autoKillNotificationDaemons": false,
-        "autoKillTrays": false
+        "autoKillTrays": true
     },
     "crosshair": {
         "code": "0;P;d;1;0l;10;0o;2;1b;0"

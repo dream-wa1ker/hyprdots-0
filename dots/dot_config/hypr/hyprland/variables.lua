@@ -51,7 +51,7 @@ return {
 
     -- Window styling — transparency for everything (opacity < 1 globally);
     -- opaque-app exceptions get overridden per-window in rules.lua, not here.
-    windowOpacity              = 0.85,
+    windowOpacity              = 0.75,
     windowRounding             = 15,
     windowBorderSize           = 1,
 
@@ -111,10 +111,6 @@ return {
     kbLock        = "SUPER + L",
     kbRestoreLock = "SUPER + ALT + L",
 
-    -- Caelestia (caelestia-cli + caelestia-shell are both installed)
-    enable_caelestia   = false,
-    kbKillCaelestia    = "CTRL + ALT + Delete",
-    kbRestartCaelestia = "CTRL + SHIFT + R",
 
     -- Float rules — keyed by lowercase window class, built from packages you
     -- actually have installed (dolphin AND thunar both present; both get an
