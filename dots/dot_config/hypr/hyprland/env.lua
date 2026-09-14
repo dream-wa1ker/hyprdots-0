@@ -1,3 +1,6 @@
+-- ~/.config/hypr/hyprland/env.lua
+-- dream-wa1ker
+
 local vars = require("hyprland.variables")
 hl.env("qsConfig", "ii")
 

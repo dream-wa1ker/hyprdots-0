@@ -1,17 +1,11 @@
 -- ~/.config/hypr/variables.lua
--- Colors below are hardcoded from the new config's live palette
--- (colors.lua's values, which load after general.lua and win) —
--- no scheme/matugen system, per your call to drop it.
-
+-- dream-wa1ker
 return {
     ------------------
     ---- HYPRLAND ----
     ------------------
 
     -- Apps
-    -- NOTE: you have BOTH thunar and dolphin, and BOTH nvim and zed installed.
-    -- Defaulting to thunar/nvim (matches your old setup) — say the word if
-    -- you actually want dolphin/zed as primary now, it's a one-line change.
     terminal      = "kitty",
     browser       = "zen-browser",   -- zen-browser-bin's desktop entry launches this binary name
     editor        = "nvim",
@@ -30,7 +24,7 @@ return {
 
     -- Blur — universal, on by default (decoration.lua will wire these in)
     blurEnabled      = true,
-    blurSpecialWs    = false,   -- was false in your old config; you asked for "everything"
+    blurSpecialWs    = false,
     blurPopups       = true,
     blurInputMethods = true,
     blurSize         = 8,
@@ -41,7 +35,7 @@ return {
     shadowEnabled     = true,
     shadowRange       = 15,
     shadowRenderPower = 4,
-    shadowColour      = "rgba(00000020)",   -- new's decoration.shadow.color
+    shadowColour      = "rgba(00000020)",
 
     -- Gaps
     workspaceGaps       = 20,
@@ -51,14 +45,14 @@ return {
 
     -- Window styling — transparency for everything (opacity < 1 globally);
     -- opaque-app exceptions get overridden per-window in rules.lua, not here.
-    windowOpacity              = 0.75,
+    windowOpacity              = 0.80,
     windowRounding             = 15,
     windowBorderSize           = 1,
 
     -- Misc
     volumeStep      = 10,
     volumeMax       = 100,
-    cursorTheme     = "Bibata-Modern-Classic",   -- adwaita-cursors is installed; no "sweet-cursors" package present
+    cursorTheme     = "Bibata-Modern-Classic",
     cursorSize      = 14,
     sleepGestureCmd = "systemctl suspend-then-hibernate",
 

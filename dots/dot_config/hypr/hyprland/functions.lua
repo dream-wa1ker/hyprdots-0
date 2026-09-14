@@ -1,4 +1,5 @@
 -- ~/.config/hypr/hyprland/functions.lua
+-- dream-wa1ker
 
 local boot = require("core.bootstrap")
 

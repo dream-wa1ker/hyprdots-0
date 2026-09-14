@@ -1,4 +1,6 @@
 -- ~/.config/hypr/hyprland/gestures.lua
+-- dream-wa1ker
+
 local vars = require("hyprland.variables")
 
 hl.config({
@@ -27,13 +29,12 @@ hl.gesture({
     workspace_name = "special",
 })
 
--- 3-finger swipe down: toggle special workspace via caelestia (caelestia-cli installed)
+-- 3-finger swipe down: hide special/scratchpad workspace
 hl.gesture({
     fingers   = vars.gestureFingers,
     direction = "down",
-    action    = function()
-        hl.exec_cmd("caelestia toggle specialws")
-    end,
+    action         = "special",
+    workspace_name = "special",
 })
 
 -- 4-finger swipe down: sleep

@@ -1,4 +1,5 @@
 -- ~/.config/hypr/hyprland/misc.lua
+-- dream-wa1ker
 
 hl.config({
     misc = {
@@ -16,8 +17,6 @@ hl.config({
 
         mouse_move_enables_dpms = true,
         key_press_enables_dpms  = true,
-
-        background_color = "rgba(131315FF)",   -- new's colors.lua misc.background_color
     },
 
     debug = {

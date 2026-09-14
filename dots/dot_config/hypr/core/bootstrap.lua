@@ -1,5 +1,5 @@
 -- ~/.config/hypr/core/bootstrap.lua
---
+-- dream-wa1ker
 
 local M = {}
 

@@ -1,4 +1,6 @@
--- put former exec-once commands inside the func and former exec commands outside
+-- ~/.config/hypr/hyprland/execs.lua
+-- dream-wa1ker
+
 hl.on("hyprland.start", function ()
 
     -- Bar, wallpaper

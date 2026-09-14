@@ -1,4 +1,5 @@
 -- ~/.config/hypr/hyprland/rules.lua
+-- dream-wa1ker
 local vars = require("hyprland.variables")
 local boot = require("core.bootstrap")
 
@@ -292,7 +293,7 @@ local layer_rules = {
     { match = { namespace = "quickshell:dock" },              animation = "slide bottom" },
     { match = { namespace = "quickshell:screenCorners" },     animation = "popin 120%" },
     { match = { namespace = "quickshell:lockWindowPusher" },  no_anim = true },
-    { match = { namespace = "quickshell:notificationPopup" }, animation = "fade" },
+    { match = { namespace = "quickshell:notificationPopup" }, animation = "slide right" },
     { match = { namespace = "quickshell:overlay" },           no_anim = true },
     { match = { namespace = "quickshell:overlay" },           ignore_alpha = 1 },
     { match = { namespace = "quickshell:overview" },          no_anim = true },

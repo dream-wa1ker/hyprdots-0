@@ -1,4 +1,6 @@
 -- ~/.config/hypr/hyprland/general.lua
+-- dream-wa1ker
+
 local vars = require("hyprland.variables")
 
 hl.config({

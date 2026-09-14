@@ -1,11 +1,9 @@
 -- ~/.config/hypr/hyprland/keybinds.lua
---
+-- dream-wa1ker
 
 local vars = require("hyprland.variables")
 local fn   = require("hyprland.functions")
 
--- Set this in variables.lua if your quickshell config dir isn't literally
--- named "quickshell" (mirrors $qsConfig from the old .conf).
 local qsConfig = vars.qsConfig or "quickshell"
 
 ------------------------------------------------------------------
@@ -85,8 +83,8 @@ hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "-1" }), { description 
 hl.bind("SUPER + mouse_up", hl.dsp.focus({ workspace = "+1" }), { description = "Workspaces: Focus Next Workspace" })
 hl.bind(vars.kbPrevWs, hl.dsp.focus({ workspace = "-1" }), { repeating = true, description = "Workspaces: Focus Previous Workspace" })
 hl.bind(vars.kbNextWs, hl.dsp.focus({ workspace = "+1" }), { repeating = true, description = "Workspaces: Focus Next Workspace" })
-hl.bind("SUPER + Page_Up", hl.dsp.focus({ workspace = "-1" }), { repeating = true, description = "Workspaces: Focus Previous Workspace" })
-hl.bind("SUPER + Page_down", hl.dsp.focus({ workspace = "+1" }), { repeating = true, description = "Workspaces: Focus Next Workspace" })
+hl.bind("SUPER + Page_Up", hl.dsp.focus({ workspace = "-10" }), { repeating = true, description = "Workspaces: Focus Previous Workspace Group" })
+hl.bind("SUPER + Page_down", hl.dsp.focus({ workspace = "+10" }), { repeating = true, description = "Workspaces: Focus Next Workspace Group" })
 
 -- Workspace group -1/+1
 hl.bind("CTRL + SUPER + mouse_down", hl.dsp.focus({ workspace = "-10" }), { description = "Workspaces: Focus Previous Workspace Group" })
@@ -97,8 +95,8 @@ hl.bind("SUPER + ALT + Page_Up", hl.dsp.window.move({ workspace = "-1" }), { rep
 hl.bind("SUPER + ALT + Page_Down", hl.dsp.window.move({ workspace = "+1" }), { repeating = true, description = "Workspaces: Move Window to Next Workspace" })
 hl.bind("SUPER + ALT + mouse_down", hl.dsp.window.move({ workspace = "-1" }), { description = "Workspaces: Move Window to Previous Workspace" })
 hl.bind("SUPER + ALT + mouse_up", hl.dsp.window.move({ workspace = "+1" }), { description = "Workspaces: Move Window to Next Workspace" })
-hl.bind("CTRL + SUPER + SHIFT + right", hl.dsp.window.move({ workspace = "+1" }), { repeating = true, description = "Workspaces: Move Window to Next Workspace" })
-hl.bind("CTRL + SUPER + SHIFT + left", hl.dsp.window.move({ workspace = "-1" }), { repeating = true, description = "Workspaces: Move Window to Previous Workspace" })
+hl.bind("CTRL + SUPER + SHIFT + right", hl.dsp.window.move({ workspace = "+10" }), { repeating = true, description = "Workspaces: Move Window to Next Workspace Group" })
+hl.bind("CTRL + SUPER + SHIFT + left", hl.dsp.window.move({ workspace = "-10" }), { repeating = true, description = "Workspaces: Move Window to Previous Workspace Group" })
 
 -- Move to/from special workspace
 hl.bind("CTRL + SUPER + up", hl.dsp.window.move({ workspace = "special:special" }), { description = "Workspaces: Move Window to Special Workspace" })
@@ -107,8 +105,8 @@ hl.bind("CTRL + SUPER + down", hl.dsp.window.move({ workspace = "e+0" }), { desc
 -- Window groups
 hl.bind(vars.kbWindowGroupCycleNext, hl.dsp.window.cycle_next(), { repeating = true, description = "Group: Focus Next Window in Group" })
 hl.bind(vars.kbWindowGroupCyclePrev, hl.dsp.window.cycle_next({ next = false }), { repeating = true, description = "Group: Focus Previous Window in Group" })
-hl.bind("CTRL + ALT + Tab", hl.dsp.group.next(), { repeating = true, description = "Group: Switch to Next Group Window" })
-hl.bind("CTRL + SHIFT + ALT + Tab", hl.dsp.group.prev(), { repeating = true, description = "Group: Switch to Previous Group Window" })
+hl.bind("CTRL + Tab", hl.dsp.group.next(), { repeating = true, description = "Group: Switch to Next Group Window" })
+hl.bind("CTRL + SHIFT + Tab", hl.dsp.group.prev(), { repeating = true, description = "Group: Switch to Previous Group Window" })
 hl.bind(vars.kbToggleGroup, hl.dsp.group.toggle(), { description = "Group: Toggle Window Grouping" })
 hl.bind(vars.kbUngroup, hl.dsp.window.move({ out_of_group = true }), { description = "Group: Move Window Out of Group" })
 hl.bind("SUPER + SHIFT + Comma", hl.dsp.group.lock_active(), { description = "Group: Lock Active Group" })
@@ -140,8 +138,8 @@ hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true, description =
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Mouse: Resize Window" })
 
 -- Other window functions
-hl.bind("CTRL + SUPER + Backslash", hl.dsp.window.center(), { description = "Window: Center Window" })
-hl.bind("CTRL + SUPER + ALT + Backslash", fn.resize_screen(55, 70), { description = "Window: Resize to 55x70 Percent of Screen" })
+hl.bind("SUPER + Backslash", hl.dsp.window.center(), { description = "Window: Center Window" })
+hl.bind("CTRL + Backslash", fn.resize_screen(55, 70), { description = "Window: Resize to 55x70 Percent of Screen" })
 
 hl.bind(vars.kbWindowPip, fn.toggle_pip, { description = "Window: Toggle Picture-in-Picture Mode" })
 hl.bind(vars.kbPinWindow, hl.dsp.window.pin(), { description = "Window: Pin/Unpin Window" })
@@ -175,7 +173,7 @@ hl.bind("SHIFT + " .. vars.kbFileExplorer, hl.dsp.exec_cmd(vars.fileExplorer, fn
 hl.bind("CTRL + " .. vars.kbTerminal, hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { pseudo = true })), { description = "Applications: Launch Terminal (Pseudotiled)" })
 
 -- Color picker
-hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Utilities: Launch Color Picker" })
+hl.bind("SUPER + P", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Utilities: Launch Color Picker" })
 
 -- Volume (wireplumber's wpctl)
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true, description = "Media: Toggle Microphone Mute" })
@@ -228,5 +226,5 @@ hl.bind("XF86AudioStop", hl.dsp.exec_cmd("playerctl stop"), { locked = true, des
 hl.bind("SUPER + SHIFT + N", hl.dsp.exec_cmd(
     'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`'
 ), { description = "Media: Next Track" })
-hl.bind("SUPER + SHIFT + B", hl.dsp.exec_cmd("playerctl previous"), { description = "Media: Previous Track" })
-hl.bind("SUPER + SHIFT + P", hl.dsp.exec_cmd("playerctl play-pause"), { description = "Media: Toggle Play/Pause" })
+hl.bind("SUPER + SHIFT + P", hl.dsp.exec_cmd("playerctl previous"), { description = "Media: Previous Track" })
+hl.bind("SUPER + SHIFT + B", hl.dsp.exec_cmd("playerctl play-pause"), { description = "Media: Toggle Play/Pause" })

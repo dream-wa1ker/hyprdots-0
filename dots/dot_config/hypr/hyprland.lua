@@ -1,4 +1,5 @@
 -- ~/.config/hypr/hyprland.lua
+-- dream-wa1ker
 
 local home = os.getenv("HOME")
 local hypr = home .. "/.config/hypr"
@@ -56,6 +57,7 @@ hl.monitor({
 -- Core modules to load in dependency order
 local modules = {
     "env",
+    "colors",    
     "general",
     "input",
     "misc",
@@ -66,7 +68,6 @@ local modules = {
     "execs",
     "rules",
     "gestures",
-    "colors",
     "keybinds",
 }
 

@@ -1,4 +1,6 @@
 -- ~/.config/hypr/hyprland/animations.lua
+-- dream-wa1ker
+
 hl.config({
     animations = {
         -- enable animations
