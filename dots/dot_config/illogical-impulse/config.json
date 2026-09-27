@@ -119,14 +119,14 @@
                 "showOnlyWhenLocked": false,
                 "style": "digital",
                 "styleLocked": "digital",
-                "x": 441.78125,
-                "y": 222.5625
+                "x": 457.77734375,
+                "y": 214.37109375
             },
             "weather": {
                 "enable": true,
                 "placementStrategy": "free",
-                "x": 826.01953125,
-                "y": 245.2578125
+                "x": 857.00390625,
+                "y": 204.53125
             }
         }
     },

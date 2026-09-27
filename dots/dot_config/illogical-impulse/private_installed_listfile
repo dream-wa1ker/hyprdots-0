@@ -17,6 +17,7 @@
 /home/rev/.config/hypr/custom/scripts/__restore_video_wallpaper.sh
 /home/rev/.config/hypr/custom/variables.lua
 /home/rev/.config/hypr/hypridle.conf
+/home/rev/.config/hypr/hypridle.conf.new
 /home/rev/.config/hypr/hyprland/colors.lua
 /home/rev/.config/hypr/hyprland/env.lua
 /home/rev/.config/hypr/hyprland/execs.lua
@@ -37,6 +38,7 @@
 /home/rev/.config/hypr/hyprland/shellOverrides/main.lua
 /home/rev/.config/hypr/hyprland/variables.lua
 /home/rev/.config/hypr/hyprlock.conf
+/home/rev/.config/hypr/hyprlock.conf.new
 /home/rev/.config/illogical-impulse/installed_true
 /home/rev/.config/kdeglobals
 /home/rev/.config/kde-material-you-colors/config.conf
