@@ -215,7 +215,7 @@ local workspace_rules = {
         },
     },
 
-    { workspace = "special:special", gaps_out = 30 },
+    { workspace = "special:special", gaps_out = 10 },
 }
 
 boot.apply_all(hl.workspace_rule, workspace_rules, "rules.workspace")
