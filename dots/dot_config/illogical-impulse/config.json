@@ -80,7 +80,7 @@
       "workspaceZoom": 1.1
     },
     "thumbnailPath": "",
-    "wallpaperPath": "/home/rev/Pictures/Wallpapers/eye-monochrome.jpg",
+    "wallpaperPath": "/home/rev/Pictures/Wallpapers/underwater.png",
     "widgets": {
       "clock": {
         "cookie": {
@@ -119,14 +119,14 @@
         "showOnlyWhenLocked": false,
         "style": "digital",
         "styleLocked": "digital",
-        "x": 1403.13671875,
-        "y": 868.89453125
+        "x": 1421.09375,
+        "y": 862.02734375
       },
       "weather": {
         "enable": true,
         "placementStrategy": "free",
-        "x": 1160.25,
-        "y": 923.4296875
+        "x": 1225.3046875,
+        "y": 929.17578125
       }
     }
   },
