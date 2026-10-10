@@ -1,0 +1,11 @@
+{
+  "files": {
+    "README.md": "09a86dc1f99f21dcf71378ddfe567b37",
+    "apply.sh": "f607d9f4c15abaeb92d3a2c86d06ee1e",
+    "screenshot.png": "e090f83517528cbb36d663d34fb3c90c",
+    "template.toml": "1930789bfd26ac2a25c7baa943d35528",
+    "test.sh": "eaa1459a73ff510c1ac2a152f181b086",
+    "tmux.conf": "f47739a4528e62dcb1cb2c67f27dcad0"
+  },
+  "version": 1
+}

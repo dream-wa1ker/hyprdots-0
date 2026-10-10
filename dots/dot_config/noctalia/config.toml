@@ -1,0 +1,38 @@
+
+[shell.panel]
+
+
+floating_offset = 10
+
+launcher_placement = "floating"
+launcher_position = "bottom_center"
+
+clipboard_placement = "floating"
+clipboard_position = "bottom_center"
+
+control_center_placement = "floating"
+control_center_position = "bottom_center"
+
+wallpaper_placement = "floating"
+wallpaper_position = "center"
+
+session_placement = "floating"
+session_position = "center"
+
+polkit_placement = "floating"
+polkit_position = "center"
+
+[plugin_settings."kenn/keybind-cheatsheet"]
+cheatsheet_placement = "floating"
+cheatsheet_position = "center"
+
+[plugin_settings."yuuto/arch-updater"]
+panel_placement = "floating"
+panel_position = "center"
+
+[plugin_settings."thepunkoff/pomodoro"]
+panel_placement = "floating"
+panel_position = "top_center"
+
+[control_center]
+sidebar_section = "none"

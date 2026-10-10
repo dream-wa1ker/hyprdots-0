@@ -45,7 +45,7 @@ return {
 
     -- Window styling — transparency for everything (opacity < 1 globally);
     -- opaque-app exceptions get overridden per-window in rules.lua, not here.
-    windowOpacity              = 0.85,
+    windowOpacity              = 0.90,
     windowRounding             = 15,
     windowBorderSize           = 1,
 
@@ -104,6 +104,7 @@ return {
     kbShowPanels  = "SUPER + K",
     kbLock        = "SUPER + L",
     kbRestoreLock = "SUPER + ALT + L",
+    shell = "noctalia",
 
 
     -- Float rules — keyed by lowercase window class, built from packages you

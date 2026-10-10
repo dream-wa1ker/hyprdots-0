@@ -1,0 +1,306 @@
+{
+  "change_serial": 213,
+  "entries": [
+    {
+      "active": false,
+      "close_reason": "closed_by_call",
+      "event_serial": 213,
+      "notification": {
+        "actions": [
+          "1",
+          "Go to Community",
+          "2",
+          "Mute Community"
+        ],
+        "app_name": "KDE Connect",
+        "body": "arch:",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791636899159,
+        "icon": "kdeconnect",
+        "id": 134,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 72,
+          "image_file": "i_ffa006ce2da5ab45dd664eaaf30a88a8.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791636893159,
+        "summary": "Reddit",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 202,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "Your post got 105 impressions and drove 1 profile viewer. View your analytics.",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637317565,
+        "icon": "kdeconnect",
+        "id": 137,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 66,
+          "image_file": "i_40db5a0ae5556d0570503e8c282590ae.webp",
+          "row_stride": 264,
+          "width": 66
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637311565,
+        "summary": "LinkedIn",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 199,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "✨ Shop to appliances From ₹799: Get Up to ₹20,000 Off on Exch.* | Shop now!",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637319212,
+        "icon": "kdeconnect",
+        "id": 138,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_d983f03c4516348089b0d78b8714bc10.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637313212,
+        "summary": "Flipkart",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 200,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "Review Quickshell Codebase: Here is the complete shared.lua extracted from your original bindings. It keeps your existing hl.bind syntax and variables, while excluding shell panels, Quickshell IPC, shell-specific recording scri…",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637321463,
+        "icon": "kdeconnect",
+        "id": 139,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_251f982053d01d506d9e94674264609e.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637315463,
+        "summary": "ChatGPT",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 201,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "Review Quickshell Codebase: Yes. Noctalia v5 supports detaching individual panels from the top bar by setting their placement to floating instead of attached. You can also choose where a floating panel appears, such as the cent…",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637321486,
+        "icon": "kdeconnect",
+        "id": 140,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_251f982053d01d506d9e94674264609e.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637315486,
+        "summary": "ChatGPT",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 204,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "✨ Shop to appliances From ₹799: Get Up to ₹20,000 Off on Exch.* | Shop now!",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637328834,
+        "icon": "kdeconnect",
+        "id": 141,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_d983f03c4516348089b0d78b8714bc10.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637322834,
+        "summary": "Flipkart",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 206,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "Sorted, bro. 😎: Your next commute? Book a Rapido Auto.",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791637387233,
+        "icon": "kdeconnect",
+        "id": 142,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_4de8fce67cc1a144de80dc9e08286a20.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791637381233,
+        "summary": "Rapido",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 208,
+      "notification": {
+        "actions": [],
+        "app_name": "KDE Connect",
+        "body": "Review Quickshell Codebase: I checked Noctalia v5's configuration reference. The important distinction is that built-in panels have individual placement settings, while plugin panels have their own per-plugin layer setting. You…",
+        "category": null,
+        "desktop_entry": "org.kde.kdeconnect.daemon",
+        "expiry_wall_ms": 1791638645497,
+        "icon": "kdeconnect",
+        "id": 146,
+        "image_data": {
+          "bits_per_sample": 8,
+          "channels": 4,
+          "has_alpha": true,
+          "height": 96,
+          "image_file": "i_251f982053d01d506d9e94674264609e.webp",
+          "row_stride": 384,
+          "width": 96
+        },
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791638639497,
+        "summary": "ChatGPT",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 210,
+      "notification": {
+        "actions": [],
+        "app_name": "Network Management",
+        "body": "Connection 'alksdk' deactivated.",
+        "category": null,
+        "desktop_entry": "org.kde.kded6",
+        "expiry_wall_ms": 1791638771646,
+        "icon": "network-wireless-disconnected",
+        "id": 147,
+        "image_data": null,
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791638765646,
+        "summary": "alksdk",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    },
+    {
+      "active": false,
+      "close_reason": "expired",
+      "event_serial": 212,
+      "notification": {
+        "actions": [],
+        "app_name": "Network Management",
+        "body": "Connection 'SNUC' activated.",
+        "category": null,
+        "desktop_entry": "org.kde.kded6",
+        "expiry_wall_ms": 1791638784615,
+        "icon": "network-wireless-on",
+        "id": 148,
+        "image_data": null,
+        "origin": "external",
+        "persist_in_history": false,
+        "received_wall_ms": 1791638778615,
+        "summary": "SNUC",
+        "timeout": 6000,
+        "urgency": "normal"
+      },
+      "seen": true
+    }
+  ],
+  "next_id": 149,
+  "version": 2
+}

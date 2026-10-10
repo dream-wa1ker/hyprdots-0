@@ -1,0 +1,14 @@
+{
+  "files": {
+    "Paths.xcu": "f0249a769fed68b4329baf57ac5c1bac",
+    "README.md": "c36760d40cae238078e2c8ceae480730",
+    "Theme_Colors.xcu": "9e3918407865e787a1081059d19187fd",
+    "apply.sh": "79b637c398e457e22e1975169c1f7f2f",
+    "description.xml": "810920710dcde3c1bfe9fb1ea671316c",
+    "light-screenshot.png": "ad688f5dc4feda44ed3da38827165497",
+    "pkg-description.en": "50f53d956476e61f87005bf9399e36f4",
+    "screenshot.png": "8f29907e3b5fd8a6471914503a3c8b2b",
+    "template.toml": "e1da6de79923919b05291dddf6ff5fd0"
+  },
+  "version": 1
+}

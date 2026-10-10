@@ -1,0 +1,489 @@
+config_version = 14
+
+[accessibility]
+ui_scale = 1.1000000089406967
+
+[bar]
+order = [ "default", "left" ]
+
+    [bar.default]
+    background_opacity = 0.79999998211860657
+    center = [ "widget_2", "date", "special-workspaces" ]
+    end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
+    margin_ends = 0
+    radius = 20
+    scale = 1.0500000081956387
+    start = [ "launcher", "active_window", "group:g5", "media", "group:g4" ]
+    thickness = 40
+    widget_spacing = 10
+
+        [bar.default.dead_zone.actions]
+        scroll_down = "brightness-down 2"
+        scroll_up = "brightness-up 2"
+
+        [[bar.default.capsule_group]]
+        accordion = true
+        accordion_direction = "start"
+        border_width = 1.0
+        enabled = true
+        fill = "secondary"
+        id = "g1"
+        members = [ "session", "settings" ]
+        opacity = 0.44999998807907104
+        padding = 8.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "surface_variant"
+        id = "g3"
+        members = [ "network", "bluetooth" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "surface_variant"
+        id = "g4"
+        members = [ "ram", "cpu" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "surface_variant"
+        id = "g2"
+        members = [ "input_volume", "volume", "brightness" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "surface_variant"
+        id = "g5"
+        members = [ "workspaces" ]
+        opacity = 1.0
+        padding = 6.0
+
+    [bar.left]
+    background_opacity = 0.79999998211860657
+    center = [ "screenshot", "ocr", "caffeine", "power_profile", "widget", "custom_button_2" ]
+    enabled = true
+    end = [ "privacy" ]
+    margin_ends = 0
+    panel_overlap = 2
+    position = "left"
+    radius = 20
+    radius_bottom_left = 0
+    radius_top_left = 0
+    reserve_space = false
+    scale = 1.1000000089406967
+    show_on_workspace_switch = false
+    smart_auto_hide = true
+    start = []
+    thickness = 40
+    widget_spacing = 15
+
+        [bar.left.dead_zone.actions]
+        left = "screenshot-annotate"
+        right = "exec kitty"
+
+[battery]
+warning_threshold = 20
+
+[brightness]
+minimum_brightness = 0.04999999888241291
+
+[calendar]
+enabled = true
+
+    [calendar.account.personal_google]
+    type = "google"
+
+[desktop_widgets]
+schema_version = 2
+widget_order = [
+    "desktop-widget-0000000000000004",
+    "desktop-widget-0000000000000005",
+    "desktop-widget-0000000000000006",
+    "desktop-widget-0000000000000007"
+]
+
+    [desktop_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [desktop_widgets.widget.desktop-widget-0000000000000004]
+    box_height = 96.0
+    box_width = 336.0
+    cx = 1704.0
+    cy = 984.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "audio_visualizer"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000004.settings]
+        background = false
+        bands = 32
+        centered = true
+        mirrored = true
+        reversed = false
+        show_when_idle = true
+
+    [desktop_widgets.widget.desktop-widget-0000000000000005]
+    box_height = 176.0
+    box_width = 304.0
+    cx = 1552.0
+    cy = 808.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000005.settings]
+        background = false
+        clock_style = "digital"
+        font_family = "CaskaydiaCove Nerd Font"
+
+    [desktop_widgets.widget.desktop-widget-0000000000000006]
+    box_height = 48.0
+    box_width = 320.0
+    cx = 1544.0
+    cy = 896.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000006.settings]
+        background = false
+        clock_style = "digital"
+        font_family = "VictorMono NFP Thin"
+        format = "{:%d %b, %Y}"
+
+    [desktop_widgets.widget.desktop-widget-0000000000000007]
+    box_height = 80.0
+    box_width = 240.0
+    cx = 1424.0
+    cy = 976.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000007.settings]
+        background = false
+        font_family = "VictorMono NFM SemiBold"
+        format = "{:%A}"
+
+[location]
+address = "Chennai, India"
+
+[lockscreen]
+transition_duration = 500
+wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
+
+[lockscreen_widgets]
+enabled = true
+schema_version = 2
+widget_order = [
+    "lockscreen-login-box@eDP-1",
+    "lockscreen-widget-0000000000000001",
+    "lockscreen-widget-0000000000000002",
+    "lockscreen-widget-0000000000000003",
+    "lockscreen-widget-0000000000000004"
+]
+
+    [lockscreen_widgets.grid]
+    cell_size = 16
+    major_interval = 4
+    visible = true
+
+    [lockscreen_widgets.widget."lockscreen-login-box@eDP-1"]
+    box_height = 196.0
+    box_width = 810.0
+    cx = 960.0
+    cy = 1018.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "login_box"
+
+        [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
+        background_color = "surface_variant"
+        background_opacity = 0.88
+        background_radius = 12.0
+        center_password_text = false
+        input_opacity = 1.0
+        input_radius = 6.0
+        layout = "regular"
+        show_caps_lock = true
+        show_keyboard_layout = true
+        show_login_button = true
+        show_media = true
+        show_session_buttons = true
+        show_unlock_hint = true
+        show_weather = true
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
+    box_height = 224.0
+    box_width = 368.0
+    cx = 960.0
+    cy = 440.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
+        background = false
+        font_family = "Hack"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
+    box_height = 64.0
+    box_width = 448.0
+    cx = 960.0
+    cy = 536.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000002.settings]
+        background = false
+        font_family = "VictorMono NFP SemiBold"
+        format = "{:%d %B, 2026}"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
+    box_height = 96.0
+    box_width = 272.0
+    cx = 960.0
+    cy = 616.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
+        background = false
+        font_family = "VictorMono NF SemiBold"
+        format = "{:%A}"
+
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000004]
+    box_height = 0.0
+    box_width = 0.0
+    cx = 960.0
+    cy = 275.20001220703125
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "audio_visualizer"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000004.settings]
+        background = false
+        bands = 32
+        show_when_idle = true
+
+[notification]
+max_visible = 3
+offset_x = 10
+offset_y = 10
+
+[plugin_settings."alexander/screen-toolkit"]
+hide-cursor = false
+panel-mode = "legacy"
+record-audio-in = true
+record-audio-out = true
+record-skip-confirmation = true
+share-skip-popover = true
+video-path = "/home/rev/Videos/Recordings"
+
+[plugin_settings."kenn/keybind-cheatsheet"]
+hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds/noctalia.lua"
+hyprland_lua_config = "/home/rev/.config/hypr/hyprland/keybinds/shared.lua"
+
+[plugin_settings."thepunkoff/pomodoro"]
+use-bundled-alarm-sound = true
+
+[plugin_settings."yuuto/arch-updater"]
+panel_placement = "floating"
+panel_position = "center"
+
+[plugins]
+enabled = [
+    "dotnetrob/cat",
+    "liamwh/emoji-picker",
+    "fel/ocr",
+    "kenn/keybind-cheatsheet",
+    "yuuto/arch-updater",
+    "thepunkoff/pomodoro",
+    "jamesfeeder/special-workspaces"
+]
+
+[shell]
+password_style = "random"
+polkit_agent = true
+screen_time_enabled = true
+
+    [shell.panel]
+    wallpaper_placement = "floating"
+    wallpaper_position = "center"
+
+    [shell.screenshot]
+    freeze_screen = false
+    show_cursor = true
+
+[theme]
+builtin = "Nord"
+community_palette = "Catppuccin Macchiato Blue"
+mode = "dark"
+wallpaper_scheme = "m3-content"
+
+    [theme.templates]
+    builtin_ids = [
+        "alacritty",
+        "btop",
+        "cava",
+        "emacs",
+        "foot",
+        "gtk3",
+        "gtk4",
+        "helix",
+        "hyprland",
+        "kcolorscheme",
+        "kitty",
+        "qt",
+        "starship"
+    ]
+    community_ids = [
+        "zen-browser",
+        "inkscape",
+        "libreoffice",
+        "neovim",
+        "obsidian",
+        "zed",
+        "fuzzel",
+        "fastfetch",
+        "papirus-icons",
+        "bat",
+        "fzf",
+        "konsole",
+        "tmux"
+    ]
+
+[wallpaper]
+directory = "/home/rev/Pictures/Wallpapers"
+
+    [wallpaper.default]
+    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+
+    [wallpaper.last]
+    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+
+    [wallpaper.monitors.eDP-1]
+    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+
+[widget.active_window]
+display = "text_only"
+enabled = false
+show_empty_label = true
+
+[widget.battery]
+capsule = true
+capsule_padding = 10
+
+[widget.brightness]
+show_label = false
+
+[widget.clock]
+capsule = true
+
+[widget.cpu]
+interactive = false
+visualization = "none"
+
+[widget.custom_button_2]
+glyph = "user-screen"
+type = "custom_button"
+
+    [widget.custom_button_2.actions]
+    left = "annotate"
+
+[widget.date]
+anchor = true
+capsule = true
+capsule_padding = 10
+format = "{:%a %d %b | %H:%M}"
+
+[widget.input_volume]
+show_label = false
+
+[widget.launcher]
+capsule = true
+
+[widget.media]
+capsule_padding = 10
+hide_album_art = true
+
+[widget.ocr]
+type = "fel/ocr:ocr"
+
+[widget.privacy]
+capsule = true
+capsule_fill = "primary"
+capsule_opacity = 0.80000000000000004
+capsule_padding = 10
+icon_spacing = 10
+
+[widget.ram]
+interactive = false
+visualization = "none"
+
+[widget.session]
+capsule = true
+capsule_fill = "secondary"
+capsule_foreground = "surface"
+capsule_opacity = 0.5
+
+[widget.special-workspaces]
+hide_inactive = true
+interactive = false
+type = "jamesfeeder/special-workspaces:special-workspaces"
+
+[widget.volume]
+show_label = false
+
+[widget.widget]
+anchor = true
+capsule = true
+font_scale = 1.2
+scale = 1.2
+type = "alexander/screen-toolkit:widget"
+
+[widget.widget_2]
+type = "thepunkoff/pomodoro:widget"
+
+[widget.workspaces]
+capsule = true

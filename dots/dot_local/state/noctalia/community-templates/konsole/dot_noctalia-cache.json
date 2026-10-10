@@ -1,0 +1,10 @@
+{
+  "files": {
+    "README.md": "029a3cca526aff6dd7a620d995776ddd",
+    "apply.sh": "6fbbba87a3651c9167be5f5772d18c2b",
+    "noctalia.colorscheme": "5a564a6d55b7f022089f2f0cfbda2429",
+    "pre-apply.sh": "293eff21d0686e295d93899859505e58",
+    "template.toml": "787e3f76d9e2675a05eb6e1bd0bc4496"
+  },
+  "version": 1
+}

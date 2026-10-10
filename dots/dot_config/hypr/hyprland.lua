@@ -95,3 +95,6 @@ end
 
 -- Shell overrides
 boot.safe_require("hyprland.shellOverrides.main")
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()

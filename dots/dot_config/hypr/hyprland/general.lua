@@ -27,3 +27,14 @@ hl.config({
         column_width = 0.8,
     },
 })
+
+
+-- case for noctalia; pre number workspaces.
+-- if needed, can be created more than that; 
+for i = 1, 5 do
+    hl.workspace_rule({
+        workspace = tostring(i),
+        monitor = "DP-1", -- replace with your monitor name
+        persistent = true,
+    })
+end

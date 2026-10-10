@@ -1,0 +1,13 @@
+{
+  "Applications": [
+    "/usr/share/applications/lstopo.desktop",
+    "/usr/share/applications/org.kde.partitionmanager.desktop",
+    "/usr/share/applications/org.kde.kdeconnect.app.desktop",
+    "/usr/share/applications/org.kde.konsole.desktop",
+    "/usr/share/applications/zen.desktop"
+  ],
+  "Panels": [
+    "tray-drawer",
+    "dotnetrob/cat:panel"
+  ]
+}

@@ -187,6 +187,7 @@ local window_rules = {
 
     -- No shadow for tiled windows (only floating windows get shadows)
     { match = { float = 0 }, no_shadow = true },
+    { match = { class = "dev.noctalia.Noctalia" }, float = true, size = {1080, 920} },
 }
 
 boot.apply_all(hl.window_rule, window_rules, "rules.window")
@@ -326,6 +327,18 @@ local layer_rules = {
     -- Launchers need to be FAST — no animation delay before first paint
     { match = { namespace = "gtk4-layer-shell" }, no_anim = true },
 }
+
+-- add this new layer rule : noctalia specific; don't bunch apply.
+hl.layer_rule({
+  name = "noctalia",
+  match = {
+    namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
+  },
+  no_anim = true,
+  ignore_alpha = 0.5,
+  blur = true,
+  blur_popups = true,
+})
 
 boot.apply_all(hl.layer_rule, layer_rules, "rules.layer")
 
