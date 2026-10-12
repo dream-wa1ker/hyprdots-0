@@ -2,16 +2,16 @@
 -- dream-wa1ker
 
 local vars = require("hyprland.variables")
-if vars.shell ~= "noctalia" then
-    hl.env("qsConfig", "ii")
-end
 
+-- Environment variables: put these at the top level of the file
+hl.env("XCURSOR_THEME", vars.cursorTheme)
+hl.env("XCURSOR_SIZE", vars.cursorSize)
+hl.env("HYPRCURSOR_THEME", vars.cursorTheme)
+hl.env("HYPRCURSOR_SIZE", vars.cursorSize)
 -- Themes
 hl.env("QT_QPA_PLATFORMTHEME", "kde")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", "1")
-hl.env("XCURSOR_THEME", vars.cursorTheme)
-hl.env("XCURSOR_SIZE", vars.cursorSize)
 -- Toolkit backends
 hl.env("GDK_BACKEND", "wayland,x11")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
@@ -30,5 +30,4 @@ hl.env("_JAVA_AWT_WM_NONREPARENTING", "1")
 -- Default editor
 hl.env("EDITOR", vars.editor)
 hl.env("TERMINAL", vars.terminal)
-hl.env("ILLOGICAL_IMPULSE_VIRTUAL_ENV", "/home/rev/.local/state/quickshell/.venv")
 hl.env("XDG_MENU_PREFIX", "plasma-")

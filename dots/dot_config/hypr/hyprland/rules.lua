@@ -20,7 +20,7 @@ local window_rules = {
     { match = { class = "mpv" },                tag = "+opaque_app" }, -- video playback
     { match = { class = "org.kde.okular" },      tag = "+opaque_app" }, -- document/image reader
     { match = { class = "swappy" },              tag = "+opaque_app" }, -- screenshot editor
-    { match = { class = "org.quickshell" },      tag = "+opaque_app" }, -- caelestia shell surfaces
+    { match = { class = "org.quickshell" },      tag = "+opaque_app" },  
     { match = { tag = "opaque_app" },            opaque = true },
 
     ------------------------------------------------------------------
@@ -135,7 +135,6 @@ local window_rules = {
     { match = { class = "kcm_.*" },                    float = true }, -- KDE System Settings modules
     { match = { class = ".*bluedevilwizard" },         float = true }, -- Bluetooth pairing wizard
     { match = { title = ".*Welcome" },                 float = true },
-    { match = { title = "^(illogical-impulse Settings)$" }, float = true },
     { match = { title = ".*Shell conflicts.*" },       float = true },
 
     { match = { class = "org.freedesktop.impl.portal.desktop.kde" }, float = true },
@@ -186,7 +185,7 @@ local window_rules = {
     { match = { class = "^(steam_app).*" },   immediate = true },
 
     -- No shadow for tiled windows (only floating windows get shadows)
-    { match = { float = 0 }, no_shadow = true },
+    { match = { float = false }, no_shadow = true },
     { match = { class = "dev.noctalia.Noctalia" }, float = true, size = {1080, 920} },
 }
 
@@ -256,73 +255,6 @@ local layer_rules = {
     { match = { namespace = "notifications" },  ignore_alpha = 0.69 },
     { match = { namespace = "logout_dialog" },  blur = true }, -- wlogout
 
-    ------------------------------------------------------------------
-    -- AGS shell surfaces (sidebars, bars, docks, overview, OSK, etc.)
-    ------------------------------------------------------------------
-    { match = { namespace = "sideleft.*" },  animation = "slide left" },
-    { match = { namespace = "sideright.*" }, animation = "slide right" },
-    { match = { namespace = "session[0-9]*" },   blur = true },
-    { match = { namespace = "bar[0-9]*" },       blur = true },
-    { match = { namespace = "bar[0-9]*" },       ignore_alpha = 0.6 },
-    { match = { namespace = "barcorner.*" },     blur = true },
-    { match = { namespace = "barcorner.*" },     ignore_alpha = 0.6 },
-    { match = { namespace = "dock[0-9]*" },      blur = true },
-    { match = { namespace = "dock[0-9]*" },      ignore_alpha = 0.6 },
-    { match = { namespace = "indicator.*" },     blur = true },
-    { match = { namespace = "indicator.*" },     ignore_alpha = 0.6 },
-    { match = { namespace = "overview[0-9]*" },  blur = true },
-    { match = { namespace = "overview[0-9]*" },  ignore_alpha = 0.6 },
-    { match = { namespace = "cheatsheet[0-9]*" }, blur = true },
-    { match = { namespace = "cheatsheet[0-9]*" }, ignore_alpha = 0.6 },
-    { match = { namespace = "sideright[0-9]*" },  blur = true },
-    { match = { namespace = "sideright[0-9]*" },  ignore_alpha = 0.6 },
-    { match = { namespace = "sideleft[0-9]*" },   blur = true },
-    { match = { namespace = "sideleft[0-9]*" },   ignore_alpha = 0.6 },
-    { match = { namespace = "osk[0-9]*" },        blur = true },
-    { match = { namespace = "osk[0-9]*" },        ignore_alpha = 0.6 },
-
-    ------------------------------------------------------------------
-    -- Quickshell: illogical-impulse namespaces
-    ------------------------------------------------------------------
-    { match = { namespace = "quickshell:.*" }, blur_popups = true },
-    { match = { namespace = "quickshell:.*" }, blur = true },
-    { match = { namespace = "quickshell:.*" }, ignore_alpha = 0.79 },
-
-    { match = { namespace = "quickshell:bar" },               animation = "slide" },
-    { match = { namespace = "quickshell:actionCenter" },      no_anim = true },
-    { match = { namespace = "quickshell:cheatsheet" },        animation = "slide bottom" },
-    { match = { namespace = "quickshell:dock" },              animation = "slide bottom" },
-    { match = { namespace = "quickshell:screenCorners" },     animation = "popin 120%" },
-    { match = { namespace = "quickshell:lockWindowPusher" },  no_anim = true },
-    { match = { namespace = "quickshell:notificationPopup" }, animation = "slide right" },
-    { match = { namespace = "quickshell:overlay" },           no_anim = true },
-    { match = { namespace = "quickshell:overlay" },           ignore_alpha = 1 },
-    { match = { namespace = "quickshell:overview" },          no_anim = true },
-    { match = { namespace = "quickshell:osk" },               animation = "slide bottom" },
-    { match = { namespace = "quickshell:polkit" },            no_anim = true },
-    { match = { namespace = "quickshell:popup" },             xray = false },       -- prevents odd tint on bar tooltips
-    { match = { namespace = "quickshell:popup" },             ignore_alpha = 1 },   -- xray=false alone isn't enough; belt & suspenders
-    { match = { namespace = "quickshell:mediaControls" },     ignore_alpha = 1 },   -- same tint fix as popups
-    { match = { namespace = "quickshell:reloadPopup" },       animation = "slide" },
-    { match = { namespace = "quickshell:regionSelector" },    no_anim = true },
-    { match = { namespace = "quickshell:screenshot" },        no_anim = true },
-    { match = { namespace = "quickshell:session" },           blur = true },
-    { match = { namespace = "quickshell:session" },           no_anim = true },
-    { match = { namespace = "quickshell:session" },           ignore_alpha = 0 },
-    { match = { namespace = "quickshell:sidebarRight" },      animation = "slide right" },
-    { match = { namespace = "quickshell:sidebarLeft" },       animation = "slide left" },
-    { match = { namespace = "quickshell:verticalBar" },       animation = "slide" },
-    { match = { namespace = "quickshell:osk" },               order = -1 },
-
-    ------------------------------------------------------------------
-    -- Quickshell: waffles namespaces
-    ------------------------------------------------------------------
-    { match = { namespace = "quickshell:wallpaperSelector" },    animation = "slide top" },
-    { match = { namespace = "quickshell:wNotificationCenter" },  no_anim = true },
-    { match = { namespace = "quickshell:wOnScreenDisplay" },     no_anim = true },
-    { match = { namespace = "quickshell:wStartMenu" },           no_anim = true },
-    { match = { namespace = "quickshell:wTaskView" },             ignore_alpha = 0 },
-    { match = { namespace = "quickshell:wTaskView" },             no_anim = true },
 
     -- Launchers need to be FAST — no animation delay before first paint
     { match = { namespace = "gtk4-layer-shell" }, no_anim = true },

@@ -34,7 +34,9 @@ hl.config({
 for i = 1, 5 do
     hl.workspace_rule({
         workspace = tostring(i),
-        monitor = "DP-1", -- replace with your monitor name
         persistent = true,
     })
 end
+
+
+

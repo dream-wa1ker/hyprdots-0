@@ -3,25 +3,37 @@
 
 local M = {}
 
+
 function M.safe_require(name)
     local ok, mod_or_err = pcall(require, name)
+
     if not ok then
+        print(("[Hyprland config] Failed to load '%s': %s")
+            :format(name, tostring(mod_or_err)))
+
         hl.notification.create({
-            text     = "Hyprland config: '" .. name .. "' failed to load",
+            text = "Hyprland config: '" .. name .. "' failed to load",
             duration = 6000,
-            icon     = "warning",
+            icon = "warning",
         })
+
         return nil
     end
+
     return mod_or_err
 end
 
 function M.safe_call(fn, label)
     return function(...)
-        local ok, err = pcall(fn, ...)
+        local ok, result = pcall(fn, ...)
+
         if not ok then
+            print(("[Hyprland config] %s failed: %s")
+                :format(label or "callback", tostring(result)))
+            return nil, result
         end
-        return err
+
+        return result
     end
 end
 
@@ -36,10 +48,14 @@ function M.deep_merge(base, overrides)
     return base
 end
 
+
 function M.apply_all(fn, specs, label)
     for i, spec in ipairs(specs) do
         local ok, err = pcall(fn, spec)
+
         if not ok then
+            print(("[Hyprland config] %s entry %d failed: %s")
+                :format(label or "configuration", i, tostring(err)))
         end
     end
 end

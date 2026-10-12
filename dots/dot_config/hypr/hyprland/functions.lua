@@ -3,6 +3,10 @@
 
 local boot = require("core.bootstrap")
 
+local function noctalia(command)
+    return hl.dsp.exec_cmd("noctalia msg " .. command)
+end
+
 local function addr(win)
     return win and win.address and ("address:" .. win.address) or nil
 end
@@ -12,7 +16,8 @@ local function wsaction(action, range, i)
         local activews = hl.get_active_workspace()
         if activews then
             local id = activews.id
-            local s  = (i - 1) * 10 + (id % 10)
+            local slot = ((id - 1) % 10) + 1
+            local s = (i - 1) * 10 + slot
             local t  = math.floor((id - 1) / 10) * 10 + i
             local z  = (range == "group") and s or t
 
@@ -104,7 +109,8 @@ end
 
 local function floatSpawnRule(appKey, extra)
     local vars = require("hyprland.variables")
-    local r = vars.floatRules[appKey] or vars.defaultRule
+    local class = vars.floatCommandClasses[appKey] or appKey
+    local r = vars.floatRules[class] or vars.defaultRule
     local eff = { size = r.w .. " " .. r.h }
 
     if r.x and r.y then
@@ -199,4 +205,5 @@ return {
     toggle_floating       = toggle_floating,
     cycle_all_layouts     = cycle_all_layouts,
     toggle_scroll_layout  = toggle_scroll_layout,
+    noctalia              = noctalia,
 }

@@ -1,8 +1,11 @@
 -- ~/.config/hypr/hyprland.lua
 -- dream-wa1ker
+-- Core defaults load first. Custom modules return declarative Lua tables;
+-- this loader applies those tables using the matching Hyprland API.
 
-local home = os.getenv("HOME")
+local home = assert(os.getenv("HOME"), "HOME is not set")
 local hypr = home .. "/.config/hypr"
+local customDir = hypr .. "/custom"
 
 local boot = require("core.bootstrap")
 
@@ -10,40 +13,151 @@ local boot = require("core.bootstrap")
 local lib = boot.safe_require("hyprland.lib")
 boot.safe_require("hyprland.services")
 
--- Safe file exist check (checks module table, global scope, or io.open)
+-- File existence helper compatible with the existing Lua integration.
 local function is_file_exists(path)
     if type(lib) == "table" and type(lib.is_file_exists) == "function" then
         return lib.is_file_exists(path)
     elseif type(_G.is_file_exists) == "function" then
         return _G.is_file_exists(path)
     end
-    local f = io.open(path, "r")
-    if f then
-        f:close()
+
+    local file = io.open(path, "r")
+    if file then
+        file:close()
         return true
     end
     return false
 end
 
-local function maybe_create(file, content)
-    if is_file_exists(file) then return end
-    local f = io.open(file, "w")
-    if f then
-        if content then f:write(content) end
-        f:close()
+local function custom_file_exists(name)
+    return is_file_exists(customDir .. "/" .. name .. ".lua")
+end
+
+-- Load declarative custom modules only when their files exist. A custom
+-- module should return a table; it should not call hl.* while being required.
+local function load_custom_spec(name)
+    if not custom_file_exists(name) then
+        return nil
+    end
+
+    local spec = boot.safe_require("custom." .. name)
+    if spec == nil or spec == true then
+        -- An empty Lua module commonly returns `true` from require(); treat
+        -- empty custom template files as no overrides.
+        return nil
+    end
+    if type(spec) ~= "table" then
+        hl.notification.create({
+            text = "Custom config '" .. name .. "' must return a Lua table",
+            duration = 6000,
+            icon = "warning",
+        })
+        return nil
+    end
+    return spec
+end
+
+local function as_array(value)
+    if type(value) ~= "table" then
+        return {}
+    end
+    return value
+end
+
+local function apply_config(spec, label)
+    local config = spec.config or spec
+    if type(config) == "table" and next(config) ~= nil then
+        boot.safe_call(hl.config, label)(config)
     end
 end
 
-local function maybe_copy(src, dst)
-    if is_file_exists(dst) then return end
-    local input = io.open(src, "r")
-    if not input then return end
-    local out = io.open(dst, "w")
-    if out then
-        out:write(input:read("*a"))
-        out:close()
+local function apply_rule_list(fn, rules, label)
+    if type(rules) == "table" then
+        boot.apply_all(fn, rules, label)
     end
-    input:close()
+end
+
+-- Apply declarative custom specs for ordinary Hyprland modules. Supported
+-- contracts are documented below the loader code and in custom/*.lua.
+local function apply_custom_spec(name, spec)
+    if name == "env" then
+        local entries = spec.env or spec
+        for key, value in pairs(entries) do
+            if type(key) == "string" and value ~= nil then
+                boot.safe_call(hl.env, "custom.env")(key, value)
+            end
+        end
+
+    elseif name == "general" or name == "input" or name == "misc"
+        or name == "decoration" or name == "group" then
+        apply_config(spec, "custom." .. name)
+
+    elseif name == "animations" then
+        if spec.config then
+            apply_config(spec, "custom.animations")
+        end
+
+        -- Curves may be written as a name -> definition map, or as an array
+        -- of { name = "curveName", config = { ... } } entries.
+        for key, curve in pairs(as_array(spec.curves)) do
+            if type(curve) == "table" then
+                local curveName = curve.name or (type(key) == "string" and key or nil)
+                local curveConfig = curve.config or curve.value or curve
+                if curveName then
+                    boot.safe_call(hl.curve, "custom.animations.curve")(curveName, curveConfig)
+                end
+            end
+        end
+        apply_rule_list(hl.animation, spec.animations, "custom.animations.animation")
+
+    elseif name == "rules" then
+        apply_rule_list(hl.window_rule, spec.window or spec.window_rules, "custom.rules.window")
+        apply_rule_list(hl.workspace_rule, spec.workspace or spec.workspace_rules, "custom.rules.workspace")
+        apply_rule_list(hl.layer_rule, spec.layer or spec.layer_rules, "custom.rules.layer")
+
+    elseif name == "gestures" then
+        if spec.config then
+            apply_config(spec, "custom.gestures")
+        end
+        apply_rule_list(hl.gesture, spec.gestures, "custom.gestures.gesture")
+
+    elseif name == "execs" then
+        -- Startup commands are declarative strings, run when Hyprland starts.
+        local startup = as_array(spec.startup)
+        if #startup > 0 then
+            hl.on("hyprland.start", function()
+                for _, command in ipairs(startup) do
+                    if type(command) == "string" and command ~= "" then
+                        hl.exec_cmd(command)
+                    end
+                end
+            end)
+        end
+
+        -- Optional event handlers for cases that need an actual Lua callback:
+        -- { event = "hyprland.start", callback = function() ... end }
+        for _, eventSpec in ipairs(as_array(spec.events)) do
+            if type(eventSpec) == "table"
+                and type(eventSpec.event) == "string"
+                and type(eventSpec.callback) == "function" then
+                hl.on(eventSpec.event, eventSpec.callback)
+            end
+        end
+
+    elseif name == "colors" then
+        -- Applied after Noctalia's generated theme, so explicit custom color
+        -- overrides win rather than being overwritten by apply_theme().
+        apply_config(spec, "custom.colors")
+    end
+end
+
+-- Variable overrides are the one custom table that must be merged BEFORE
+-- core modules read variables.lua. It should return either a raw variable
+-- table or { variables = { ... } }.
+local vars = boot.safe_require("hyprland.variables")
+local customVars = load_custom_spec("variables")
+if type(vars) == "table" and type(customVars) == "table" then
+    boot.deep_merge(vars, customVars.variables or customVars)
 end
 
 -- Default monitor configuration
@@ -54,10 +168,11 @@ hl.monitor({
     scale    = 1,
 })
 
--- Core modules to load in dependency order
+-- Core modules load in dependency order. custom.functions is merged into the
+-- already-loaded functions table immediately before keybinds are constructed,
+-- so keybindings can reference custom functions through `fn`.
 local modules = {
     "env",
-    "colors",    
     "general",
     "input",
     "misc",
@@ -71,16 +186,29 @@ local modules = {
     "keybinds",
 }
 
--- Load core modules via boot.safe_require
+local customSpecs = {}
 for _, name in ipairs(modules) do
-    boot.safe_require("hyprland." .. name)
-end
+    if name == "keybinds" then
+        local customFunctions = load_custom_spec("functions")
+        if type(customFunctions) == "table" then
+            local baseFunctions = boot.safe_require("hyprland.functions")
+            if type(baseFunctions) == "table" then
+                boot.deep_merge(baseFunctions, customFunctions.functions or customFunctions)
+            end
+        end
+    end
 
--- Load custom user overrides (if present in ~/.config/hypr/custom/)
-for _, name in ipairs(modules) do
-    local custom_file = hypr .. "/custom/" .. name .. ".lua"
-    if is_file_exists(custom_file) then
-        boot.safe_require("custom." .. name)
+    boot.safe_require("hyprland." .. name)
+
+    -- custom.keybinds is deliberately NOT loaded here: hyprland.keybinds
+    -- imports it as data, resolves custom precedence, then registers bindings
+    -- once. Loading it as a post-default override would be redundant/wrong.
+    if name ~= "keybinds" and name ~= "variables" and name ~= "functions" then
+        local spec = load_custom_spec(name)
+        if spec then
+            customSpecs[name] = spec
+            apply_custom_spec(name, spec)
+        end
     end
 end
 
@@ -96,5 +224,51 @@ end
 -- Shell overrides
 boot.safe_require("hyprland.shellOverrides.main")
 
--- For Noctalia Color templates
-require("noctalia").apply_theme()
+-- Apply Noctalia's generated theme first, then user color overrides.
+local noctalia = boot.safe_require("noctalia")
+if type(noctalia) == "table" and type(noctalia.apply_theme) == "function" then
+    noctalia.apply_theme()
+end
+
+local customColors = customSpecs.colors or load_custom_spec("colors")
+if type(customColors) == "table" then
+    apply_custom_spec("colors", customColors)
+end
+
+-- Declarative custom module contracts:
+--
+-- custom/variables.lua:
+--   return { variables = { windowOpacity = 0.95 } }
+--
+-- custom/env.lua:
+--   return { env = { MY_ENV_VAR = "value" } }
+--
+-- custom/general.lua, input.lua, misc.lua, decoration.lua, group.lua:
+--   return { config = { general = { ... } } } -- pass any hl.config-compatible table
+--
+-- custom/animations.lua:
+--   return { config = { animations = { enabled = true } },
+--            curves = { example = { type = "bezier", points = {{0.1, 0.2}, {0.3, 1}} } },
+--            animations = { { leaf = "windowsIn", enabled = true, speed = 4, bezier = "example" } } }
+--
+-- custom/rules.lua:
+--   return { window = { { match = { class = "example" }, float = true } },
+--            workspace = { ... }, layer = { ... } }
+--
+-- custom/gestures.lua:
+--   return { config = { gestures = { workspace_swipe_distance = 600 } },
+--            gestures = { { fingers = 3, direction = "horizontal", action = "workspace" } } }
+--
+-- custom/execs.lua:
+--   return { startup = { "command-one", "command-two" } }
+--
+-- custom/functions.lua:
+--   return { functions = { my_action = function() ... end } }
+--   Reference as `fn.my_action` from custom/keybinds.lua.
+--
+-- custom/keybinds.lua:
+--   Return an array of { key = ..., action = ..., options = {...} } records.
+--   hyprland.keybinds.lua loads this module and gives custom records precedence.
+--
+-- custom/colors.lua:
+--   return { config = { general = { col = { active_border = "rgb(...)" } } } }

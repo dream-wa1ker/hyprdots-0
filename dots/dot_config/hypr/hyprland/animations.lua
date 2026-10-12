@@ -9,7 +9,6 @@ hl.config({
 })
 
 -- Animation curves
--- caelestia
 hl.curve("specialWorkSwitch", {
     type = "bezier",
     points = {{ 0.05, 0.7 }, { 0.1, 1 }}
@@ -19,7 +18,6 @@ hl.curve("standard", {
     points = {{ 0.2, 0 }, { 0, 1 }}
 })
 
--- end4
 hl.curve("expressiveFastSpatial", {
     type = "bezier",
     points = {{0.42, 1.67}, {0.21, 0.90}}
@@ -57,13 +55,9 @@ hl.curve("stall", {
     points = {{1, -0.1}, {0.7, 0.85}}
 })
 
--- NOTE : Uncomment the animations that you want to use. Either caelestia, or end4. 
--- End 4 is usually fast. 
 
 
 ----------------------------------------------------------------------------------------------------------->
--- Animation configs of caelestia (default) ported into hyrpland 
-
 -- hl.animation({
 --     leaf = "layersIn",
 --     enabled = true,
@@ -153,8 +147,6 @@ hl.animation({
 --     style = "popin 80%"
 -- })
 
------------------------------------------------------------------------------------------------------------>
--- Animation configs of end 4 ported into hyprland
 
 hl.animation({
     leaf = "fadeIn",

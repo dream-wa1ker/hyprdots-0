@@ -1,2 +1,37 @@
-hl.bind("CTRL+SUPER+ALT+Slash", hl.dsp.exec_cmd("xdg-open ~/.config/hypr/custom/keybinds.lua"), {description = "Edit user keybinds"} )
-hl.bind("SUPER + Q", hl.dsp.window.close(), {description = "Alternate keybinding for close window"})
+-- ~/.config/hypr/custom/keybinds.lua
+-- Declarative custom keybindings. Custom entries override defaults on key collisions.
+-- This module is loaded by hyprland.keybinds.lua before registration.
+
+-- local vars = require("custom.variables")
+-- local kb = vars.keybinds
+--
+-- return {
+--     {
+--         key = kb.customEditKeybinds,
+--         action = hl.dsp.exec_cmd("xdg-open ~/.config/hypr/custom/keybinds.lua"),
+--         options = { description = "Edit user keybinds" },
+--     },
+--     {
+--         key = kb.customCloseWindow,
+--         action = hl.dsp.window.close(),
+--         options = { description = "Alternate keybinding for close window" },
+--     },
+--
+--     {
+--         key = kb.customTest,
+--         action = hl.dsp.exec_cmd("notify-send 'Hyprland' 'Test notification, if you see this, your config is fine...'"),
+--         options = { description = "Custom: Test Binding", },
+--     },
+--
+-- {
+--     key = kb.customLaunchTerminal,
+--     action = hl.dsp.exec_cmd(vars.terminal),
+--     options = {
+--         description = "Custom: Launch Terminal",
+--     },
+-- },
+-- You can similarly add custom keybindings here, or override the existing keybindings and their functionality here; 
+--
+-- }
+--
+
