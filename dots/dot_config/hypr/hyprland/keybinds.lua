@@ -17,7 +17,7 @@ local bindings = {
     },
     {
         key = kb.keybindCheatsheet,
-        action = noctalia("panel-toggle kenn/keybind-cheatsheet:cheatsheet"),
+        action = noctalia("panel-toggle blackbartblues/keymap:panel"),
         options = {
             description = "View Keybindings Cheatsheet",
         },

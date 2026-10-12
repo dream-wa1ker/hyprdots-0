@@ -7,7 +7,7 @@ return {
     -- Check the name of the variables in hyprland/variables, override them here.
     windowOpacity  = 0.90,
     windowRounding = 15,
-    editor = "zeditor",
+    editor = "nvim",
     -- modified the default terminal
     
     ------------------
