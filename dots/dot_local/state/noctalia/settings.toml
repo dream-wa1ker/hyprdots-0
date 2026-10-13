@@ -8,7 +8,7 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.79999998211860657
-    center = [ "widget_2", "date", "special-workspaces" ]
+    center = [ "widget_2", "date", "special-workspaces", "cat" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
     radius = 20
@@ -69,7 +69,7 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.79999998211860657
-    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes" ]
+    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
     enabled = true
     end = [ "privacy" ]
     margin_ends = 0
@@ -355,6 +355,9 @@ panel_open_near_click = false
 panel_placement = "floating"
 panel_position = "top_right"
 
+[plugin_settings."aristides/udiskie"]
+manager_open_near_click = true
+
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
 hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
@@ -386,7 +389,8 @@ enabled = [
     "andrewdems/vpn-manager",
     "h-jangra/region-recorder",
     "noctalia/notes",
-    "blackbartblues/keymap"
+    "blackbartblues/keymap",
+    "aristides/udiskie"
 ]
 
 [shell]
@@ -410,6 +414,8 @@ screen_time_enabled = true
 [theme]
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
+mode = "dark"
+source = "builtin"
 wallpaper_scheme = "m3-content"
 
     [theme.templates]
@@ -435,13 +441,22 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+    path = "/home/rev/Pictures/Wallpapers/nixos.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+    path = "/home/rev/Pictures/Wallpapers/nixos.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/underwater.png"
+    path = "/home/rev/Pictures/Wallpapers/nixos.png"
+
+    [[wallpaper.favorite]]
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
+
+    [[wallpaper.favorite]]
+    palette_source = "wallpaper"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
+    theme_mode = "dark"
+    wallpaper_scheme = "m3-content"
 
 [widget.active_window]
 enabled = false
@@ -456,6 +471,9 @@ capsule_padding = 10
 
 [widget.brightness]
 show_label = false
+
+[widget.cat]
+type = "dotnetrob/cat:cat"
 
 [widget.clock]
 capsule = true
@@ -513,6 +531,11 @@ capsule_opacity = 0.5
 hide_inactive = true
 interactive = false
 type = "jamesfeeder/special-workspaces:special-workspaces"
+
+[widget.status]
+hide_when_empty = true
+show_count = false
+type = "aristides/udiskie:status"
 
 [widget.volume]
 show_label = false
