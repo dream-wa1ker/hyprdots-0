@@ -9,7 +9,7 @@ return {
 
     -- Applications
     terminal      = "kitty",
-    browser       = "zen-browser",
+    browser       = "chromium",
     editor        = "nvim",
     fileExplorer  = "dolphin",
     audioSettings = "pavucontrol",

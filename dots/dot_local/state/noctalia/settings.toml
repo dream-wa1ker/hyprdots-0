@@ -185,7 +185,25 @@ widget_order = [
 
 [dock]
 auto_hide = true
+enabled = true
+position = "right"
 reserve_space = false
+show_dots = true
+show_instance_count = false
+
+[hot_corners]
+delay_ms = 250
+enabled = true
+
+    [hot_corners.bottom_left]
+    command = "noctalia msg panel-toggle noctalia/notes:panel"
+
+    [hot_corners.bottom_right]
+    action = "command"
+    command = "noctalia msg panel-toggle noctalia/notes:panel"
+
+    [hot_corners.top_left]
+    action = "window_switcher"
 
 [idle]
 behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
@@ -379,6 +397,9 @@ screen_time_enabled = true
     [shell.panel]
     wallpaper_placement = "floating"
     wallpaper_position = "center"
+
+    [shell.screen_corners]
+    enabled = true
 
     [shell.screenshot]
     directory = "/home/rev/Pictures/Screenshots"
