@@ -415,12 +415,13 @@ screen_time_enabled = true
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "builtin"
+source = "wallpaper"
 wallpaper_scheme = "m3-content"
 
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
     community_ids = [
+        "opencode",
         "zen-browser",
         "gimp",
         "inkscape",
@@ -441,13 +442,13 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nixos.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nixos.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nixos.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
 
     [[wallpaper.favorite]]
     path = "/home/rev/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"

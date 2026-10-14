@@ -1,0 +1,3 @@
+[theme.templates.user.obsidian_extra]
+input_path = "/home/$USER/.config/noctalia/obsidian/obsidian.css"
+output_path = "/home/$USER/Workspace/notes/obsidian/0000/.obsidian/snippets/noctalia.css"
