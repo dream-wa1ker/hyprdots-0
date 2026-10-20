@@ -442,13 +442,13 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
+    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
 
     [[wallpaper.favorite]]
     path = "/home/rev/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
