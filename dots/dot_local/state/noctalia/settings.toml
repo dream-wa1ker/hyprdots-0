@@ -417,7 +417,7 @@ screen_time_enabled = true
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "wallpaper"
+source = "builtin"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
@@ -444,13 +444,13 @@ wallpaper_scheme = "m3-tonal-spot"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
