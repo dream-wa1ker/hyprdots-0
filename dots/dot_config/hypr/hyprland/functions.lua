@@ -107,11 +107,36 @@ local function move_actions(win)
     end
 end
 
+-- Logical monitor size (accounts for scale), or nil if unavailable.
+local function monitor_size()
+    local m = hl.get_active_monitor()
+    if m and type(m.width) == "number" and type(m.height) == "number" then
+        local s = (type(m.scale) == "number" and m.scale > 0) and m.scale or 1
+        return m.width / s, m.height / s
+    end
+end
+
+-- Pixel size of a float rule on the active monitor.
+local function rule_pixels(r)
+    if r.wp and r.hp then
+        local mw, mh = monitor_size()
+        if mw then
+            return math.floor(mw * r.wp), math.floor(mh * r.hp)
+        end
+    end
+    return r.w or 1000, r.h or 600   -- pixel rule, or fallback without monitor info
+end
+
 local function floatSpawnRule(appKey, extra)
     local vars = require("hyprland.variables")
     local class = vars.floatCommandClasses[appKey] or appKey
     local r = vars.floatRules[class] or vars.defaultRule
-    local eff = { size = r.w .. " " .. r.h }
+    local eff = {}
+    if r.wp and r.hp then
+        eff.size = ("(monitor_w*%s) (monitor_h*%s)"):format(r.wp, r.hp)
+    else
+        eff.size = r.w .. " " .. r.h
+    end
 
     if r.x and r.y then
         eff.move = { r.x, r.y }
@@ -149,7 +174,8 @@ local toggle_floating = boot.safe_call(function()
         local class = w.class and w.class:lower() or ""
         local rule = vars.floatRules[class] or vars.defaultRule
 
-        hl.dispatch(hl.dsp.window.resize({ exact = true, x = rule.w, y = rule.h }))
+        local w_px, h_px = rule_pixels(rule)
+        hl.dispatch(hl.dsp.window.resize({ exact = true, x = w_px, y = h_px }))
 
         if rule.x and rule.y then
             hl.dispatch(hl.dsp.window.move({ exact = true, x = rule.x, y = rule.y }))

@@ -56,29 +56,27 @@ return {
     sleepGestureCmd = "systemctl suspend-then-hibernate",
     shell           = "noctalia",
 
-    -- Float rules, keyed by lowercase window class
+    -- Float rules, keyed by lowercase window class.
+    -- Size is pixels { w, h } or monitor fractions { wp, hp } (0 to 1).
+    -- Optional { x, y } places the window in pixels; otherwise it is centered.
+    -- Keep the fractions in step with the float_* tags in hyprland/rules.lua.
     floatRules = {
-        ["org.kde.dolphin"]           = { w = 1000, h = 600, x = 100, y = 100 },
-        ["foot"]                      = { w = 1000, h = 600 },
-        ["org.pulseaudio.pavucontrol"] = { w = 800, h = 600 },
-        ["blueman-manager"]           = { w = 700, h = 500 },
-        ["nwg-look"]                  = { w = 900, h = 700 },
-        ["org.kde.partitionmanager"]  = { w = 1100, h = 700 },
+        ["org.kde.dolphin"]            = { w = 1000, h = 600, x = 100, y = 100 },
+        ["org.pulseaudio.pavucontrol"] = { wp = 0.45, hp = 0.45 },
+        ["blueman-manager"]            = { wp = 0.6,  hp = 0.7 },
+        ["nwg-look"]                   = { wp = 0.5,  hp = 0.6 },
+        ["org.kde.partitionmanager"]   = { wp = 0.7,  hp = 0.8 },
     },
 
-    -- Map launch commands to their corresponding lowercase window classes.
-    -- Add there to match the class; for eg, dolphin is the command, but it has a class org.kde.dolphin.
+    -- Map launch commands to their lowercase window classes, for commands
+    -- whose name differs from the class (dolphin -> org.kde.dolphin).
     floatCommandClasses = {
-        ["dolphin"]         = "org.kde.dolphin",
-        -- ["foot"]             = "foot",
+        ["dolphin"]          = "org.kde.dolphin",
         ["pavucontrol"]      = "org.pulseaudio.pavucontrol",
-        ["blueman-manager"]  = "blueman-manager",
-        -- ["nwg-look"]         = "nwg-look",
         ["partitionmanager"] = "org.kde.partitionmanager",
     },
 
-    defaultRule = { w = 1000, h = 600 },
-
+    defaultRule = { wp = 0.55, hp = 0.6 },
     ------------------
     ---- KEYBINDS ----
     ------------------

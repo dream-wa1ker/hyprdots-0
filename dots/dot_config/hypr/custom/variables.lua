@@ -1,35 +1,40 @@
 -- ~/.config/hypr/custom/variables.lua
 -- dream-wa1ker
--- Central configuration for applications, behavior, and every default keybinding. : Overrides
+--
+-- PURPOSE     Override values from hyprland/variables.lua (apps, gaps, blur, sizes,
+--             shortcut strings). Every other file reads these values.
+-- RETURNS     A table. List ONLY what differs from the default; a value equal to
+--             the default is noise. ({ variables = { ... } } is also accepted.)
+-- LOADED      First: merged into the defaults before any other module reads them,
+--             so one line here changes every file that uses that variable.
+-- FIND NAMES  Every overridable name lives in hyprland/variables.lua:
+--                 grep -n "=" ~/.config/hypr/hyprland/variables.lua | less
+--             Nested tables (keybinds, floatRules) merge key by key, so you can
+--             change one shortcut without repeating the others.
+-- RULE OF THUMB  If a variable exists (windowOpacity, blurPasses, terminal ...) set
+--             it here. Options with no variable go in the matching custom file
+--             (decoration.lua, input.lua, misc.lua ...).
 
 return {
-    -- Custom Window appearance
-    -- Check the name of the variables in hyprland/variables, override them here.
-    windowOpacity  = 0.90,
-    windowRounding = 15,
-    editor = "nvim",
-    -- modified the default terminal
+    -- Active overrides ---------------------------------------------------------
+    windowOpacity = 0.90, -- default 0.85
+    blurSize      = 6,    -- default 8
 
-    blurSize         = 6,
-    ------------------
-    ---- KEYBINDS ----
-    ------------------
-    -- Every literal default shortcut lives here. Actions remain in keybinds.lua.
+    -- Examples: remove the leading `--` to enable --------------------------------
+    -- terminal  = "foot",
+    -- browser   = "firefox",
+    -- editor    = "nvim",       -- terminal editors are wrapped in a terminal by custom/functions.lua
+    -- editorInTerminal = true,  -- force that wrapping for an editor custom/functions.lua does not know
+    -- blurPasses   = 2,         -- cheaper on integrated graphics
+    -- windowGapsIn = 3,
+    -- cursorSize   = 24,
+    -- autostartKdeConnect = true, -- opens network listeners at login, see hyprland/execs.lua
+
+    -- Shortcuts: the VALUE is the key combination, the NAME is the action. Names are
+    -- listed in the `keybinds` table of hyprland/variables.lua. The loader reports
+    -- duplicates, so if the new combination is taken, move the other action too.
     keybinds = {
-        -- Overrides the already existing keybindings in default
-        --  NOTE : This config comes with duplicate detection in keybindings; 
-
-        -- browser = "SUPER + SHIFT + B",
-        -- duplicates with the SUPER + SHIF + B = browser in float mode in default, change that too; 
+        -- browser         = "SUPER + SHIFT + B",
         -- floatingBrowser = "SUPER + B",
-
-        -- or you can override the action : declare a keybind here first.
-        -- this overlaps the settings shortcut.
-        -- customLaunchTerminal = "SUPER + I", 
-
-        -- Keep the custom specfic keybindings here; 
-        customEditKeybinds = "CTRL + SUPER + ALT + Slash",
-        customCloseWindow  = "SUPER + Q",
-        customTest = "SUPER + ALT + I",
     },
 }
