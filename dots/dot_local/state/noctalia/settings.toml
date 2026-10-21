@@ -1,4 +1,4 @@
-config_version = 14
+config_version = 15
 
 [accessibility]
 ui_scale = 1.2000000104308128
@@ -7,7 +7,7 @@ ui_scale = 1.2000000104308128
 order = [ "default", "left" ]
 
     [bar.default]
-    background_opacity = 0.79999998211860657
+    background_opacity = 0.89999997988343239
     center = [ "widget_2", "date", "special-workspaces", "cat" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
@@ -68,7 +68,7 @@ order = [ "default", "left" ]
         padding = 6.0
 
     [bar.left]
-    background_opacity = 0.79999998211860657
+    background_opacity = 0.89999997988343239
     center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
     enabled = true
     end = [ "privacy" ]
@@ -337,6 +337,7 @@ widget_order = [
         show_when_idle = true
 
 [notification]
+background_opacity = 0.89999997988343239
 max_visible = 3
 offset_x = 10
 offset_y = 10
@@ -399,6 +400,7 @@ polkit_agent = true
 screen_time_enabled = true
 
     [shell.panel]
+    transparency_mode = "soft"
     wallpaper_placement = "floating"
     wallpaper_position = "center"
 
@@ -416,7 +418,7 @@ builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
 source = "wallpaper"
-wallpaper_scheme = "m3-content"
+wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
@@ -442,22 +444,13 @@ wallpaper_scheme = "m3-content"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
+    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
+    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-212ldx.png"
-
-    [[wallpaper.favorite]]
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-yqv2wx.jpg"
-
-    [[wallpaper.favorite]]
-    palette_source = "wallpaper"
-    path = "/home/rev/Pictures/Wallpapers/wallhaven-ex.png"
-    theme_mode = "dark"
-    wallpaper_scheme = "m3-content"
+    path = "/home/rev/Pictures/Wallpapers/cyberpunk-blue-scape.png"
 
 [widget.active_window]
 enabled = false

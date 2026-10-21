@@ -11,14 +11,11 @@ local boot = require("core.bootstrap")
 
 -- Internal libraries and services
 local lib = boot.safe_require("hyprland.lib")
-boot.safe_require("hyprland.services")
+local services = boot.safe_require("hyprland.services")
 
--- File existence helper compatible with the existing Lua integration.
 local function is_file_exists(path)
     if type(lib) == "table" and type(lib.is_file_exists) == "function" then
         return lib.is_file_exists(path)
-    elseif type(_G.is_file_exists) == "function" then
-        return _G.is_file_exists(path)
     end
 
     local file = io.open(path, "r")
@@ -185,6 +182,15 @@ local modules = {
     "gestures",
     "keybinds",
 }
+
+-- Make sure every override file exists (never overwrites).
+if type(services) == "table" and services.create_custom_config then
+    local unpack = table.unpack or unpack
+    boot.safe_call(services.create_custom_config.ensure, "services.create_custom_config")(
+        customDir,
+        { "variables", "colors", unpack(modules) }
+    )
+end
 
 local customSpecs = {}
 for _, name in ipairs(modules) do

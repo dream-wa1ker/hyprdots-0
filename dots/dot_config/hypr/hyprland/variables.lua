@@ -45,7 +45,7 @@ return {
 
     -- Window styling
     windowOpacity   = 0.85,
-    windowRounding  = 15,
+    windowRounding  = 12,
     windowBorderSize = 1,
 
     -- Miscellaneous behavior

@@ -899,16 +899,24 @@ for i = 1, 10 do
     }
 end
 -- Custom bindings are declarative so they can override defaults before registration.
--- A custom module may return { { key = "...", action = function() return ... end, options = {...} } }.
+-- A problem never aborts registration: it is collected, logged, and reported once.
+local problems = {}
+local function report(message)
+    problems[#problems + 1] = message
+    print("[Hyprland config] keybinds: " .. message)
+end
+
 local ok, customBindings = pcall(require, "custom.keybinds")
 if not ok then
-    -- Missing custom module is normal; an actual syntax/runtime error is surfaced.
+    -- A missing custom module is normal; a syntax/runtime error is reported.
     if not tostring(customBindings):match("module 'custom%.keybinds' not found") then
-        error("Failed to load custom.keybinds: " .. tostring(customBindings))
+        report("custom.keybinds failed to load: " .. tostring(customBindings))
     end
     customBindings = {}
 end
+-- An empty (or all-comment) file makes require() return `true`, not a table.
 if type(customBindings) ~= "table" then customBindings = {} end
+
 local function normalizeKey(key)
     local parts = {}
     for part in tostring(key):gmatch("[^+]+") do
@@ -918,33 +926,57 @@ local function normalizeKey(key)
     table.sort(parts)
     return table.concat(parts, "+")
 end
-local customKeys = {}
-for _, entry in ipairs(customBindings) do
-    assert(type(entry) == "table" and type(entry.key) == "string" and entry.action ~= nil,
-        "custom.keybinds entries require key and action")
-    local normalized = normalizeKey(entry.key)
-    assert(not customKeys[normalized], "Duplicate custom keybinding: " .. entry.key)
-    customKeys[normalized] = true
+
+-- Validate custom entries; the first one wins on a duplicate.
+local customKeys, validCustom = {}, {}
+for i, entry in ipairs(customBindings) do
+    if type(entry) ~= "table" or type(entry.key) ~= "string" or entry.action == nil then
+        report(("custom entry #%d needs a string `key` and an `action`"):format(i))
+    else
+        local normalized = normalizeKey(entry.key)
+        if customKeys[normalized] then
+            report("duplicate custom keybinding ignored: " .. entry.key)
+        else
+            customKeys[normalized] = true
+            validCustom[#validCustom + 1] = entry
+        end
+    end
 end
-local finalBindings = {}
-local seenDefaults = {}
+
+-- Custom entries replace defaults on the same key; defaults must be unique.
+local finalBindings, seenDefaults = {}, {}
 for _, entry in ipairs(bindings) do
     local normalized = normalizeKey(entry.key)
     if not customKeys[normalized] then
         if seenDefaults[normalized] then
-            error("Duplicate default keybinding: " .. entry.key .. " (" .. entry.options.description .. ")")
+            report(("duplicate default keybinding ignored: %s (%s)")
+                :format(entry.key, (entry.options and entry.options.description) or "no description"))
+        else
+            seenDefaults[normalized] = true
+            finalBindings[#finalBindings + 1] = entry
         end
-        seenDefaults[normalized] = true
-        finalBindings[#finalBindings + 1] = entry
     end
 end
-for _, entry in ipairs(customBindings) do
+for _, entry in ipairs(validCustom) do
     finalBindings[#finalBindings + 1] = {
-        key = entry.key,
-        action = entry.action,
+        key     = entry.key,
+        action  = entry.action,
         options = entry.options or {},
     }
 end
+
+-- Register each binding in isolation so one bad entry cannot block the rest.
 for _, entry in ipairs(finalBindings) do
-    hl.bind(entry.key, entry.action, entry.options)
+    local bound, err = pcall(hl.bind, entry.key, entry.action, entry.options)
+    if not bound then
+        report(("could not bind %s: %s"):format(entry.key, tostring(err)))
+    end
+end
+
+if #problems > 0 then
+    hl.notification.create({
+        text     = ("Keybinds: %d problem(s). Run `hyprctl rollinglog` for details."):format(#problems),
+        duration = 8000,
+        icon     = "warning",
+    })
 end
