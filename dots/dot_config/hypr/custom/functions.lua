@@ -9,6 +9,8 @@
 --           2. Declare everything `local`; accidental globals leak into every other file.
 
 local vars = require("hyprland.variables")
+local lib  = require("hyprland.lib")
+local boot = require("core.bootstrap")
 
 -- bind(key, action [, description [, flags]]) -> one entry for custom/keybinds.lua
 --   key          "SUPER + SHIFT + B" (see custom/keybinds.lua for the syntax)
@@ -52,10 +54,79 @@ local function editor_rule_key()
     return needs_terminal(vars.editor) and vars.terminal or vars.editor
 end
 
+-- Power saver ------------------------------------------------------------------
+-- One key toggles: blur, shadows, rounding and animations off, and the shell
+-- (vars.shell, Noctalia) stopped. Pressing it again restores everything from the
+-- values in vars, so overrides in custom/variables.lua are respected.
+--
+-- State is a marker file in $XDG_RUNTIME_DIR: a per-user directory (mode 0700) that is
+-- emptied at logout. A predictable path in /tmp would let another local user pre-create
+-- or symlink it.
+-- After `hyprctl reload` the visuals reset but the marker stays; one key press then
+-- restores (and restarts the shell), a second press turns the saver on again.
+local runtime    = os.getenv("XDG_RUNTIME_DIR")
+local STATE_FILE = runtime and (runtime .. "/hypr-power-saver") or nil
+
+local function saver_active()
+    return STATE_FILE ~= nil and lib.is_file_exists(STATE_FILE)
+end
+
+local function set_saver_state(on)
+    if on then
+        local f = io.open(STATE_FILE, "w")
+        if f then
+            f:write("1")
+            f:close()
+        end
+    else
+        os.remove(STATE_FILE)
+    end
+end
+
+local function apply_saver(on)
+    hl.config({
+        animations = { enabled = not on },
+        decoration = {
+            rounding = on and 0 or vars.windowRounding,
+            blur     = { enabled = (not on) and vars.blurEnabled },
+            shadow   = { enabled = (not on) and vars.shadowEnabled },
+        },
+    })
+
+    local shell = lib.shell_quote(vars.shell)
+    if on then
+        hl.exec_cmd("pkill -x -- " .. shell)
+    else
+        -- start the shell only if it is not already running
+        hl.exec_cmd("pgrep -x -- " .. shell .. " >/dev/null || " .. shell)
+    end
+end
+
+local power_saver_toggle = boot.safe_call(function()
+    if not STATE_FILE then
+        pcall(hl.notification.create, {
+            text = "Power saver unavailable: XDG_RUNTIME_DIR is not set",
+            duration = 4000, icon = "warning",
+        })
+        return
+    end
+
+    local turn_on = not saver_active()
+    apply_saver(turn_on)
+    set_saver_state(turn_on)
+
+    -- Hyprland's own notification: the shell's daemon may be stopped.
+    pcall(hl.notification.create, {
+        text = turn_on and "Power saver ON (shell stopped)" or "Power saver OFF",
+        duration = 2500, icon = "info",
+    })
+end, "powerSaverToggle")
+
 return {
     functions = {
-        bind            = bind,
-        editor_command  = editor_command,
-        editor_rule_key = editor_rule_key,
+        bind               = bind,
+        power_saver_toggle = power_saver_toggle,
+        editor_command     = editor_command,
+        editor_rule_key    = editor_rule_key,
     },
 }

@@ -34,6 +34,7 @@ return {
     -- listed in the `keybinds` table of hyprland/variables.lua. The loader reports
     -- duplicates, so if the new combination is taken, move the other action too.
     keybinds = {
+        powerSaver = "SUPER + ALT + B", -- power saver on/off, see custom/functions.lua
         -- browser         = "SUPER + SHIFT + B",
         -- floatingBrowser = "SUPER + B",
     },

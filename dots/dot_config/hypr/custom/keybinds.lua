@@ -49,6 +49,10 @@ return {
         hl.dsp.exec_cmd(cmd, fn.floatSpawnRule(ruleKey, { float = true })),
         "Floating editor"),
 
+    fn.bind(kb.powerSaver,
+        fn.power_saver_toggle,
+        "Power saver: blur, rounding, shadows, animations off; shell stopped"),
+
     -- Examples: remove the leading `--` to enable --------------------------------
     -- fn.bind("SUPER + Q", hl.dsp.window.close(), "Close window"),
     -- fn.bind("SUPER + ALT + T", hl.dsp.exec_cmd(vars.terminal .. " -e btop"), "System monitor"),
