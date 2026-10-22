@@ -1,0 +1,13 @@
+# Optional appearance packages from the user's current foreign/AUR inventory.
+# These are intentionally NOT installed by default. Review the list before using --with-aur.
+bibata-cursor-theme
+papirus-folders
+adw-gtk-theme-git
+breeze-plus
+darkly-bin
+otf-space-grotesk
+ttf-material-symbols-variable-git
+ttf-readex-pro
+ttf-rubik-vf
+ttf-twemoji
+qtengine

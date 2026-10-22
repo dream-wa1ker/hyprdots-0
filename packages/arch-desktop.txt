@@ -1,0 +1,94 @@
+# Hyprland Lua configuration and shell
+hyprland
+noctalia
+chezmoi
+git
+fish
+starship
+eza
+bat
+fzf
+zoxide
+
+# Applications referenced by ~/.config/hypr/hyprland/variables.lua and dotfiles
+kitty
+foot
+fuzzel
+chromium
+neovim
+dolphin
+pavucontrol
+partitionmanager
+nwg-look
+
+# Status, media and music
+btop
+cava
+fastfetch
+mpd
+mpc
+mpd-mpris
+rmpc
+playerctl
+
+# PipeWire and audio controls
+pipewire
+pipewire-alsa
+pipewire-audio
+pipewire-jack
+pipewire-pulse
+wireplumber
+
+# Session integration, Bluetooth, KDE Connect and notifications
+dbus
+gnome-keyring
+libnotify
+polkit
+bluez
+bluez-utils
+blueman
+kdeconnect
+
+# Commands used by keybindings and Noctalia panels
+brightnessctl
+jq
+bc
+grim
+slurp
+wl-clipboard
+hyprpicker
+swappy
+
+# Noctalia plugin requirements (OCR, Region Recorder, USB manager, updates)
+tesseract
+tesseract-data-eng
+ffmpeg
+gpu-screen-recorder
+udiskie
+udisks2
+pacman-contrib
+
+# VPN Manager plugin (requires NetworkManager; OpenVPN support for .ovpn profiles)
+networkmanager
+networkmanager-openvpn
+
+# Desktop portals, file pickers and XDG user directories
+xdg-desktop-portal
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+xdg-utils
+xdg-user-dirs
+zenity
+kdialog
+
+# Noctalia status widgets / fonts used in settings.toml
+power-profiles-daemon
+upower
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-cascadia-code-nerd
+ttf-hack-nerd
+ttf-victor-mono-nerd
+otf-commit-mono-nerd
+papirus-icon-theme
