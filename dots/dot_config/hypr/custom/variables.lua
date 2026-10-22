@@ -17,7 +17,7 @@
 
 return {
     -- Active overrides ---------------------------------------------------------
-    windowOpacity = 0.90, -- default 0.85
+    windowOpacity = 0.85, -- default 0.85
     blurSize      = 6,    -- default 8
 
     -- Examples: remove the leading `--` to enable --------------------------------

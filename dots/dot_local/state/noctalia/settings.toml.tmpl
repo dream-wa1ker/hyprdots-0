@@ -185,7 +185,7 @@ widget_order = [
 
 [dock]
 auto_hide = true
-enabled = true
+enabled = false
 position = "right"
 reserve_space = false
 show_dots = true
@@ -228,7 +228,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
+wallpaper = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/archlinux.png"
 
 [lockscreen_widgets]
 enabled = true
@@ -349,7 +349,7 @@ record-audio-in = true
 record-audio-out = true
 record-skip-confirmation = true
 share-skip-popover = true
-video-path = "/home/rev/Videos/Recordings"
+video-path = "{{ .chezmoi.homeDir }}/Videos/Recordings"
 
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
@@ -361,7 +361,7 @@ manager_open_near_click = true
 
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
-hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
+hyprland_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
 
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
@@ -369,8 +369,8 @@ audio_source = "both"
 [plugin_settings."kenn/keybind-cheatsheet"]
 cheatsheet_open_near_click = false
 compositor = "hyprland"
-hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
-hyprland_lua_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
+hyprland_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
+hyprland_lua_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
 hyprland_parser = "lua"
 mango_config = ""
 merge_sequential = false
@@ -408,7 +408,7 @@ screen_time_enabled = true
     enabled = true
 
     [shell.screenshot]
-    directory = "/home/rev/Pictures/Screenshots"
+    directory = "{{ .chezmoi.homeDir }}/Pictures/Screenshots"
     freeze_screen = false
     pipe_command = "swappy -f -"
     show_cursor = true
@@ -441,16 +441,16 @@ wallpaper_scheme = "m3-tonal-spot"
     ]
 
 [wallpaper]
-directory = "/home/rev/Pictures/Wallpapers"
+directory = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
