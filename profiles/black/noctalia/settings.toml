@@ -8,6 +8,7 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
+    border_width = 1.0
     center = [ "widget_2", "date", "special-workspaces", "cat" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
@@ -69,19 +70,16 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.89999997988343239
+    border_width = 1.0
     center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
     enabled = true
     end = [ "privacy" ]
     margin_ends = 0
     panel_overlap = 2
-    position = "left"
+    position = "bottom"
     radius = 20
-    radius_bottom_left = 0
-    radius_top_left = 0
-    reserve_space = false
     scale = 1.1000000089406967
     show_on_workspace_switch = false
-    smart_auto_hide = true
     start = []
     thickness = 40
     widget_spacing = 15
