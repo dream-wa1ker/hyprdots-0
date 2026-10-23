@@ -8,7 +8,6 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
-    border_width = 1.0
     center = [ "widget_2", "date", "special-workspaces", "cat" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
@@ -70,16 +69,19 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.89999997988343239
-    border_width = 1.0
     center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
     enabled = true
     end = [ "privacy" ]
     margin_ends = 0
     panel_overlap = 2
-    position = "bottom"
+    position = "left"
     radius = 20
+    radius_bottom_left = 0
+    radius_top_left = 0
+    reserve_space = false
     scale = 1.1000000089406967
     show_on_workspace_switch = false
+    smart_auto_hide = true
     start = []
     thickness = 40
     widget_spacing = 15
@@ -226,7 +228,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
+wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
 
 [lockscreen_widgets]
 enabled = true
@@ -340,6 +342,7 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
+
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
 panel_placement = "floating"
@@ -354,6 +357,7 @@ hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
+
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
@@ -396,9 +400,8 @@ screen_time_enabled = true
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-pure_black_dark = true
-source = "wallpaper"
-wallpaper_scheme = "m3-monochrome"
+source = "builtin"
+wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
@@ -424,13 +427,13 @@ wallpaper_scheme = "m3-monochrome"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
@@ -513,6 +516,7 @@ type = "aristides/udiskie:status"
 
 [widget.volume]
 show_label = false
+
 
 [widget.widget_2]
 type = "thepunkoff/pomodoro:widget"

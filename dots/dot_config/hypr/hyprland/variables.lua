@@ -110,6 +110,7 @@ return {
         screenshotRegion     = "SUPER + SHIFT + S",
         screenshotClipboard  = "CTRL + Print",
         screenshotSave       = "Print",
+        noctaliaProfileSwitcher = "SUPER + ALT + Space",
         wallpaperSelector    = "SUPER + W",
         randomWallpaper      = "CTRL + SUPER + ALT + T",
         noctaliaSettings     = "SUPER + I",

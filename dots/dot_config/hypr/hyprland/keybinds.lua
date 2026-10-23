@@ -201,6 +201,14 @@ local bindings = {
         },
     },
     {
+        key = kb.noctaliaProfileSwitcher,
+        action = hl.dsp.exec_cmd('bash ~/Projects/hyprdots-0/scripts/profile-switch'),
+        options = {
+            description = "Save Monitor Screenshot",
+        },
+    },
+
+    {
         key = kb.wallpaperSelector,
         action = noctalia("panel-toggle wallpaper"),
         options = {
