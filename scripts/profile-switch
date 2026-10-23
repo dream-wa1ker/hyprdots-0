@@ -155,10 +155,6 @@ apply_profile() {
         bash "$post_apply"
     fi
 
-    # Reapply Noctalia after profile-specific modifications.
-    noctalia msg config-reload
-    noctalia msg templates-apply
-
     # Import the final active configuration into chezmoi.
     chezmoi --source "$CHEZMOI_SOURCE" add -- \
         "$HOME/.config/btop/themes/noctalia.theme" \
@@ -170,7 +166,8 @@ apply_profile() {
         "$HOME/.config/kitty/themes/noctalia.conf" \
         "$HOME/.config/nvim/lua/matugen.lua" \
         "$HOME/.config/starship.toml" \
-        "$HOME/.local/state/noctalia/settings.toml"
+        "$HOME/.local/state/noctalia/settings.toml" \
+        "$HOME/.config/hypr/noctalia.lua"
 
     log "Profile '$profile' activated."
 }
