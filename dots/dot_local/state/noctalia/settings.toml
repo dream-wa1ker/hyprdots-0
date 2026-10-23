@@ -228,7 +228,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/archlinux.png"
+wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
 
 [lockscreen_widgets]
 enabled = true
@@ -353,7 +353,7 @@ manager_open_near_click = true
 
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
-hyprland_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
+hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
@@ -391,7 +391,7 @@ screen_time_enabled = true
     enabled = true
 
     [shell.screenshot]
-    directory = "{{ .chezmoi.homeDir }}/Pictures/Screenshots"
+    directory = "/home/rev/Pictures/Screenshots"
     freeze_screen = false
     pipe_command = "swappy -f -"
     show_cursor = true
@@ -424,16 +424,16 @@ wallpaper_scheme = "m3-tonal-spot"
     ]
 
 [wallpaper]
-directory = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers"
+directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "{{ .chezmoi.homeDir }}/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
