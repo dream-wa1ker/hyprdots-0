@@ -1,0 +1,339 @@
+#!/usr/bin/env bash
+#
+# profile-switch - switch Hyprdots profile-specific settings.
+#
+# Profiles:
+#   profiles/<profile>/obsidian/appearance.json
+#   profiles/<profile>/noctalia/settings.toml
+#
+# Live destinations:
+#   ~/Workspace/notes/obsidian/0000/.obsidian/appearance.json
+#   ~/.local/state/noctalia/settings.toml
+#
+# Synchronization:
+#   chezmoi add imports the active Noctalia settings into dots/.
+#
+
+set -Eeuo pipefail
+IFS=$'\n\t'
+umask 077
+
+readonly REPO_ROOT="/home/rev/Projects/hyprdots-0"
+readonly CHEZMOI_SOURCE="${REPO_ROOT}/dots"
+readonly OBSIDIAN_VAULT="${HOME}/Workspace/notes/obsidian/0000"
+readonly OBSIDIAN_TARGET="${OBSIDIAN_VAULT}/.obsidian/appearance.json"
+readonly NOCTALIA_TARGET="${HOME}/.local/state/noctalia/settings.toml"
+readonly BACKUP_ROOT="${HOME}/.local/state/hyprdots-profile-switch/backups"
+
+PROGRAM="${0##*/}"
+BACKUP_DIR=""
+TRANSACTION_STARTED=0
+COMMIT_COMPLETED=0
+HAD_OBSIDIAN=0
+HAD_NOCTALIA=0
+
+usage() {
+    cat <<EOF
+Usage:
+  ${PROGRAM} <profile>
+  ${PROGRAM} --list
+  ${PROGRAM} --help
+
+Profiles:
+  ${REPO_ROOT}/profiles/<profile>/
+
+Required files:
+  obsidian/appearance.json
+  noctalia/settings.toml
+
+Live destinations:
+  ${OBSIDIAN_TARGET}
+  ${NOCTALIA_TARGET}
+
+Backups:
+  ${BACKUP_ROOT}
+EOF
+}
+
+die() {
+    printf 'error: %s\n' "$*" >&2
+    exit 1
+}
+
+log() {
+    printf '[%s] %s\n' "$PROGRAM" "$*"
+}
+
+warn() {
+    printf 'warning: %s\n' "$*" >&2
+}
+
+require_command() {
+    command -v "$1" >/dev/null 2>&1 ||
+        die "Required command not found: $1"
+}
+
+list_profiles() {
+    local path
+    local found=0
+
+    [[ -d "${REPO_ROOT}/profiles" ]] ||
+        die "Profiles directory not found: ${REPO_ROOT}/profiles"
+
+    printf 'Available profiles:\n'
+
+    while IFS= read -r -d '' path; do
+        printf '  %s\n' "${path##*/}"
+        found=1
+    done < <(
+        find "${REPO_ROOT}/profiles" \
+            -mindepth 1 -maxdepth 1 -type d -print0 |
+            sort -z
+    )
+
+    ((found == 1)) || warn "No profiles found."
+}
+
+validate_profile_name() {
+    local name="$1"
+
+    [[ "$name" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] ||
+        die "Invalid profile name: $name"
+}
+
+validate_json() {
+    local file="$1"
+
+    if command -v jq >/dev/null 2>&1; then
+        jq empty "$file" >/dev/null ||
+            die "Invalid JSON: $file"
+    elif command -v python >/dev/null 2>&1; then
+        python - "$file" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as file:
+    json.load(file)
+PY
+    else
+        warn "Neither jq nor python is available; skipping JSON validation."
+    fi
+}
+
+validate_profile() {
+    local profile="$1"
+    local dir="${REPO_ROOT}/profiles/${profile}"
+    local obsidian_file="${dir}/obsidian/appearance.json"
+    local noctalia_file="${dir}/noctalia/settings.toml"
+
+    validate_profile_name "$profile"
+
+    [[ -d "$dir" ]] ||
+        die "Profile not found: $dir"
+
+    [[ -f "$obsidian_file" && -r "$obsidian_file" ]] ||
+        die "Missing or unreadable file: $obsidian_file"
+
+    [[ -f "$noctalia_file" && -r "$noctalia_file" ]] ||
+        die "Missing or unreadable file: $noctalia_file"
+
+    [[ -s "$obsidian_file" ]] ||
+        die "Obsidian appearance file is empty: $obsidian_file"
+
+    [[ -s "$noctalia_file" ]] ||
+        die "Noctalia settings file is empty: $noctalia_file"
+
+    validate_json "$obsidian_file"
+
+    printf '%s\n%s\n' "$obsidian_file" "$noctalia_file"
+}
+
+backup_existing_file() {
+    local target="$1"
+    local backup_name="$2"
+
+    if [[ -e "$target" || -L "$target" ]]; then
+        [[ -f "$target" && ! -L "$target" ]] ||
+            die "Refusing to replace a non-regular file or symlink: $target"
+
+        cp -a -- "$target" "${BACKUP_DIR}/${backup_name}"
+        printf '1'
+    else
+        printf '0'
+    fi
+}
+
+restore_target() {
+    local target="$1"
+    local backup_name="$2"
+    local existed="$3"
+
+    if [[ "$existed" == "1" ]]; then
+        if [[ -f "${BACKUP_DIR}/${backup_name}" ]]; then
+            cp -a -- "${BACKUP_DIR}/${backup_name}" "$target"
+        else
+            warn "Backup missing; cannot restore $target"
+        fi
+    else
+        rm -f -- "$target"
+    fi
+}
+
+rollback() {
+    local status=$?
+
+    trap - ERR INT TERM
+
+    if ((TRANSACTION_STARTED == 1 && COMMIT_COMPLETED == 0)); then
+        warn "Operation failed; attempting to restore live settings."
+
+        if [[ -n "$BACKUP_DIR" && -d "$BACKUP_DIR" ]]; then
+            restore_target \
+                "$OBSIDIAN_TARGET" \
+                "obsidian-appearance.json" \
+                "$HAD_OBSIDIAN" ||
+                warn "Could not restore Obsidian settings."
+
+            restore_target \
+                "$NOCTALIA_TARGET" \
+                "noctalia-settings.toml" \
+                "$HAD_NOCTALIA" ||
+                warn "Could not restore Noctalia settings."
+
+            warn "Backups retained at: $BACKUP_DIR"
+        fi
+    fi
+
+    exit "$status"
+}
+
+main() {
+    local profile="${1:-}"
+
+    if [[ $# -gt 1 ]]; then
+        die "Expected at most one profile name."
+    fi
+
+    if [[ -z "$profile" ]]; then
+        require_command fuzzel
+
+        [[ -d "$REPO_ROOT/profiles" ]] ||
+            die "Profiles directory not found: $REPO_ROOT/profiles"
+
+        profile="$(
+            find "$REPO_ROOT/profiles" \
+                -mindepth 1 -maxdepth 1 -type d \
+                -printf '%f\n' |
+                sort |
+                fuzzel --dmenu \
+                    --prompt 'Profile  ' \
+                    --width 30
+        )" || exit 0
+
+        [[ -n "$profile" ]] || exit 0
+    fi
+
+    case "$profile" in
+    --help | -h)
+        usage
+        exit 0
+        ;;
+    --list | -l)
+        list_profiles
+        exit 0
+        ;;
+    -*)
+        die "Unknown option: $profile"
+        ;;
+    esac
+
+    require_command cp
+    require_command mv
+    require_command mktemp
+    require_command chezmoi
+    require_command find
+    require_command sort
+    require_command sed
+
+    [[ -d "$REPO_ROOT" ]] ||
+        die "Repository root not found: $REPO_ROOT"
+
+    [[ -d "$CHEZMOI_SOURCE" ]] ||
+        die "chezmoi source directory not found: $CHEZMOI_SOURCE"
+
+    [[ -d "$OBSIDIAN_VAULT" ]] ||
+        die "Obsidian vault not found: $OBSIDIAN_VAULT"
+
+    [[ -d "${OBSIDIAN_VAULT}/.obsidian" ]] ||
+        die "Obsidian .obsidian directory not found."
+
+    [[ -d "$(dirname "$NOCTALIA_TARGET")" ]] ||
+        die "Noctalia state directory not found."
+
+    [[ -w "${OBSIDIAN_VAULT}/.obsidian" ]] ||
+        die "Obsidian configuration directory is not writable."
+
+    [[ -w "$(dirname "$NOCTALIA_TARGET")" ]] ||
+        die "Noctalia state directory is not writable."
+
+    local profile_files
+    local obsidian_source
+    local noctalia_source
+
+    profile_files="$(validate_profile "$profile")"
+    obsidian_source="$(printf '%s\n' "$profile_files" | sed -n '1p')"
+    noctalia_source="$(printf '%s\n' "$profile_files" | sed -n '2p')"
+
+    chezmoi --source "$CHEZMOI_SOURCE" source-path >/dev/null ||
+        die "Could not resolve chezmoi source directory."
+
+    mkdir -p -- "$BACKUP_ROOT"
+
+    BACKUP_DIR="$(mktemp -d "${BACKUP_ROOT}/${profile}-XXXXXXXX")"
+    chmod 700 "$BACKUP_DIR"
+
+    HAD_OBSIDIAN="$(
+        backup_existing_file "$OBSIDIAN_TARGET" "obsidian-appearance.json"
+    )"
+
+    HAD_NOCTALIA="$(
+        backup_existing_file "$NOCTALIA_TARGET" "noctalia-settings.toml"
+    )"
+
+    local obsidian_stage
+    local noctalia_stage
+
+    obsidian_stage="$(
+        mktemp "${OBSIDIAN_VAULT}/.profile-appearance.XXXXXXXX"
+    )"
+
+    noctalia_stage="$(
+        mktemp "$(dirname "$NOCTALIA_TARGET")/.profile-settings.XXXXXXXX"
+    )"
+
+    cp -- "$obsidian_source" "$obsidian_stage"
+    cp -- "$noctalia_source" "$noctalia_stage"
+
+    chmod 600 "$obsidian_stage" "$noctalia_stage"
+
+    TRANSACTION_STARTED=1
+
+    log "Applying profile: $profile"
+
+    mv -f -- "$obsidian_stage" "$OBSIDIAN_TARGET"
+    mv -f -- "$noctalia_stage" "$NOCTALIA_TARGET"
+
+    log "Importing Noctalia settings into chezmoi..."
+
+    chezmoi --source "$CHEZMOI_SOURCE" add -- "$NOCTALIA_TARGET"
+
+    COMMIT_COMPLETED=1
+
+    log "Profile '$profile' activated successfully."
+    log "Obsidian: $OBSIDIAN_TARGET"
+    log "Noctalia: $NOCTALIA_TARGET"
+    log "chezmoi source: $CHEZMOI_SOURCE"
+    log "Backup retained at: $BACKUP_DIR"
+}
+
+main "$@"
