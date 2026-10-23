@@ -1,0 +1,9 @@
+{
+  "baseFontSize": 21,
+  "baseFontSizeAction": true,
+  "cssTheme": "Nordic",
+  "enabledCssSnippets": [
+    "noctalia"
+  ],
+  "accentColor": ""
+}

@@ -1,0 +1,9 @@
+{
+  "baseFontSize": 21,
+  "baseFontSizeAction": true,
+  "cssTheme": "OLED.Black",
+  "enabledCssSnippets": [
+    "noctalia"
+  ],
+  "accentColor": ""
+}
