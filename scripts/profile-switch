@@ -147,7 +147,7 @@ apply_profile() {
     noctalia msg config-reload
     noctalia msg templates-apply
 
-    sleep 10
+    sleep 5
 
     # Run the profile-specific post-apply hook, if present.
     if [[ -f "$post_apply" ]]; then
