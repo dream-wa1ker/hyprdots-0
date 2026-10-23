@@ -17,6 +17,5 @@ hl.on("hyprland.start", function ()
 
     -- KDE Connect
     hl.exec_cmd("kdeconnect-indicator")
-    hl.exec_cmd("bash " .. os.getenv("HOME") .. "/.dotfiles/scripts/profile-init")
 
 end)
