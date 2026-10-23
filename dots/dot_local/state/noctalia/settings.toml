@@ -228,7 +228,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
+wallpaper = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
 
 [lockscreen_widgets]
 enabled = true
@@ -342,7 +342,6 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
-
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
 panel_placement = "floating"
@@ -357,7 +356,6 @@ hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
-
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
@@ -400,8 +398,9 @@ screen_time_enabled = true
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "builtin"
-wallpaper_scheme = "m3-tonal-spot"
+pure_black_dark = true
+source = "wallpaper"
+wallpaper_scheme = "m3-monochrome"
 
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
@@ -427,13 +426,13 @@ wallpaper_scheme = "m3-tonal-spot"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/deer.jpg"
 
 [widget.active_window]
 enabled = false
@@ -516,7 +515,6 @@ type = "aristides/udiskie:status"
 
 [widget.volume]
 show_label = false
-
 
 [widget.widget_2]
 type = "thepunkoff/pomodoro:widget"

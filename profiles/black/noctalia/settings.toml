@@ -228,7 +228,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
+wallpaper = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
 
 [lockscreen_widgets]
 enabled = true

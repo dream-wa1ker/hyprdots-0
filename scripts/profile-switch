@@ -2,16 +2,6 @@
 #
 # profile-switch: switch Hyprdots profiles.
 #
-# Profiles:
-#   profiles/<profile>/obsidian/appearance.json
-#   profiles/<profile>/noctalia/settings.toml
-#
-# Workflow:
-#   1. Select a profile using Fuzzel.
-#   2. Copy its settings to the live destinations.
-#   3. Reload Noctalia and apply theme templates.
-#   4. Import the active configuration into chezmoi.
-#
 # Usage:
 #   profile-switch
 #   profile-switch <profile>
@@ -28,19 +18,6 @@ readonly PROFILES_DIR="${REPO_ROOT}/profiles"
 readonly OBSIDIAN_VAULT="${HOME}/Workspace/notes/obsidian/0000"
 readonly OBSIDIAN_TARGET="${OBSIDIAN_VAULT}/.obsidian/appearance.json"
 readonly NOCTALIA_TARGET="${HOME}/.local/state/noctalia/settings.toml"
-
-readonly -a CHEZMOI_TARGETS=(
-    "$NOCTALIA_TARGET"
-    "$HOME/.config/btop/themes/noctalia.theme"
-    "$HOME/.config/cava/themes/noctalia"
-    "$HOME/.config/fastfetch/themes/noctalia.jsonc"
-    "$HOME/.config/foot/themes/noctalia"
-    "$HOME/.config/fuzzel/themes/noctalia"
-    "$HOME/.config/hypr/noctalia.lua"
-    "$HOME/.config/kitty/themes/noctalia.conf"
-    "$HOME/.config/nvim/lua/matugen.lua"
-    "$HOME/.config/starship.toml"
-)
 
 PROGRAM="${0##*/}"
 
@@ -145,9 +122,7 @@ validate_destinations() {
 apply_profile() {
     local profile="$1"
     local profile_dir="${PROFILES_DIR}/${profile}"
-    local obsidian_source="${profile_dir}/obsidian/appearance.json"
-    local noctalia_source="${profile_dir}/noctalia/settings.toml"
-    local target
+    local post_apply="${profile_dir}/post-apply.sh"
 
     validate_profile_name "$profile"
     validate_profile "$profile"
@@ -159,35 +134,43 @@ apply_profile() {
 
     log "Applying profile: $profile"
 
-    # Copy the selected profile into the live configuration.
-    cp -- "$obsidian_source" "$OBSIDIAN_TARGET"
-    cp -- "$noctalia_source" "$NOCTALIA_TARGET"
+    # Copy profile settings.
+    cp -- \
+        "${profile_dir}/obsidian/appearance.json" \
+        "$OBSIDIAN_TARGET"
 
-    # Reload Noctalia's settings and regenerate configured theme templates.
-    log "Reloading Noctalia configuration..."
+    cp -- \
+        "${profile_dir}/noctalia/settings.toml" \
+        "$NOCTALIA_TARGET"
+
+    # Apply the selected profile in Noctalia.
     noctalia msg config-reload
-
-    log "Applying Noctalia theme templates..."
     noctalia msg templates-apply
 
-    # Import only existing live files. Missing optional theme files are skipped.
-    # The Obsidian target is intentionally excluded because its path may be
-    # represented by a chezmoi symlink entry in the source tree.
-    local -a existing_targets=()
+    sleep 10
 
-    for target in "${CHEZMOI_TARGETS[@]}"; do
-        if [[ -f "$target" && ! -L "$target" ]]; then
-            existing_targets+=("$target")
-        else
-            log "Skipping missing file or symlink: $target"
-        fi
-    done
+    # Run the profile-specific post-apply hook, if present.
+    if [[ -f "$post_apply" ]]; then
+        log "Running profile hook: $post_apply"
+        bash "$post_apply"
+    fi
 
-    ((${#existing_targets[@]} > 0)) ||
-        die "No existing configuration files found to import."
+    # Reapply Noctalia after profile-specific modifications.
+    noctalia msg config-reload
+    noctalia msg templates-apply
 
-    log "Importing active configuration into chezmoi..."
-    chezmoi --source "$CHEZMOI_SOURCE" add -- "${existing_targets[@]}"
+    # Import the final active configuration into chezmoi.
+    chezmoi --source "$CHEZMOI_SOURCE" add -- \
+        "$HOME/.config/btop/themes/noctalia.theme" \
+        "$HOME/.config/cava/themes/noctalia" \
+        "$HOME/.config/fastfetch/themes/noctalia.jsonc" \
+        "$HOME/.config/foot/themes/noctalia" \
+        "$HOME/.config/fuzzel/themes/noctalia" \
+        "$HOME/.config/hypr/noctalia.lua" \
+        "$HOME/.config/kitty/themes/noctalia.conf" \
+        "$HOME/.config/nvim/lua/matugen.lua" \
+        "$HOME/.config/starship.toml" \
+        "$HOME/.local/state/noctalia/settings.toml"
 
     log "Profile '$profile' activated."
 }
@@ -218,9 +201,6 @@ main() {
     esac
 
     apply_profile "$profile"
-    sleep 2
-    apply_profile "$profile"
-
 }
 
 main "$@"
