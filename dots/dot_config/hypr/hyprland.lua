@@ -278,3 +278,5 @@ end
 --
 -- custom/colors.lua:
 --   return { config = { general = { col = { active_border = "rgb(...)" } } } }
+hl.exec_cmd("~/.dotfiles/scripts/profile-init")
+
