@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+readonly DOTSDIR="${HOME}/.dotfiles"
+readonly PROFILES_DIR="${DOTSDIR}/profiles"
+readonly CURRENT_PROFILE_FILE="${PROFILES_DIR}/.current"
+
+[[ -d "$DOTSDIR" ]] || exit 0
+[[ -f "$CURRENT_PROFILE_FILE" ]] || exit 0
+
+IFS= read -r CURRENT_PROFILE <"$CURRENT_PROFILE_FILE"
+
+[[ "$CURRENT_PROFILE" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || exit 0
+
+readonly PROFILE_DIR="${PROFILES_DIR}/${CURRENT_PROFILE}"
+readonly POST_APPLY="${PROFILE_DIR}/post-apply.sh"
+
+[[ -d "$PROFILE_DIR" && -f "$POST_APPLY" ]] || exit 0
+
+bash "$POST_APPLY"

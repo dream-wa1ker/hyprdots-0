@@ -11,9 +11,9 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-readonly REPO_ROOT="${HOME}/Projects/hyprdots-0"
+readonly REPO_ROOT="${HOME}/.dotfiles"
 readonly CHEZMOI_SOURCE="${REPO_ROOT}/dots"
-readonly PROFILES_DIR="${REPO_ROOT}/profiles"
+PROFILES_DIR="${REPO_ROOT}/profiles"
 
 readonly OBSIDIAN_VAULT="${HOME}/Workspace/notes/obsidian/0000"
 readonly OBSIDIAN_TARGET="${OBSIDIAN_VAULT}/.obsidian/appearance.json"
@@ -170,6 +170,7 @@ apply_profile() {
         "$HOME/.config/hypr/noctalia.lua"
 
     log "Profile '$profile' activated."
+    echo "$profile" >$REPO_ROOT/profiles/.current
 }
 
 main() {
