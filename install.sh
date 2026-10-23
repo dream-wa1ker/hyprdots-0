@@ -170,6 +170,24 @@ if ((!SKIP_SERVICES)) && command -v systemctl >/dev/null 2>&1; then
     systemctl --user enable --now mpd.service 2>/dev/null || true
 fi
 
+# ---------- Replace installer-specific home paths ----------
+step 'Personalizing configuration paths'
+
+OLD_HOME="/home/rev"
+NEW_HOME="$HOME"
+
+for file in \
+    "$SOURCE_ROOT/dot_config/fuzzel/fuzzel.ini" \
+    "$SOURCE_ROOT/dot_local/state/noctalia/settings.toml"; do
+
+    [[ -f "$file" ]] || continue
+
+    if grep -Fq "$OLD_HOME/" "$file"; then
+        sed -i "s|${OLD_HOME}|${NEW_HOME}|g" "$file"
+        ok "Updated paths in ${file#"$ROOT"/}"
+    fi
+done
+
 # ---------- 5. chezmoi ----------
 step 'Dotfiles (chezmoi)'
 CZ=(chezmoi --source "$ROOT" --no-pager)
