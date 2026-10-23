@@ -22,9 +22,6 @@ session_position = "center"
 polkit_placement = "floating"
 polkit_position = "center"
 
-[plugin_settings."kenn/keybind-cheatsheet"]
-cheatsheet_placement = "floating"
-cheatsheet_position = "center"
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"

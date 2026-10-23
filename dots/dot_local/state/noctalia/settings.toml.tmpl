@@ -342,14 +342,6 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
-[plugin_settings."alexander/screen-toolkit"]
-hide-cursor = false
-panel-mode = "legacy"
-record-audio-in = true
-record-audio-out = true
-record-skip-confirmation = true
-share-skip-popover = true
-video-path = "{{ .chezmoi.homeDir }}/Videos/Recordings"
 
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
@@ -366,15 +358,6 @@ hyprland_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
 
-[plugin_settings."kenn/keybind-cheatsheet"]
-cheatsheet_open_near_click = false
-compositor = "hyprland"
-hyprland_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
-hyprland_lua_config = "{{ .chezmoi.homeDir }}/.config/hypr/hyprland/keybinds.lua"
-hyprland_parser = "lua"
-mango_config = ""
-merge_sequential = false
-niri_config = ""
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
@@ -534,12 +517,6 @@ type = "aristides/udiskie:status"
 [widget.volume]
 show_label = false
 
-[widget.widget]
-anchor = true
-capsule = true
-font_scale = 1.2
-scale = 1.2
-type = "alexander/screen-toolkit:widget"
 
 [widget.widget_2]
 type = "thepunkoff/pomodoro:widget"
