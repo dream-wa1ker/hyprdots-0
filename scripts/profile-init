@@ -1,20 +1,71 @@
 #!/usr/bin/env bash
+#
+# profile-init: session-start hook. Runs the active profile's post-apply.sh (if it has
+# one). Started from ~/.config/hypr/custom/execs.lua when Hyprland starts.
+#
+# It never blocks or fails the session: every problem is written to
+# ~/.local/state/hyprdots/profile-init.log and the script exits 0.
+#
+# The profile's Hyprland colours are NOT handled here any more; they are applied in
+# Lua by ~/.config/hypr/custom/colors.lua, which reads profiles/.current.
 set -Eeuo pipefail
 
 readonly DOTSDIR="${HOME}/.dotfiles"
 readonly PROFILES_DIR="${DOTSDIR}/profiles"
 readonly CURRENT_PROFILE_FILE="${PROFILES_DIR}/.current"
+readonly LOG_DIR="${HOME}/.local/state/hyprdots"
+readonly LOG_FILE="${LOG_DIR}/profile-init.log"
 
-[[ -d "$DOTSDIR" ]] || exit 0
-[[ -f "$CURRENT_PROFILE_FILE" ]] || exit 0
+log() {
+    mkdir -p -- "$LOG_DIR"
+    # Keep the log small: start over once it passes 100 KiB.
+    if [[ -f "$LOG_FILE" ]] && (($(stat -c %s -- "$LOG_FILE") > 102400)); then
+        : >"$LOG_FILE"
+    fi
+    printf '%s %s\n' "$(date -Is)" "$*" >>"$LOG_FILE"
+}
 
-IFS= read -r CURRENT_PROFILE <"$CURRENT_PROFILE_FILE"
+# A hook is run only if you own it and neither group nor others can write to it.
+# Otherwise another account (or a process running as it) could plant code that runs
+# at every login.
+safe_to_run() {
+    local file="$1"
+    [[ -f "$file" && -O "$file" ]] || return 1
+    [[ -z "$(find "$file" -maxdepth 0 -perm /022 2>/dev/null)" ]]
+}
 
-[[ "$CURRENT_PROFILE" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || exit 0
+main() {
+    local profile profile_dir post_apply
 
-readonly PROFILE_DIR="${PROFILES_DIR}/${CURRENT_PROFILE}"
-readonly POST_APPLY="${PROFILE_DIR}/post-apply.sh"
+    # The hook's output is redirected into the log, so the directory must exist first.
+    mkdir -p -- "$LOG_DIR"
 
-[[ -d "$PROFILE_DIR" && -f "$POST_APPLY" ]] || exit 0
+    [[ -d "$DOTSDIR" && -f "$CURRENT_PROFILE_FILE" ]] || return 0
+    IFS= read -r profile <"$CURRENT_PROFILE_FILE" || true
+    if [[ ! "$profile" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]]; then
+        log "ignored: invalid profile name in ${CURRENT_PROFILE_FILE}"
+        return 0
+    fi
 
-bash "$POST_APPLY"
+    profile_dir="${PROFILES_DIR}/${profile}"
+    post_apply="${profile_dir}/post-apply.sh"
+    [[ -d "$profile_dir" ]] || {
+        log "ignored: no such profile directory: ${profile_dir}"
+        return 0
+    }
+    [[ -f "$post_apply" ]] || return 0 # a profile without a hook is fine
+
+    if ! safe_to_run "$post_apply"; then
+        log "refused: ${post_apply} must be owned by you and not writable by group/others"
+        return 0
+    fi
+
+    if bash "$post_apply" >>"$LOG_FILE" 2>&1; then
+        log "profile '${profile}': post-apply.sh ok"
+    else
+        log "profile '${profile}': post-apply.sh failed (see the lines above)"
+    fi
+}
+
+main "$@" || log "profile-init failed unexpectedly"
+exit 0

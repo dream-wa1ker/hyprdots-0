@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# hyprdots-0 installer for a fresh Arch Linux install.
-# Run as your normal user (not root) from anywhere inside the cloned repo.
+# hyprdots installer for Arch Linux and Arch-based systems.
+# Run as your normal user (not root) from the clone at ~/.dotfiles. Safe to re-run.
 set -Eeuo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 SOURCE_ROOT="$ROOT/dots"
+PROFILES_DIR="$ROOT/profiles"
 PACMAN_MANIFEST="$ROOT/packages/arch-desktop.txt"
 AUR_MANIFEST="$ROOT/packages/aur-optional.txt"
+STATE_DIR="$HOME/.local/state/hyprdots"
+
+# The repository was authored under this home directory. Every occurrence in the
+# tracked configuration is rewritten to the installing user's $HOME (rewrite_home).
+OLD_HOME="/home/rev"
+# First Hyprland release that reads hyprland.lua.
+MIN_HYPRLAND="0.55.0"
 
 # Needed by the config but not in the manifest (Neovim parsers, C tooling).
 EXTRA_PKGS=(base-devel tree-sitter-cli clang)
@@ -15,6 +23,7 @@ BOOTSTRAP_PKGS=(git chezmoi)
 WITH_AUR=0
 ASSUME_YES=0
 SKIP_SERVICES=0
+WARNINGS=()
 
 usage() {
     cat <<'USAGE'
@@ -26,9 +35,10 @@ Usage: ./install.sh [--with-aur] [--yes] [--no-services]
                  is still printed before dotfiles are applied.
   --no-services  Do not offer to enable NetworkManager/Bluetooth/power-profiles.
 
-Steps: sanity checks -> full upgrade + packages -> user directories -> services ->
-chezmoi diff + apply -> fish login shell -> Noctalia validation.
-Safe to re-run.
+Steps: sanity checks -> full upgrade + packages -> Hyprland version gate -> user
+directories -> services -> home-path rewrite -> backup + chezmoi diff/apply ->
+fish login shell -> validation.
+The repository must live at ~/.dotfiles.
 USAGE
 }
 
@@ -51,12 +61,10 @@ done
 
 # ---------- helpers ----------
 if [[ -t 1 ]]; then
-    B=$'\e[1m'
-    R=$'\e[31m'
-    Y=$'\e[33m'
-    G=$'\e[32m'
-    N=$'\e[0m'
-else B= R= Y= G= N=; fi
+    B=$'\e[1m' R=$'\e[31m' Y=$'\e[33m' G=$'\e[32m' N=$'\e[0m'
+else
+    B='' R='' Y='' G='' N=''
+fi
 step() { printf '\n%s==> %s%s\n' "$B" "$*" "$N"; }
 info() { printf '%s\n' "$*"; }
 ok() { printf '%s%s%s\n' "$G" "$*" "$N"; }
@@ -68,30 +76,100 @@ die() {
     printf '%sERROR: %s%s\n' "$R" "$*" "$N" >&2
     exit 1
 }
-WARNINGS=()
 trap 'die "Failed at line $LINENO: $BASH_COMMAND"' ERR
 
 ask_yes() {
     local prompt="$1" answer
-    ((ASSUME_YES)) && {
+    if ((ASSUME_YES)); then
         printf '%s [auto-yes]\n' "$prompt"
         return 0
-    }
+    fi
     read -r -p "$prompt [y/N] " answer || true
     [[ "$answer" =~ ^([yY]|[yY][eE][sS])$ ]]
 }
+
 read_manifest() { grep -Ev '^[[:space:]]*(#|$)' "$1" | sed 's/[[:space:]]*#.*$//; s/^[[:space:]]*//; s/[[:space:]]*$//'; }
+
+is_arch_based() {
+    [[ -f /etc/arch-release ]] && return 0
+    local ids
+    ids="$(
+        # shellcheck disable=SC1091
+        . /etc/os-release 2>/dev/null
+        printf '%s %s' "${ID:-}" "${ID_LIKE:-}"
+    )" || return 1
+    [[ " $ids " == *" arch "* ]]
+}
+
+# Rewrite OLD_HOME/ to $HOME/ in every tracked text file of dots/ and profiles/.
+# Plain `sed`, idempotent, and a no-op when the home directory is unchanged.
+# NOTE: this edits tracked files; do not commit them from a machine whose home
+# directory differs from OLD_HOME.
+rewrite_home() {
+    local new_home="$HOME" repl pattern f
+    local -a files=()
+    if [[ "$new_home" == "$OLD_HOME" ]]; then
+        info "Home directory is $OLD_HOME; no path rewrite needed."
+        return 0
+    fi
+    mapfile -d '' -t files < <(grep -rlIFZ --exclude-dir=.git -- "$OLD_HOME/" "$SOURCE_ROOT" "$PROFILES_DIR" 2>/dev/null || true)
+    ((${#files[@]})) || {
+        info "No files contain $OLD_HOME/; nothing to rewrite."
+        return 0
+    }
+    # Escape the replacement for sed (\ & and the | delimiter).
+    repl="${new_home//\\/\\\\}"
+    repl="${repl//&/\\&}"
+    repl="${repl//|/\\|}"
+    pattern="${OLD_HOME//./\\.}/"
+    for f in "${files[@]}"; do
+        sed -i "s|${pattern}|${repl}/|g" "$f"
+        ok "Rewrote paths in ${f#"$ROOT"/}"
+    done
+    if grep -rqIF --exclude-dir=.git -- "$OLD_HOME/" "$SOURCE_ROOT" "$PROFILES_DIR" 2>/dev/null; then
+        warn "Some files still contain $OLD_HOME/ after the rewrite."
+    fi
+}
+
+# Archive the files chezmoi is about to overwrite (private, restorable with
+# `tar -xzf <archive> -C /`).
+backup_existing() {
+    local managed_out p backup
+    local -a managed=() existing=()
+    if ! managed_out="$("${CZ[@]}" managed --include=files --path-style=absolute 2>&1)"; then
+        warn "chezmoi managed failed, so no backup was made: ${managed_out}"
+        return 0
+    fi
+    mapfile -t managed <<<"$managed_out"
+    for p in "${managed[@]}"; do
+        if [[ -f "$p" ]]; then existing+=("$p"); fi
+    done
+    if ((${#existing[@]} == 0)); then
+        info 'No existing managed files to back up.'
+        return 0
+    fi
+    mkdir -p -- "$STATE_DIR"
+    backup="$STATE_DIR/backup-$(date +%Y%m%d-%H%M%S).tar.gz"
+    if (umask 077 && tar -czf "$backup" -- "${existing[@]}" 2>/dev/null); then
+        ok "Backed up ${#existing[@]} existing files to $backup"
+    else
+        warn 'Could not create the backup archive.'
+    fi
+}
 
 # ---------- 1. sanity checks ----------
 step 'Checking the system'
 ((EUID != 0)) || die 'Run as your normal user, not root. sudo is used where needed.'
-[[ -f /etc/arch-release ]] || die 'This installer targets Arch Linux.'
+is_arch_based || die 'This installer targets Arch Linux and Arch-based distributions.'
 command -v pacman >/dev/null 2>&1 || die 'pacman was not found.'
 command -v sudo >/dev/null 2>&1 || die 'sudo is required. As root: pacman -S sudo, then add your user to wheel.'
+command -v curl >/dev/null 2>&1 || die 'curl is required (pacman -S curl).'
 sudo -v || die 'sudo authentication failed.'
 curl -fsI --max-time 10 https://archlinux.org >/dev/null 2>&1 ||
     die 'No network connection. Connect first (iwctl / nmcli) and re-run.'
 
+[[ "$ROOT" == "$(cd -- "$HOME/.dotfiles" 2>/dev/null && pwd -P || true)" ]] ||
+    die "The repository must be cloned to ~/.dotfiles (this copy is at $ROOT)."
 [[ "$(tr -d '[:space:]' <"$ROOT/.chezmoiroot" 2>/dev/null)" == dots ]] ||
     die '.chezmoiroot at the repository root must contain exactly: dots'
 [[ -d "$SOURCE_ROOT/dot_config/hypr" ]] || die 'Expected dots/dot_config/hypr in this repository.'
@@ -100,6 +178,9 @@ curl -fsI --max-time 10 https://archlinux.org >/dev/null 2>&1 ||
 wallpaper_dir="$SOURCE_ROOT/Pictures/Wallpapers"
 find "$wallpaper_dir" -type f -print -quit 2>/dev/null | grep -q . ||
     die "No wallpapers in $wallpaper_dir. On the source computer run scripts/import-wallpapers.sh, commit, and pull here."
+
+# git does not always keep the executable bit (zip downloads, odd filesystems).
+chmod +x "$ROOT/install.sh" "$ROOT/post-install.sh" "$ROOT"/scripts/* "$ROOT"/profiles/*/post-apply.sh 2>/dev/null || true
 
 # ---------- 2. packages ----------
 step 'Packages'
@@ -122,9 +203,11 @@ PACFLAGS=()
 ((ASSUME_YES)) && PACFLAGS=(--noconfirm)
 sudo pacman -Syu "${PACFLAGS[@]}"
 missing=()
-for p in "${packages[@]}"; do pacman -Si -- "$p" >/dev/null 2>&1 || missing+=("$p"); done
+for p in "${packages[@]}"; do
+    pacman -Si -- "$p" >/dev/null 2>&1 || missing+=("$p")
+done
 if ((${#missing[@]})); then
-    die "Not found in the official repositories: ${missing[*]}. Fix packages/arch-desktop.txt (AUR packages belong in aur-optional.txt)."
+    die "Not found in the enabled repositories: ${missing[*]}. Fix packages/arch-desktop.txt (AUR packages belong in aur-optional.txt)."
 fi
 sudo pacman -S --needed "${PACFLAGS[@]}" "${packages[@]}"
 
@@ -146,11 +229,22 @@ if ((WITH_AUR)); then
     fi
 fi
 
+# Version gate: an older Hyprland cannot read hyprland.lua and would start with no config.
+step 'Hyprland version'
+hypr_ver="$(pacman -Q hyprland 2>/dev/null | awk '{print $2}' || true)"
+[[ -n "$hypr_ver" ]] || die 'hyprland is not installed.'
+hypr_ver="${hypr_ver#*:}" # drop epoch
+hypr_ver="${hypr_ver%-*}" # drop pkgrel
+if (($(vercmp "$hypr_ver" "$MIN_HYPRLAND") < 0)); then
+    die "Hyprland $hypr_ver is older than $MIN_HYPRLAND, the first release with Lua configuration. Update your mirrors/distribution and re-run."
+fi
+ok "Hyprland $hypr_ver (>= $MIN_HYPRLAND)"
+
 # ---------- 3. directories ----------
 step 'User directories'
 command -v xdg-user-dirs-update >/dev/null 2>&1 && xdg-user-dirs-update || true
 mkdir -p "$HOME/Pictures/Wallpapers" "$HOME/Pictures/Screenshots" "$HOME/Videos/Recordings" \
-    "$HOME/Documents/Notes" "$HOME/.local/bin" "$HOME/.cache" "$HOME/.local/state/hyprdots"
+    "$HOME/Documents/Notes" "$HOME/.local/bin" "$HOME/.cache" "$STATE_DIR"
 
 # ---------- 4. services ----------
 if ((!SKIP_SERVICES)) && command -v systemctl >/dev/null 2>&1; then
@@ -170,25 +264,11 @@ if ((!SKIP_SERVICES)) && command -v systemctl >/dev/null 2>&1; then
     systemctl --user enable --now mpd.service 2>/dev/null || true
 fi
 
-# ---------- Replace installer-specific home paths ----------
+# ---------- 5. home paths ----------
 step 'Personalizing configuration paths'
+rewrite_home
 
-OLD_HOME="/home/rev"
-NEW_HOME="$HOME"
-
-for file in \
-    "$SOURCE_ROOT/dot_config/fuzzel/fuzzel.ini" \
-    "$SOURCE_ROOT/dot_local/state/noctalia/settings.toml"; do
-
-    [[ -f "$file" ]] || continue
-
-    if grep -Fq "$OLD_HOME/" "$file"; then
-        sed -i "s|${OLD_HOME}|${NEW_HOME}|g" "$file"
-        ok "Updated paths in ${file#"$ROOT"/}"
-    fi
-done
-
-# ---------- 5. chezmoi ----------
+# ---------- 6. chezmoi ----------
 step 'Dotfiles (chezmoi)'
 CZ=(chezmoi --source "$ROOT" --no-pager)
 actual_source="$(realpath -- "$("${CZ[@]}" source-path)")"
@@ -212,6 +292,7 @@ ask_yes 'Apply the dotfiles now?' || {
     info 'Not applied. Later: chezmoi diff && chezmoi apply'
     exit 0
 }
+backup_existing
 "${CZ[@]}" apply -v
 
 command -v fc-cache >/dev/null 2>&1 && fc-cache -f >/dev/null 2>&1 || true
@@ -219,7 +300,7 @@ if command -v fc-list >/dev/null 2>&1 && ! fc-list | grep -qi 'Google Sans Flex'
     warn 'Font "Google Sans Flex" (used by fuzzel.ini) is not installed; fuzzel will fall back to a default font.'
 fi
 
-# ---------- 6. login shell ----------
+# ---------- 7. login shell ----------
 step 'Login shell'
 fish_path="$(command -v fish || true)"
 if [[ -n "$fish_path" && "$(getent passwd "$USER" | cut -d: -f7)" != "$fish_path" ]]; then
@@ -229,14 +310,19 @@ if [[ -n "$fish_path" && "$(getent passwd "$USER" | cut -d: -f7)" != "$fish_path
     fi
 fi
 
-# ---------- 7. validation ----------
+# ---------- 8. validation ----------
 step 'Validation'
 if command -v noctalia >/dev/null 2>&1; then
     noctalia config validate || warn 'noctalia config validate reported errors; inspect before logging in.'
 else
     warn 'noctalia is not installed or not on PATH.'
 fi
-[[ -f "$HOME/.config/hypr/hyprland.lua" ]] || warn '~/.config/hypr/hyprland.lua is missing after apply.'
+[[ -f "$HOME/.config/hypr/hyprland.lua" ]] || warn "$HOME/.config/hypr/hyprland.lua is missing after apply."
+current_profile=''
+[[ -f "$PROFILES_DIR/.current" ]] && IFS= read -r current_profile <"$PROFILES_DIR/.current" || true
+if [[ ! "$current_profile" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ || ! -d "$PROFILES_DIR/$current_profile" ]]; then
+    warn "profiles/.current does not name an existing profile ('$current_profile'). Run: $ROOT/scripts/profile-switch"
+fi
 
 # ---------- summary ----------
 step 'Done'
@@ -245,13 +331,14 @@ if ((${#WARNINGS[@]})); then
     printf '  - %s\n' "${WARNINGS[@]}"
 fi
 
-cat <<'DONE'
+cat <<DONE
 
 Next:
   1. Reboot (or log out), then log in on tty1: fish starts Hyprland via start-hyprland.
      Log: ~/.cache/hyprland.log
-  2. Inside Hyprland, run once:  ~/.local/share/chezmoi/post-install.sh
-     (enables and fetches the ten Noctalia plugins; re-run if one fails)
+  2. Inside Hyprland, run once:  $ROOT/post-install.sh
+     (enables and fetches the Noctalia plugins; re-run if one fails)
   3. Sign into Google again if the calendar asks.
   4. Open nvim once and let lazy.nvim install plugins.
+Backups of replaced files: $STATE_DIR
 DONE

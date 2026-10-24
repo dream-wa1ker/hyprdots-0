@@ -1,30 +1,50 @@
 #!/usr/bin/env bash
 #
-# profile-switch: switch Hyprdots profiles.
+# profile-switch: switch hyprdots profiles.
 #
 # Usage:
-#   profile-switch
-#   profile-switch <profile>
-#   profile-switch --list
+#   profile-switch              choose a profile with fuzzel
+#   profile-switch <profile>    apply a specific profile
+#   profile-switch --list       list profiles
 #   profile-switch --help
-
+#
+# Order of operations (the order matters):
+#   1. validate the profile and back up the live files
+#   2. copy the profile's Noctalia settings (and Obsidian appearance, if a vault exists)
+#   3. write the profile name to profiles/.current BEFORE any reload, so that
+#      ~/.config/hypr/custom/colors.lua reads the NEW profile when Hyprland reloads
+#   4. Noctalia reloads and regenerates its templates; wait for the Hyprland theme file
+#   5. hyprctl reload, run the profile's post-apply.sh, capture the result with chezmoi
+# If anything fails before step 5 the previous state is restored.
 set -Eeuo pipefail
 IFS=$'\n\t'
 
 readonly REPO_ROOT="${HOME}/.dotfiles"
 readonly CHEZMOI_SOURCE="${REPO_ROOT}/dots"
-PROFILES_DIR="${REPO_ROOT}/profiles"
+readonly PROFILES_DIR="${REPO_ROOT}/profiles"
+readonly CURRENT_FILE="${PROFILES_DIR}/.current"
 
-readonly OBSIDIAN_VAULT="${HOME}/Workspace/notes/obsidian/0000"
+# The vault is optional: without it the Obsidian step is skipped.
+readonly OBSIDIAN_VAULT="${OBSIDIAN_VAULT:-${HOME}/Workspace/notes/obsidian/0000}"
 readonly OBSIDIAN_TARGET="${OBSIDIAN_VAULT}/.obsidian/appearance.json"
 readonly NOCTALIA_TARGET="${HOME}/.local/state/noctalia/settings.toml"
+readonly HYPR_THEME="${HOME}/.config/hypr/noctalia.lua"
+
+readonly STATE_DIR="${HOME}/.local/state/hyprdots"
+readonly BACKUP_DIR="${STATE_DIR}/backups"
+readonly KEEP_BACKUPS=10
+readonly TEMPLATE_TIMEOUT=20 # seconds to wait for Noctalia to rewrite the theme
 
 PROGRAM="${0##*/}"
 
-log() {
-    printf '[%s] %s\n' "$PROGRAM" "$*"
-}
+# Rollback state.
+PREVIOUS_PROFILE=''
+SETTINGS_BACKUP=''
+OBSIDIAN_BACKUP=''
+ROLLBACK_ARMED=0
 
+log() { printf '[%s] %s\n' "$PROGRAM" "$*"; }
+warn() { printf '[%s] warning: %s\n' "$PROGRAM" "$*" >&2; }
 die() {
     printf '[%s] error: %s\n' "$PROGRAM" "$*" >&2
     exit 1
@@ -44,133 +64,210 @@ EOF
 }
 
 require_command() {
-    command -v "$1" >/dev/null 2>&1 ||
-        die "Required command not found: $1"
+    local cmd
+    for cmd in "$@"; do
+        command -v "$cmd" >/dev/null 2>&1 || die "Required command not found: $cmd"
+    done
 }
 
 validate_profile_name() {
-    [[ "$1" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] ||
-        die "Invalid profile name: $1"
+    [[ "$1" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || die "Invalid profile name: $1"
+}
+
+# A hook is run only if you own it and neither group nor others can write to it.
+safe_to_run() {
+    local file="$1"
+    [[ -f "$file" && -O "$file" ]] || return 1
+    [[ -z "$(find "$file" -maxdepth 0 -perm /022 2>/dev/null)" ]]
 }
 
 list_profiles() {
-    [[ -d "$PROFILES_DIR" ]] ||
-        die "Profiles directory not found: $PROFILES_DIR"
-
-    find "$PROFILES_DIR" \
-        -mindepth 1 -maxdepth 1 -type d \
-        -printf '%f\n' |
-        sort
+    [[ -d "$PROFILES_DIR" ]] || die "Profiles directory not found: $PROFILES_DIR"
+    find "$PROFILES_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
 }
 
 select_profile() {
     require_command fuzzel
-
     local selected
-
-    selected="$(
-        list_profiles |
-            fuzzel --dmenu \
-                --prompt 'Profile  ' \
-                --width 30
-    )" || return 1
-
+    selected="$(list_profiles | fuzzel --dmenu --prompt 'Profile  ' --width 30)" || return 1
     [[ -n "$selected" ]] || return 1
-
     printf '%s\n' "$selected"
+}
+
+read_current() {
+    local line
+    [[ -f "$CURRENT_FILE" ]] || return 1
+    IFS= read -r line <"$CURRENT_FILE" || true
+    [[ "$line" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || return 1
+    printf '%s\n' "$line"
+}
+
+# Atomic: write a temporary file next to the target, then rename it.
+write_current() {
+    local tmp
+    tmp="$(mktemp -- "${PROFILES_DIR}/.current.XXXXXX")"
+    printf '%s\n' "$1" >"$tmp"
+    mv -f -- "$tmp" "$CURRENT_FILE"
 }
 
 validate_profile() {
     local profile="$1"
     local profile_dir="${PROFILES_DIR}/${profile}"
 
-    [[ -d "$profile_dir" ]] ||
-        die "Profile not found: $profile_dir"
-
-    [[ -s "${profile_dir}/obsidian/appearance.json" ]] ||
-        die "Missing or empty file: ${profile_dir}/obsidian/appearance.json"
-
+    [[ -d "$profile_dir" ]] || die "Profile not found: $profile_dir"
     [[ -s "${profile_dir}/noctalia/settings.toml" ]] ||
         die "Missing or empty file: ${profile_dir}/noctalia/settings.toml"
 
-    if command -v jq >/dev/null 2>&1; then
-        jq empty "${profile_dir}/obsidian/appearance.json" >/dev/null ||
-            die "Invalid Obsidian JSON in profile: $profile"
+    # The Obsidian part is optional, but when present it must be valid.
+    if [[ -e "${profile_dir}/obsidian/appearance.json" ]]; then
+        [[ -s "${profile_dir}/obsidian/appearance.json" ]] ||
+            die "Empty file: ${profile_dir}/obsidian/appearance.json"
+        if command -v jq >/dev/null 2>&1; then
+            jq empty "${profile_dir}/obsidian/appearance.json" >/dev/null ||
+                die "Invalid Obsidian JSON in profile: $profile"
+        fi
     fi
 }
 
 validate_destinations() {
-    [[ -d "$REPO_ROOT" ]] ||
-        die "Repository not found: $REPO_ROOT"
+    [[ -d "$REPO_ROOT" ]] || die "Repository not found: $REPO_ROOT"
+    [[ -d "$CHEZMOI_SOURCE" ]] || die "chezmoi source not found: $CHEZMOI_SOURCE"
+    [[ -d "$(dirname "$NOCTALIA_TARGET")" ]] || die "Noctalia state directory not found."
+    [[ -w "$(dirname "$NOCTALIA_TARGET")" ]] || die "Noctalia state directory is not writable."
+    [[ -w "$PROFILES_DIR" ]] || die "Profiles directory is not writable: $PROFILES_DIR"
+}
 
-    [[ -d "$CHEZMOI_SOURCE" ]] ||
-        die "chezmoi source not found: $CHEZMOI_SOURCE"
+obsidian_available() {
+    [[ -d "${OBSIDIAN_VAULT}/.obsidian" && -w "${OBSIDIAN_VAULT}/.obsidian" ]]
+}
 
-    [[ -d "${OBSIDIAN_VAULT}/.obsidian" ]] ||
-        die "Obsidian configuration directory not found."
+prune_backups() {
+    local f
+    # Newest first; delete everything after the first KEEP_BACKUPS files.
+    while IFS= read -r f; do
+        rm -f -- "$f"
+    done < <(find "$BACKUP_DIR" -maxdepth 1 -type f -printf '%T@ %p\n' 2>/dev/null |
+        sort -rn | tail -n "+$((KEEP_BACKUPS + 1))" | cut -d' ' -f2-)
+}
 
-    [[ -d "$(dirname "$NOCTALIA_TARGET")" ]] ||
-        die "Noctalia state directory not found."
+# Runs on every exit; does something only while a switch is half-finished.
+rollback() {
+    ((ROLLBACK_ARMED)) || return 0
+    ROLLBACK_ARMED=0
+    warn 'The switch failed; restoring the previous state.'
+    if [[ -n "$SETTINGS_BACKUP" && -f "$SETTINGS_BACKUP" ]]; then
+        cp -- "$SETTINGS_BACKUP" "$NOCTALIA_TARGET" || true
+    fi
+    if [[ -n "$OBSIDIAN_BACKUP" && -f "$OBSIDIAN_BACKUP" ]]; then
+        cp -- "$OBSIDIAN_BACKUP" "$OBSIDIAN_TARGET" || true
+    fi
+    if [[ -n "$PREVIOUS_PROFILE" ]]; then
+        write_current "$PREVIOUS_PROFILE" || true
+    fi
+    noctalia msg config-reload >/dev/null 2>&1 || true
+}
+trap rollback EXIT
 
-    [[ -w "${OBSIDIAN_VAULT}/.obsidian" ]] ||
-        die "Obsidian configuration directory is not writable."
-
-    [[ -w "$(dirname "$NOCTALIA_TARGET")" ]] ||
-        die "Noctalia state directory is not writable."
+# Wait until Noctalia has rewritten the Hyprland theme file after $1 (a stamp file).
+wait_for_theme() {
+    local stamp="$1" waited=0
+    while [[ ! "$HYPR_THEME" -nt "$stamp" ]]; do
+        if ((waited >= TEMPLATE_TIMEOUT)); then
+            warn "Noctalia did not rewrite ${HYPR_THEME} within ${TEMPLATE_TIMEOUT}s; continuing."
+            return 0
+        fi
+        sleep 1
+        waited=$((waited + 1))
+    done
 }
 
 apply_profile() {
     local profile="$1"
     local profile_dir="${PROFILES_DIR}/${profile}"
     local post_apply="${profile_dir}/post-apply.sh"
+    local ts stamp f
+    local -a capture=()
+    local -a candidates=(
+        "$HOME/.config/btop/themes/noctalia.theme"
+        "$HOME/.config/cava/themes/noctalia"
+        "$HOME/.config/fastfetch/themes/noctalia.jsonc"
+        "$HOME/.config/foot/themes/noctalia"
+        "$HOME/.config/fuzzel/themes/noctalia"
+        "$HOME/.config/hypr/noctalia.lua"
+        "$HOME/.config/kitty/themes/noctalia.conf"
+        "$HOME/.config/nvim/lua/matugen.lua"
+        "$HOME/.config/starship.toml"
+        "$HOME/.local/state/noctalia/settings.toml"
+    )
 
     validate_profile_name "$profile"
     validate_profile "$profile"
     validate_destinations
-
-    require_command cp
-    require_command chezmoi
-    require_command noctalia
+    require_command cp chezmoi noctalia mktemp find sort
 
     log "Applying profile: $profile"
 
-    # Copy profile settings.
-    cp -- \
-        "${profile_dir}/obsidian/appearance.json" \
-        "$OBSIDIAN_TARGET"
+    # 1. Back up the live files.
+    ts="$(date +%Y%m%d-%H%M%S)"
+    mkdir -p -- "$BACKUP_DIR"
+    PREVIOUS_PROFILE="$(read_current || true)"
+    if [[ -f "$NOCTALIA_TARGET" ]]; then
+        SETTINGS_BACKUP="${BACKUP_DIR}/noctalia-settings-${ts}.toml"
+        cp -- "$NOCTALIA_TARGET" "$SETTINGS_BACKUP"
+    fi
+    if obsidian_available && [[ -f "$OBSIDIAN_TARGET" ]]; then
+        OBSIDIAN_BACKUP="${BACKUP_DIR}/obsidian-appearance-${ts}.json"
+        cp -- "$OBSIDIAN_TARGET" "$OBSIDIAN_BACKUP"
+    fi
+    ROLLBACK_ARMED=1
 
-    cp -- \
-        "${profile_dir}/noctalia/settings.toml" \
-        "$NOCTALIA_TARGET"
+    # 2. Copy the profile files into place.
+    cp -- "${profile_dir}/noctalia/settings.toml" "$NOCTALIA_TARGET"
+    if [[ -f "${profile_dir}/obsidian/appearance.json" ]]; then
+        if obsidian_available; then
+            cp -- "${profile_dir}/obsidian/appearance.json" "$OBSIDIAN_TARGET"
+        else
+            log "No Obsidian vault at ${OBSIDIAN_VAULT}; skipping the Obsidian appearance."
+        fi
+    fi
+    noctalia config validate || die "Noctalia rejected the settings of profile '$profile'."
 
-    # Apply the selected profile in Noctalia.
+    # 3. Record the profile before anything reloads.
+    write_current "$profile"
+
+    # 4. Let Noctalia reload and regenerate its templates.
+    stamp="$(mktemp)"
     noctalia msg config-reload
     noctalia msg templates-apply
+    wait_for_theme "$stamp"
+    rm -f -- "$stamp"
 
-    sleep 10
+    # 5. Hyprland re-reads the generated theme, then custom/colors.lua wins over it.
+    if command -v hyprctl >/dev/null 2>&1; then
+        hyprctl reload >/dev/null || warn 'hyprctl reload failed; reload Hyprland manually.'
+    fi
+    ROLLBACK_ARMED=0 # the profile is now active; later problems are warnings only
 
-    # Run the profile-specific post-apply hook, if present.
     if [[ -f "$post_apply" ]]; then
-        log "Running profile hook: $post_apply"
-        bash "$post_apply"
+        if safe_to_run "$post_apply"; then
+            log "Running profile hook: $post_apply"
+            bash "$post_apply" || warn "The profile hook reported a problem: $post_apply"
+        else
+            warn "Not running ${post_apply}: it must be owned by you and not writable by group/others."
+        fi
     fi
 
     # Import the final active configuration into chezmoi.
-    chezmoi --source "$CHEZMOI_SOURCE" add -- \
-        "$HOME/.config/btop/themes/noctalia.theme" \
-        "$HOME/.config/cava/themes/noctalia" \
-        "$HOME/.config/fastfetch/themes/noctalia.jsonc" \
-        "$HOME/.config/foot/themes/noctalia" \
-        "$HOME/.config/fuzzel/themes/noctalia" \
-        "$HOME/.config/hypr/noctalia.lua" \
-        "$HOME/.config/kitty/themes/noctalia.conf" \
-        "$HOME/.config/nvim/lua/matugen.lua" \
-        "$HOME/.config/starship.toml" \
-        "$HOME/.local/state/noctalia/settings.toml" \
-        "$HOME/.config/hypr/noctalia.lua"
+    for f in "${candidates[@]}"; do
+        if [[ -e "$f" ]]; then capture+=("$f"); fi
+    done
+    if ((${#capture[@]})); then
+        chezmoi --source "$CHEZMOI_SOURCE" add -- "${capture[@]}" ||
+            warn 'chezmoi add failed; the repository does not have the new theme files.'
+    fi
 
+    prune_backups
     log "Profile '$profile' activated."
-    echo "$profile" >$REPO_ROOT/profiles/.current
 }
 
 main() {

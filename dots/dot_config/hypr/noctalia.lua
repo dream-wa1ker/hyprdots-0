@@ -13,7 +13,7 @@ local function apply_theme()
         general = {
             col = {
                 active_border = primary,
-                inactive_border = surface,
+                inactive_border = on_secondary
             },
         },
         group = {

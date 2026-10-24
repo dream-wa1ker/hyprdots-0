@@ -11,6 +11,9 @@
 
 return {
     startup = {
+        -- Runs the active profile's post-apply.sh. Its colours are applied in Lua by
+        -- custom/colors.lua; this hook only runs the profile's own checks.
+        'bash "$HOME/.dotfiles/scripts/profile-init"',
         -- "nm-applet --indicator",
         -- "blueman-applet",
     },
