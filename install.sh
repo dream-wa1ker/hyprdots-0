@@ -342,3 +342,6 @@ Next:
   4. Open nvim once and let lazy.nvim install plugins.
 Backups of replaced files: $STATE_DIR
 DONE
+
+echo "Reloading Hyprland Configuration..."
+hyprctl reload
