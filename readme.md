@@ -410,3 +410,5 @@ systemctl --user status mpd.service
 If you have any suggestions, want to contribute, add profiles, you can make a pull request. 
 If you like this dotfiles, give it a star, so that you can stay up to date with the changes made to this repository.
 
+The wiki is under construction, you can read the [wiki](https://github.com/dream-wa1ker/hyprdots-0/wiki).
+
