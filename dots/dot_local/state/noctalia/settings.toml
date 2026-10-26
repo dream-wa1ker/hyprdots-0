@@ -342,7 +342,6 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
-
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
 panel_placement = "floating"
@@ -358,6 +357,8 @@ hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
 
+[plugin_settings."noctalia/notes"]
+notes_dir = "/home/rev/Workspace/notes/scratchpad"
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
@@ -516,7 +517,6 @@ type = "aristides/udiskie:status"
 
 [widget.volume]
 show_label = false
-
 
 [widget.widget_2]
 type = "thepunkoff/pomodoro:widget"
