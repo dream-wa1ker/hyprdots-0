@@ -1,4 +1,4 @@
-config_version = 15
+config_version = 16
 
 [accessibility]
 ui_scale = 1.2000000104308128
@@ -39,7 +39,7 @@ order = [ "default", "left" ]
         accordion_direction = "end"
         border_width = 1.0
         enabled = true
-        fill = "surface_variant"
+        fill = "surface_container"
         id = "g3"
         members = [ "network", "bluetooth", "bar" ]
         opacity = 1.0
@@ -50,7 +50,7 @@ order = [ "default", "left" ]
         accordion_direction = "end"
         border_width = 1.0
         enabled = true
-        fill = "surface_variant"
+        fill = "surface_container"
         id = "g4"
         members = [ "ram", "cpu" ]
         opacity = 1.0
@@ -61,7 +61,7 @@ order = [ "default", "left" ]
         accordion_direction = "end"
         border_width = 1.0
         enabled = true
-        fill = "surface_variant"
+        fill = "surface_container"
         id = "g2"
         members = [ "input_volume", "volume", "brightness" ]
         opacity = 1.0
@@ -258,7 +258,7 @@ widget_order = [
     type = "login_box"
 
         [lockscreen_widgets.widget."lockscreen-login-box@eDP-1".settings]
-        background_color = "surface_variant"
+        background_color = "surface_container"
         background_opacity = 0.88
         background_radius = 12.0
         center_password_text = false
@@ -526,6 +526,6 @@ type = "h-jangra/region-recorder:widget"
 
 [widget.workspaces]
 capsule = true
-empty_color = "surface_variant"
+empty_color = "surface_container"
 label_source = "name"
 urgent_color = "tertiary"
