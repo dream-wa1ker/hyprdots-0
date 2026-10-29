@@ -368,7 +368,6 @@ enabled = [
     "andrewdems/vpn-manager",
     "h-jangra/region-recorder",
     "noctalia/notes",
-    "blackbartblues/keymap",
     "aristides/udiskie"
 ]
 
@@ -401,6 +400,7 @@ wallpaper_scheme = "m3-tonal-spot"
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
     community_ids = [
+        "codex",
         "opencode",
         "zen-browser",
         "gimp",
