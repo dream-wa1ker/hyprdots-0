@@ -1,8 +1,9 @@
 -- ~/.config/hypr/hyprland/keybinds.lua
 -- Declarative keybinding registry. All shortcut strings live in variables.lua.
+local registry = require("hyprland.lib.keybinds")
 local vars = require("hyprland.variables")
 local fn = require("hyprland.functions")
-local kb = vars.keybinds
+local kb = type(vars.keybinds) == "table" and vars.keybinds or {}
 local noctalia = fn.noctalia
 local recorder = "noctalia msg plugin h-jangra/region-recorder:service all "
 local nextTrack = 'playerctl next || playerctl position `bc <<< "100 * $(playerctl metadata mpris:length) / 1000000 / 100"`'
@@ -10,7 +11,10 @@ local bindings = {
     -- Noctalia / shell
     {
         key = kb.launcher,
-        action = noctalia("panel-toggle launcher"),
+        fallback_key = registry.default_key("launcher"),
+        build_action = function()
+            return noctalia("panel-toggle launcher")
+        end,
         options = {
             description = "Toggle Launcher / Search",
             release = true,
@@ -18,84 +22,120 @@ local bindings = {
     },
     {
         key = kb.keybindCheatsheet,
-        action = noctalia("panel-toggle blackbartblues/keymap:panel"),
+        fallback_key = registry.default_key("keybindCheatsheet"),
+        build_action = function()
+            return noctalia("panel-toggle blackbartblues/keymap:panel")
+        end,
         options = {
             description = "View Keybindings Cheatsheet",
         },
     },
     {
         key = kb.clipboard,
-        action = noctalia("panel-toggle clipboard"),
+        fallback_key = registry.default_key("clipboard"),
+        build_action = function()
+            return noctalia("panel-toggle clipboard")
+        end,
         options = {
             description = "Toggle Clipboard History",
         },
     },
     {
         key = kb.emojiSearch,
-        action = noctalia('panel-toggle launcher "/emo "'),
+        fallback_key = registry.default_key("emojiSearch"),
+        build_action = function()
+            return noctalia('panel-toggle launcher "/emo "')
+        end,
         options = {
             description = "Toggle Emoji Searcher",
         },
     },
     {
         key = kb.shellPanelSelector,
-        action = noctalia('panel-toggle launcher "/"'),
+        fallback_key = registry.default_key("shellPanelSelector"),
+        build_action = function()
+            return noctalia('panel-toggle launcher "/"')
+        end,
         options = {
             description = "Toggle Shell Panel Selector",
         },
     },
     {
         key = kb.windowSwitcher,
-        action = noctalia("window-switcher hold"),
+        fallback_key = registry.default_key("windowSwitcher"),
+        build_action = function()
+            return noctalia("window-switcher hold")
+        end,
         options = {
             description = "Toggle Window Switcher",
         },
     },
     {
         key = kb.dashboard,
-        action = noctalia("panel-toggle control-center"),
+        fallback_key = registry.default_key("dashboard"),
+        build_action = function()
+            return noctalia("panel-toggle control-center")
+        end,
         options = {
             description = "Toggle Main Dashboard",
         },
     },
     {
         key = kb.notifications,
-        action = noctalia("panel-toggle control-center notifications"),
+        fallback_key = registry.default_key("notifications"),
+        build_action = function()
+            return noctalia("panel-toggle control-center notifications")
+        end,
         options = {
             description = "Toggle Notifications Panel",
         },
     },
     {
         key = kb.mediaPanel,
-        action = noctalia("panel-toggle control-center media"),
+        fallback_key = registry.default_key("mediaPanel"),
+        build_action = function()
+            return noctalia("panel-toggle control-center media")
+        end,
         options = {
             description = "Toggle Media Panel",
         },
     },
     {
         key = kb.barToggle,
-        action = noctalia("bar-toggle default"),
+        fallback_key = registry.default_key("barToggle"),
+        build_action = function()
+            return noctalia("bar-toggle default")
+        end,
         options = {
             description = "Toggle the Visibility of Default Bar",
         },
     },
     {
         key = kb.sessionPanel,
-        action = noctalia("panel-toggle session"),
+        fallback_key = registry.default_key("sessionPanel"),
+        build_action = function()
+            return noctalia("panel-toggle session")
+        end,
         options = {
             description = "Toggle Session Panel",
         },
     },
     {
         key = kb.lockScreen,
-        action = noctalia("session lock"),
+        fallback_key = registry.default_key("lockScreen"),
+        build_action = function()
+            return noctalia("session lock")
+        end,
         options = {
             description = "Activate Lock Screen",
         },
     },
     {
         key = kb.reloadNoctalia,
-        action = noctalia("config-reload"),
+        fallback_key = registry.default_key("reloadNoctalia"),
+        build_action = function()
+            return noctalia("config-reload")
+        end,
         options = {
             release = true,
             description = "Reload Noctalia Configuration",
@@ -103,7 +143,10 @@ local bindings = {
     },
     {
         key = kb.suspend,
-        action = noctalia("session lock-and-suspend"),
+        fallback_key = registry.default_key("suspend"),
+        build_action = function()
+            return noctalia("session lock-and-suspend")
+        end,
         options = {
             locked = true,
             description = "Session: Lock and Suspend",
@@ -111,84 +154,120 @@ local bindings = {
     },
     {
         key = kb.archUpdater,
-        action = noctalia("panel-toggle yuuto/arch-updater:panel"),
+        fallback_key = registry.default_key("archUpdater"),
+        build_action = function()
+            return noctalia("panel-toggle yuuto/arch-updater:panel")
+        end,
         options = {
             description = "View Pending Arch System Updates",
         },
     },
     {
         key = kb.pomodoro,
-        action = noctalia("panel-toggle thepunkoff/pomodoro:panel"),
+        fallback_key = registry.default_key("pomodoro"),
+        build_action = function()
+            return noctalia("panel-toggle thepunkoff/pomodoro:panel")
+        end,
         options = {
             description = "Toggle Focus Pomodoro",
         },
     },
     {
         key = kb.notes,
-        action = noctalia("panel-toggle noctalia/notes:panel"),
+        fallback_key = registry.default_key("notes"),
+        build_action = function()
+            return noctalia("panel-toggle noctalia/notes:panel")
+        end,
         options = {
             description = "Open Notes Side Bar",
         },
     },
     {
         key = kb.liveAnnotation,
-        action = noctalia("annotate"),
+        fallback_key = registry.default_key("liveAnnotation"),
+        build_action = function()
+            return noctalia("annotate")
+        end,
         options = {
             description = "Activate Live Screen Annotation",
         },
     },
     {
         key = kb.ocrRegion,
-        action = noctalia("plugin fel/ocr:ocr all ocr-region"),
+        fallback_key = registry.default_key("ocrRegion"),
+        build_action = function()
+            return noctalia("plugin fel/ocr:ocr all ocr-region")
+        end,
         options = {
             description = "OCR Selector for a Region",
         },
     },
     {
         key = kb.frozenAnnotation,
-        action = noctalia("screenshot-annotate"),
+        fallback_key = registry.default_key("frozenAnnotation"),
+        build_action = function()
+            return noctalia("screenshot-annotate")
+        end,
         options = {
             description = "Activate Frozen Screen Annotation",
         },
     },
     {
         key = kb.ocrFullscreen,
-        action = noctalia("plugin fel/ocr:ocr all ocr-screen"),
+        fallback_key = registry.default_key("ocrFullscreen"),
+        build_action = function()
+            return noctalia("plugin fel/ocr:ocr all ocr-screen")
+        end,
         options = {
             description = "OCR Selector for Fullscreen",
         },
     },
     {
         key = kb.recordFullscreen,
-        action = hl.dsp.exec_cmd(recorder .. "record-fullscreen"),
+        fallback_key = registry.default_key("recordFullscreen"),
+        build_action = function()
+            return hl.dsp.exec_cmd(recorder .. "record-fullscreen")
+        end,
         options = {
             description = "Recording: Start Fullscreen (Audio)",
         },
     },
     {
         key = kb.recordRegion,
-        action = hl.dsp.exec_cmd(recorder .. "select-region"),
+        fallback_key = registry.default_key("recordRegion"),
+        build_action = function()
+            return hl.dsp.exec_cmd(recorder .. "select-region")
+        end,
         options = {
             description = "Recording: Select Region (Audio)",
         },
     },
     {
         key = kb.stopRecording,
-        action = hl.dsp.exec_cmd(recorder .. "stop"),
+        fallback_key = registry.default_key("stopRecording"),
+        build_action = function()
+            return hl.dsp.exec_cmd(recorder .. "stop")
+        end,
         options = {
             description = "Recording: Stop",
         },
     },
     {
         key = kb.screenshotRegion,
-        action = noctalia("screenshot-region"),
+        fallback_key = registry.default_key("screenshotRegion"),
+        build_action = function()
+            return noctalia("screenshot-region")
+        end,
         options = {
             description = "Screenshot: Region",
         },
     },
     {
         key = kb.screenshotClipboard,
-        action = hl.dsp.exec_cmd('grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" - | wl-copy && notify-send -u low "Screenshot" "Monitor screenshot copied to clipboard"'),
+        fallback_key = registry.default_key("screenshotClipboard"),
+        build_action = function()
+            return hl.dsp.exec_cmd('grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" - | wl-copy && notify-send -u low "Screenshot" "Monitor screenshot copied to clipboard"')
+        end,
         options = {
             locked = true,
             description = "Copy Monitor Screenshot to Clipboard",
@@ -196,14 +275,20 @@ local bindings = {
     },
     {
         key = kb.screenshotSave,
-        action = hl.dsp.exec_cmd('mkdir -p "$(xdg-user-dir PICTURES)/Screenshots" && grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" "$(xdg-user-dir PICTURES)/Screenshots/Screenshot_$(date \'+%Y-%m-%d_%H.%M.%S\').png" && notify-send -u low "Screenshot" "Monitor screenshot saved to Pictures/Screenshots"'),
+        fallback_key = registry.default_key("screenshotSave"),
+        build_action = function()
+            return hl.dsp.exec_cmd('mkdir -p "$(xdg-user-dir PICTURES)/Screenshots" && grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')" "$(xdg-user-dir PICTURES)/Screenshots/Screenshot_$(date \'+%Y-%m-%d_%H.%M.%S\').png" && notify-send -u low "Screenshot" "Monitor screenshot saved to Pictures/Screenshots"')
+        end,
         options = {
             description = "Save Monitor Screenshot",
         },
     },
     {
         key = kb.noctaliaProfileSwitcher,
-        action = hl.dsp.exec_cmd('bash ~/.dotfiles/scripts/profile-switch'),
+        fallback_key = registry.default_key("noctaliaProfileSwitcher"),
+        build_action = function()
+            return hl.dsp.exec_cmd('bash ~/.dotfiles/scripts/profile-switch')
+        end,
         options = {
             description = "Save Monitor Screenshot",
         },
@@ -211,21 +296,30 @@ local bindings = {
 
     {
         key = kb.wallpaperSelector,
-        action = noctalia("panel-toggle wallpaper"),
+        fallback_key = registry.default_key("wallpaperSelector"),
+        build_action = function()
+            return noctalia("panel-toggle wallpaper")
+        end,
         options = {
             description = "Toggle Wallpaper Selector",
         },
     },
     {
         key = kb.randomWallpaper,
-        action = noctalia("wallpaper-random"),
+        fallback_key = registry.default_key("randomWallpaper"),
+        build_action = function()
+            return noctalia("wallpaper-random")
+        end,
         options = {
             description = "Set Random Wallpaper",
         },
     },
     {
         key = kb.noctaliaSettings,
-        action = noctalia("settings-toggle"),
+        fallback_key = registry.default_key("noctaliaSettings"),
+        build_action = function()
+            return noctalia("settings-toggle")
+        end,
         options = {
             description = "Launch Noctalia Settings",
         },
@@ -233,21 +327,30 @@ local bindings = {
     -- Workspace navigation and movement (non-numbered)
     {
         key = kb.previousWorkspaceMouse,
-        action = hl.dsp.focus({ workspace = "-1" }),
+        fallback_key = registry.default_key("previousWorkspaceMouse"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "-1" })
+        end,
         options = {
             description = "Focus Previous Workspace",
         },
     },
     {
         key = kb.nextWorkspaceMouse,
-        action = hl.dsp.focus({ workspace = "+1" }),
+        fallback_key = registry.default_key("nextWorkspaceMouse"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "+1" })
+        end,
         options = {
             description = "Focus Next Workspace",
         },
     },
     {
         key = kb.previousWorkspace,
-        action = hl.dsp.focus({ workspace = "-1" }),
+        fallback_key = registry.default_key("previousWorkspace"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "-1" })
+        end,
         options = {
             repeating = true,
             description = "Focus Previous Workspace",
@@ -255,7 +358,10 @@ local bindings = {
     },
     {
         key = kb.nextWorkspace,
-        action = hl.dsp.focus({ workspace = "+1" }),
+        fallback_key = registry.default_key("nextWorkspace"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "+1" })
+        end,
         options = {
             repeating = true,
             description = "Focus Next Workspace",
@@ -263,7 +369,10 @@ local bindings = {
     },
     {
         key = kb.moveWindowPreviousWorkspace,
-        action = hl.dsp.window.move({ workspace = "-1" }),
+        fallback_key = registry.default_key("moveWindowPreviousWorkspace"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "-1" })
+        end,
         options = {
             repeating = true,
             description = "Move Window to Previous Workspace",
@@ -271,7 +380,10 @@ local bindings = {
     },
     {
         key = kb.moveWindowNextWorkspace,
-        action = hl.dsp.window.move({ workspace = "+1" }),
+        fallback_key = registry.default_key("moveWindowNextWorkspace"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "+1" })
+        end,
         options = {
             repeating = true,
             description = "Move Window to Next Workspace",
@@ -279,21 +391,30 @@ local bindings = {
     },
     {
         key = kb.moveWindowPreviousWorkspaceMouse,
-        action = hl.dsp.window.move({ workspace = "-1" }),
+        fallback_key = registry.default_key("moveWindowPreviousWorkspaceMouse"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "-1" })
+        end,
         options = {
             description = "Move Window to Previous Workspace",
         },
     },
     {
         key = kb.moveWindowNextWorkspaceMouse,
-        action = hl.dsp.window.move({ workspace = "+1" }),
+        fallback_key = registry.default_key("moveWindowNextWorkspaceMouse"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "+1" })
+        end,
         options = {
             description = "Move Window to Next Workspace",
         },
     },
     {
         key = kb.previousWorkspaceGroup,
-        action = hl.dsp.focus({ workspace = "-10" }),
+        fallback_key = registry.default_key("previousWorkspaceGroup"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "-10" })
+        end,
         options = {
             repeating = true,
             description = "Focus Previous Workspace Group",
@@ -301,7 +422,10 @@ local bindings = {
     },
     {
         key = kb.nextWorkspaceGroup,
-        action = hl.dsp.focus({ workspace = "+10" }),
+        fallback_key = registry.default_key("nextWorkspaceGroup"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "+10" })
+        end,
         options = {
             repeating = true,
             description = "Focus Next Workspace Group",
@@ -309,21 +433,30 @@ local bindings = {
     },
     {
         key = kb.previousWorkspaceGroupMouse,
-        action = hl.dsp.focus({ workspace = "-10" }),
+        fallback_key = registry.default_key("previousWorkspaceGroupMouse"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "-10" })
+        end,
         options = {
             description = "Focus Previous Workspace Group",
         },
     },
     {
         key = kb.nextWorkspaceGroupMouse,
-        action = hl.dsp.focus({ workspace = "+10" }),
+        fallback_key = registry.default_key("nextWorkspaceGroupMouse"),
+        build_action = function()
+            return hl.dsp.focus({ workspace = "+10" })
+        end,
         options = {
             description = "Focus Next Workspace Group",
         },
     },
     {
         key = kb.moveWindowNextWorkspaceGroup,
-        action = hl.dsp.window.move({ workspace = "+10" }),
+        fallback_key = registry.default_key("moveWindowNextWorkspaceGroup"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "+10" })
+        end,
         options = {
             repeating = true,
             description = "Move Window to Next Workspace Group",
@@ -331,7 +464,10 @@ local bindings = {
     },
     {
         key = kb.moveWindowPreviousWorkspaceGroup,
-        action = hl.dsp.window.move({ workspace = "-10" }),
+        fallback_key = registry.default_key("moveWindowPreviousWorkspaceGroup"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "-10" })
+        end,
         options = {
             repeating = true,
             description = "Move Window to Previous Workspace Group",
@@ -340,35 +476,50 @@ local bindings = {
     -- Named special workspaces
     {
         key = kb.specialWorkspace,
-        action = hl.dsp.workspace.toggle_special("special"),
+        fallback_key = registry.default_key("specialWorkspace"),
+        build_action = function()
+            return hl.dsp.workspace.toggle_special("special")
+        end,
         options = {
             description = "Toggle Special Workspace",
         },
     },
     {
         key = kb.sysmonWorkspace,
-        action = hl.dsp.workspace.toggle_special("sysmon"),
+        fallback_key = registry.default_key("sysmonWorkspace"),
+        build_action = function()
+            return hl.dsp.workspace.toggle_special("sysmon")
+        end,
         options = {
             description = "Toggle Sysmon Workspace",
         },
     },
     {
         key = kb.communicationWorkspace,
-        action = hl.dsp.workspace.toggle_special("communication"),
+        fallback_key = registry.default_key("communicationWorkspace"),
+        build_action = function()
+            return hl.dsp.workspace.toggle_special("communication")
+        end,
         options = {
             description = "Toggle Communication Workspace",
         },
     },
     {
         key = kb.moveWindowToSpecialWorkspace,
-        action = hl.dsp.window.move({ workspace = "special:special" }),
+        fallback_key = registry.default_key("moveWindowToSpecialWorkspace"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "special:special" })
+        end,
         options = {
             description = "Move Window to Special Workspace",
         },
     },
     {
         key = kb.moveWindowOutOfSpecialWorkspace,
-        action = hl.dsp.window.move({ workspace = "e+0" }),
+        fallback_key = registry.default_key("moveWindowOutOfSpecialWorkspace"),
+        build_action = function()
+            return hl.dsp.window.move({ workspace = "e+0" })
+        end,
         options = {
             description = "Move Window Out of Special Workspace",
         },
@@ -376,28 +527,40 @@ local bindings = {
     -- Window grouping
     {
         key = kb.toggleGroup,
-        action = hl.dsp.group.toggle(),
+        fallback_key = registry.default_key("toggleGroup"),
+        build_action = function()
+            return hl.dsp.group.toggle()
+        end,
         options = {
             description = "Toggle Window Grouping",
         },
     },
     {
         key = kb.ungroupWindow,
-        action = hl.dsp.window.move({ out_of_group = true }),
+        fallback_key = registry.default_key("ungroupWindow"),
+        build_action = function()
+            return hl.dsp.window.move({ out_of_group = true })
+        end,
         options = {
             description = "Move Window Out of Group",
         },
     },
     {
         key = kb.lockActiveGroup,
-        action = hl.dsp.group.lock(),
+        fallback_key = registry.default_key("lockActiveGroup"),
+        build_action = function()
+            return hl.dsp.group.lock()
+        end,
         options = {
             description = "Lock Active Group",
         },
     },
     {
         key = kb.nextWindowInGroup,
-        action = hl.dsp.window.cycle_next(),
+        fallback_key = registry.default_key("nextWindowInGroup"),
+        build_action = function()
+            return hl.dsp.window.cycle_next()
+        end,
         options = {
             repeating = true,
             description = "Focus Next Window in Group",
@@ -405,7 +568,10 @@ local bindings = {
     },
     {
         key = kb.previousWindowInGroup,
-        action = hl.dsp.window.cycle_next({ next = false }),
+        fallback_key = registry.default_key("previousWindowInGroup"),
+        build_action = function()
+            return hl.dsp.window.cycle_next({ next = false })
+        end,
         options = {
             repeating = true,
             description = "Focus Previous Window in Group",
@@ -413,7 +579,10 @@ local bindings = {
     },
     {
         key = kb.nextGroupWindow,
-        action = hl.dsp.group.next(),
+        fallback_key = registry.default_key("nextGroupWindow"),
+        build_action = function()
+            return hl.dsp.group.next()
+        end,
         options = {
             repeating = true,
             description = "Switch to Next Group Window",
@@ -421,7 +590,10 @@ local bindings = {
     },
     {
         key = kb.previousGroupWindow,
-        action = hl.dsp.group.prev(),
+        fallback_key = registry.default_key("previousGroupWindow"),
+        build_action = function()
+            return hl.dsp.group.prev()
+        end,
         options = {
             repeating = true,
             description = "Switch to Previous Group Window",
@@ -430,56 +602,80 @@ local bindings = {
     -- Window focus and movement
     {
         key = kb.focusLeft,
-        action = hl.dsp.focus({ direction = "left" }),
+        fallback_key = registry.default_key("focusLeft"),
+        build_action = function()
+            return hl.dsp.focus({ direction = "left" })
+        end,
         options = {
             description = "Focus Left Window",
         },
     },
     {
         key = kb.focusRight,
-        action = hl.dsp.focus({ direction = "right" }),
+        fallback_key = registry.default_key("focusRight"),
+        build_action = function()
+            return hl.dsp.focus({ direction = "right" })
+        end,
         options = {
             description = "Focus Right Window",
         },
     },
     {
         key = kb.focusUp,
-        action = hl.dsp.focus({ direction = "up" }),
+        fallback_key = registry.default_key("focusUp"),
+        build_action = function()
+            return hl.dsp.focus({ direction = "up" })
+        end,
         options = {
             description = "Focus Up Window",
         },
     },
     {
         key = kb.focusDown,
-        action = hl.dsp.focus({ direction = "down" }),
+        fallback_key = registry.default_key("focusDown"),
+        build_action = function()
+            return hl.dsp.focus({ direction = "down" })
+        end,
         options = {
             description = "Focus Down Window",
         },
     },
     {
         key = kb.moveLeft,
-        action = hl.dsp.window.move({ direction = "left" }),
+        fallback_key = registry.default_key("moveLeft"),
+        build_action = function()
+            return hl.dsp.window.move({ direction = "left" })
+        end,
         options = {
             description = "Move Window Left",
         },
     },
     {
         key = kb.moveRight,
-        action = hl.dsp.window.move({ direction = "right" }),
+        fallback_key = registry.default_key("moveRight"),
+        build_action = function()
+            return hl.dsp.window.move({ direction = "right" })
+        end,
         options = {
             description = "Move Window Right",
         },
     },
     {
         key = kb.moveUp,
-        action = hl.dsp.window.move({ direction = "up" }),
+        fallback_key = registry.default_key("moveUp"),
+        build_action = function()
+            return hl.dsp.window.move({ direction = "up" })
+        end,
         options = {
             description = "Move Window Up",
         },
     },
     {
         key = kb.moveDown,
-        action = hl.dsp.window.move({ direction = "down" }),
+        fallback_key = registry.default_key("moveDown"),
+        build_action = function()
+            return hl.dsp.window.move({ direction = "down" })
+        end,
         options = {
             description = "Move Window Down",
         },
@@ -487,7 +683,10 @@ local bindings = {
     -- Window resizing and pointer actions
     {
         key = kb.shrinkWidth,
-        action = fn.resize_active(-10, 0),
+        fallback_key = registry.default_key("shrinkWidth"),
+        build_action = function()
+            return fn.resize_active(-10, 0)
+        end,
         options = {
             repeating = true,
             description = "Shrink Window Width",
@@ -495,7 +694,10 @@ local bindings = {
     },
     {
         key = kb.expandWidth,
-        action = fn.resize_active(10, 0),
+        fallback_key = registry.default_key("expandWidth"),
+        build_action = function()
+            return fn.resize_active(10, 0)
+        end,
         options = {
             repeating = true,
             description = "Expand Window Width",
@@ -503,7 +705,10 @@ local bindings = {
     },
     {
         key = kb.shrinkHeight,
-        action = fn.resize_active(0, -10),
+        fallback_key = registry.default_key("shrinkHeight"),
+        build_action = function()
+            return fn.resize_active(0, -10)
+        end,
         options = {
             repeating = true,
             description = "Shrink Window Height",
@@ -511,7 +716,10 @@ local bindings = {
     },
     {
         key = kb.expandHeight,
-        action = fn.resize_active(0, 10),
+        fallback_key = registry.default_key("expandHeight"),
+        build_action = function()
+            return fn.resize_active(0, 10)
+        end,
         options = {
             repeating = true,
             description = "Expand Window Height",
@@ -519,7 +727,10 @@ local bindings = {
     },
     {
         key = kb.shrinkWidthAlt,
-        action = fn.resize_active(-10, 0),
+        fallback_key = registry.default_key("shrinkWidthAlt"),
+        build_action = function()
+            return fn.resize_active(-10, 0)
+        end,
         options = {
             repeating = true,
             description = "Shrink Window Width",
@@ -527,7 +738,10 @@ local bindings = {
     },
     {
         key = kb.expandWidthAlt,
-        action = fn.resize_active(10, 0),
+        fallback_key = registry.default_key("expandWidthAlt"),
+        build_action = function()
+            return fn.resize_active(10, 0)
+        end,
         options = {
             repeating = true,
             description = "Expand Window Width",
@@ -535,7 +749,10 @@ local bindings = {
     },
     {
         key = kb.shrinkHeightAlt,
-        action = fn.resize_active(0, -10),
+        fallback_key = registry.default_key("shrinkHeightAlt"),
+        build_action = function()
+            return fn.resize_active(0, -10)
+        end,
         options = {
             repeating = true,
             description = "Shrink Window Height",
@@ -543,7 +760,10 @@ local bindings = {
     },
     {
         key = kb.expandHeightAlt,
-        action = fn.resize_active(0, 10),
+        fallback_key = registry.default_key("expandHeightAlt"),
+        build_action = function()
+            return fn.resize_active(0, 10)
+        end,
         options = {
             repeating = true,
             description = "Expand Window Height",
@@ -551,7 +771,10 @@ local bindings = {
     },
     {
         key = kb.dragWindow,
-        action = hl.dsp.window.drag(),
+        fallback_key = registry.default_key("dragWindow"),
+        build_action = function()
+            return hl.dsp.window.drag()
+        end,
         options = {
             mouse = true,
             description = "Move Window Using Mouse",
@@ -559,7 +782,10 @@ local bindings = {
     },
     {
         key = kb.resizeWindowMouse,
-        action = hl.dsp.window.resize(),
+        fallback_key = registry.default_key("resizeWindowMouse"),
+        build_action = function()
+            return hl.dsp.window.resize()
+        end,
         options = {
             mouse = true,
             description = "Resize Window Using Mouse",
@@ -567,14 +793,20 @@ local bindings = {
     },
     {
         key = kb.centerWindow,
-        action = hl.dsp.window.center(),
+        fallback_key = registry.default_key("centerWindow"),
+        build_action = function()
+            return hl.dsp.window.center()
+        end,
         options = {
             description = "Move Window to Screen Center",
         },
     },
     {
         key = kb.resizeWindowToScreen,
-        action = fn.resize_screen(55, 70),
+        fallback_key = registry.default_key("resizeWindowToScreen"),
+        build_action = function()
+            return fn.resize_screen(55, 70)
+        end,
         options = {
             description = "Resize Window to 55x70 Percent of Screen",
         },
@@ -582,63 +814,90 @@ local bindings = {
     -- Window modes and layouts
     {
         key = kb.pictureInPicture,
-        action = fn.toggle_pip,
+        fallback_key = registry.default_key("pictureInPicture"),
+        build_action = function()
+            return fn.toggle_pip
+        end,
         options = {
             description = "Toggle Picture-in-Picture Mode",
         },
     },
     {
         key = kb.pinWindow,
-        action = hl.dsp.window.pin(),
+        fallback_key = registry.default_key("pinWindow"),
+        build_action = function()
+            return hl.dsp.window.pin()
+        end,
         options = {
             description = "Pin/Unpin Window",
         },
     },
     {
         key = kb.pseudotileWindow,
-        action = hl.dsp.window.pseudo(),
+        fallback_key = registry.default_key("pseudotileWindow"),
+        build_action = function()
+            return hl.dsp.window.pseudo()
+        end,
         options = {
             description = "Toggle Pseudotiled Mode",
         },
     },
     {
         key = kb.fullscreenWindow,
-        action = hl.dsp.window.fullscreen({ mode = "fullscreen" }),
+        fallback_key = registry.default_key("fullscreenWindow"),
+        build_action = function()
+            return hl.dsp.window.fullscreen({ mode = "fullscreen" })
+        end,
         options = {
             description = "Toggle Fullscreen Mode",
         },
     },
     {
         key = kb.maximizedWindow,
-        action = hl.dsp.window.fullscreen({ mode = "maximized" }),
+        fallback_key = registry.default_key("maximizedWindow"),
+        build_action = function()
+            return hl.dsp.window.fullscreen({ mode = "maximized" })
+        end,
         options = {
             description = "Toggle Maximized Mode",
         },
     },
     {
         key = kb.toggleFloating,
-        action = fn.toggle_floating,
+        fallback_key = registry.default_key("toggleFloating"),
+        build_action = function()
+            return fn.toggle_floating
+        end,
         options = {
             description = "Toggle Floating Mode",
         },
     },
     {
         key = kb.closeWindow,
-        action = hl.dsp.window.close(),
+        fallback_key = registry.default_key("closeWindow"),
+        build_action = function()
+            return hl.dsp.window.close()
+        end,
         options = {
             description = "Close Active Window",
         },
     },
     {
         key = kb.cycleWorkspaceLayout,
-        action = fn.cycle_all_layouts,
+        fallback_key = registry.default_key("cycleWorkspaceLayout"),
+        build_action = function()
+            return fn.cycle_all_layouts
+        end,
         options = {
             description = "Cycle Workspace Layout (All Types)",
         },
     },
     {
         key = kb.toggleScrollLayout,
-        action = fn.toggle_scroll_layout,
+        fallback_key = registry.default_key("toggleScrollLayout"),
+        build_action = function()
+            return fn.toggle_scroll_layout
+        end,
         options = {
             description = "Toggle between Dwindle and Scrolling Layout",
         },
@@ -646,77 +905,110 @@ local bindings = {
     -- Applications
     {
         key = kb.terminal,
-        action = hl.dsp.exec_cmd(vars.terminal),
+        fallback_key = registry.default_key("terminal"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.terminal)
+        end,
         options = {
             description = "Launch Default Terminal",
         },
     },
     {
         key = kb.browser,
-        action = hl.dsp.exec_cmd(vars.browser),
+        fallback_key = registry.default_key("browser"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.browser)
+        end,
         options = {
             description = "Launch Default Web Browser",
         },
     },
     {
         key = kb.editor,
-        action = hl.dsp.exec_cmd(vars.editor),
+        fallback_key = registry.default_key("editor"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.editor)
+        end,
         options = {
             description = "Launch Default Text Editor",
         },
     },
     {
         key = kb.fileExplorer,
-        action = hl.dsp.exec_cmd(vars.fileExplorer),
+        fallback_key = registry.default_key("fileExplorer"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.fileExplorer)
+        end,
         options = {
             description = "Launch Default File Manager",
         },
     },
     {
         key = kb.audioMixer,
-        action = hl.dsp.exec_cmd(vars.audioSettings),
+        fallback_key = registry.default_key("audioMixer"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.audioSettings)
+        end,
         options = {
             description = "Launch Volume Mixer",
         },
     },
     {
         key = kb.floatingTerminal,
-        action = hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { float = true })),
+        fallback_key = registry.default_key("floatingTerminal"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { float = true }))
+        end,
         options = {
             description = "Launch Terminal in (Floating)",
         },
     },
     {
         key = kb.floatingBrowser,
-        action = hl.dsp.exec_cmd(vars.browser, fn.floatSpawnRule(vars.browser, { float = true })),
+        fallback_key = registry.default_key("floatingBrowser"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.browser, fn.floatSpawnRule(vars.browser, { float = true }))
+        end,
         options = {
             description = "Launch Web Browser in (Floating)",
         },
     },
     {
         key = kb.floatingEditor,
-        action = hl.dsp.exec_cmd(vars.editor, fn.floatSpawnRule(vars.editor, { float = true })),
+        fallback_key = registry.default_key("floatingEditor"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.editor, fn.floatSpawnRule(vars.editor, { float = true }))
+        end,
         options = {
             description = "Launch Text Editor in (Floating)",
         },
     },
     {
         key = kb.floatingFileExplorer,
-        action = hl.dsp.exec_cmd(vars.fileExplorer, fn.floatSpawnRule(vars.fileExplorer, { float = true })),
+        fallback_key = registry.default_key("floatingFileExplorer"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.fileExplorer, fn.floatSpawnRule(vars.fileExplorer, { float = true }))
+        end,
         options = {
             description = "Launch File Manager in (Floating)",
         },
     },
     {
         key = kb.pseudotiledTerminal,
-        action = hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { pseudo = true })),
+        fallback_key = registry.default_key("pseudotiledTerminal"),
+        build_action = function()
+            return hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { pseudo = true }))
+        end,
         options = {
             description = "Launch Terminal in (Pseudotiled)",
         },
     },
     {
         key = kb.colorPicker,
-        action = hl.dsp.exec_cmd("hyprpicker -a"),
+        fallback_key = registry.default_key("colorPicker"),
+        build_action = function()
+            return hl.dsp.exec_cmd("hyprpicker -a")
+        end,
         options = {
             description = "Launch Color Picker",
         },
@@ -724,7 +1016,10 @@ local bindings = {
     -- Audio
     {
         key = kb.microphoneMute,
-        action = hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
+        fallback_key = registry.default_key("microphoneMute"),
+        build_action = function()
+            return hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle")
+        end,
         options = {
             locked = true,
             description = "Toggle Microphone Mute",
@@ -732,7 +1027,10 @@ local bindings = {
     },
     {
         key = kb.audioMute,
-        action = hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+        fallback_key = registry.default_key("audioMute"),
+        build_action = function()
+            return hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+        end,
         options = {
             locked = true,
             description = "Toggle Audio Mute",
@@ -740,7 +1038,10 @@ local bindings = {
     },
     {
         key = kb.audioMuteAlt,
-        action = hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+        fallback_key = registry.default_key("audioMuteAlt"),
+        build_action = function()
+            return hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle")
+        end,
         options = {
             locked = true,
             description = "Toggle Audio Mute",
@@ -748,7 +1049,10 @@ local bindings = {
     },
     {
         key = kb.volumeUp,
-        action = hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l " .. (vars.volumeMax / 100) .. " @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%+"),
+        fallback_key = registry.default_key("volumeUp"),
+        build_action = function()
+            return hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume -l " .. (vars.volumeMax / 100) .. " @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%+")
+        end,
         options = {
             locked = true,
             repeating = true,
@@ -757,7 +1061,10 @@ local bindings = {
     },
     {
         key = kb.volumeDown,
-        action = hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%-"),
+        fallback_key = registry.default_key("volumeDown"),
+        build_action = function()
+            return hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ " .. vars.volumeStep .. "%-")
+        end,
         options = {
             locked = true,
             repeating = true,
@@ -767,7 +1074,10 @@ local bindings = {
     -- Brightness and keyboard backlight
     {
         key = kb.brightnessUp,
-        action = hl.dsp.exec_cmd("brightnessctl s 5%+"),
+        fallback_key = registry.default_key("brightnessUp"),
+        build_action = function()
+            return hl.dsp.exec_cmd("brightnessctl s 5%+")
+        end,
         options = {
             locked = true,
             description = "Increase Display Brightness",
@@ -775,7 +1085,10 @@ local bindings = {
     },
     {
         key = kb.brightnessDown,
-        action = hl.dsp.exec_cmd("brightnessctl s 5%-"),
+        fallback_key = registry.default_key("brightnessDown"),
+        build_action = function()
+            return hl.dsp.exec_cmd("brightnessctl s 5%-")
+        end,
         options = {
             locked = true,
             description = "Decrease Display Brightness",
@@ -783,14 +1096,20 @@ local bindings = {
     },
     {
         key = kb.keyboardBacklightUp,
-        action = hl.dsp.exec_cmd("brightnessctl -d platform::kbd_backlight set +1"),
+        fallback_key = registry.default_key("keyboardBacklightUp"),
+        build_action = function()
+            return hl.dsp.exec_cmd("brightnessctl -d platform::kbd_backlight set +1")
+        end,
         options = {
             description = "Increase Keyboard Backlight",
         },
     },
     {
         key = kb.keyboardBacklightDown,
-        action = hl.dsp.exec_cmd("brightnessctl -d platform::kbd_backlight set 1-"),
+        fallback_key = registry.default_key("keyboardBacklightDown"),
+        build_action = function()
+            return hl.dsp.exec_cmd("brightnessctl -d platform::kbd_backlight set 1-")
+        end,
         options = {
             description = "Decrease Keyboard Backlight",
         },
@@ -798,7 +1117,10 @@ local bindings = {
     -- Media playback
     {
         key = kb.mediaPlay,
-        action = hl.dsp.exec_cmd("playerctl play-pause"),
+        fallback_key = registry.default_key("mediaPlay"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl play-pause")
+        end,
         options = {
             locked = true,
             description = "Toggle Play/Pause",
@@ -806,7 +1128,10 @@ local bindings = {
     },
     {
         key = kb.mediaPause,
-        action = hl.dsp.exec_cmd("playerctl play-pause"),
+        fallback_key = registry.default_key("mediaPause"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl play-pause")
+        end,
         options = {
             locked = true,
             description = "Toggle Play/Pause",
@@ -814,14 +1139,20 @@ local bindings = {
     },
     {
         key = kb.mediaPlayAlt,
-        action = hl.dsp.exec_cmd("playerctl play-pause"),
+        fallback_key = registry.default_key("mediaPlayAlt"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl play-pause")
+        end,
         options = {
             description = "Toggle Play/Pause",
         },
     },
     {
         key = kb.mediaNext,
-        action = hl.dsp.exec_cmd(nextTrack),
+        fallback_key = registry.default_key("mediaNext"),
+        build_action = function()
+            return hl.dsp.exec_cmd(nextTrack)
+        end,
         options = {
             locked = true,
             description = "Play Next Track",
@@ -829,7 +1160,10 @@ local bindings = {
     },
     {
         key = kb.mediaNextAlt,
-        action = hl.dsp.exec_cmd(nextTrack),
+        fallback_key = registry.default_key("mediaNextAlt"),
+        build_action = function()
+            return hl.dsp.exec_cmd(nextTrack)
+        end,
         options = {
             locked = true,
             description = "Play Next Track",
@@ -837,14 +1171,20 @@ local bindings = {
     },
     {
         key = kb.mediaNextAlt2,
-        action = hl.dsp.exec_cmd(nextTrack),
+        fallback_key = registry.default_key("mediaNextAlt2"),
+        build_action = function()
+            return hl.dsp.exec_cmd(nextTrack)
+        end,
         options = {
             description = "Play Next Track",
         },
     },
     {
         key = kb.mediaPrevious,
-        action = hl.dsp.exec_cmd("playerctl previous"),
+        fallback_key = registry.default_key("mediaPrevious"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl previous")
+        end,
         options = {
             locked = true,
             description = "Play Previous Track",
@@ -852,7 +1192,10 @@ local bindings = {
     },
     {
         key = kb.mediaPreviousAlt,
-        action = hl.dsp.exec_cmd("playerctl previous"),
+        fallback_key = registry.default_key("mediaPreviousAlt"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl previous")
+        end,
         options = {
             locked = true,
             description = "Play Previous Track",
@@ -860,14 +1203,20 @@ local bindings = {
     },
     {
         key = kb.mediaPreviousAlt2,
-        action = hl.dsp.exec_cmd("playerctl previous"),
+        fallback_key = registry.default_key("mediaPreviousAlt2"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl previous")
+        end,
         options = {
             description = "Play Previous Track",
         },
     },
     {
         key = kb.mediaStop,
-        action = hl.dsp.exec_cmd("playerctl stop"),
+        fallback_key = registry.default_key("mediaStop"),
+        build_action = function()
+            return hl.dsp.exec_cmd("playerctl stop")
+        end,
         options = {
             locked = true,
             description = "Stop Playback",
@@ -879,113 +1228,47 @@ local bindings = {
 for i = 1, 10 do
     local key = i % 10
     bindings[#bindings + 1] = {
-        key = kb.goToWorkspacePrefix .. " + " .. key,
-        action = fn.wsaction("focus", "", i),
+        key = registry.workspace_key(kb.goToWorkspacePrefix, key),
+        fallback_key = registry.workspace_key(registry.default_key("goToWorkspacePrefix"), key),
+        build_action = function()
+            return fn.wsaction("focus", "", i)
+        end,
         options = {
             description = "Focus Workspace " .. i,
         },
     }
     bindings[#bindings + 1] = {
-        key = kb.moveWindowToWorkspacePrefix .. " + " .. key,
-        action = fn.wsaction("move", "", i),
+        key = registry.workspace_key(kb.moveWindowToWorkspacePrefix, key),
+        fallback_key = registry.workspace_key(registry.default_key("moveWindowToWorkspacePrefix"), key),
+        build_action = function()
+            return fn.wsaction("move", "", i)
+        end,
         options = {
             description = "Workspaces: Move Window to Workspace " .. i,
         },
     }
     bindings[#bindings + 1] = {
-        key = kb.goToWorkspaceGroupPrefix .. " + " .. key,
-        action = fn.wsaction("focus", "group", i),
+        key = registry.workspace_key(kb.goToWorkspaceGroupPrefix, key),
+        fallback_key = registry.workspace_key(registry.default_key("goToWorkspaceGroupPrefix"), key),
+        build_action = function()
+            return fn.wsaction("focus", "group", i)
+        end,
         options = {
             description = "Focus Workspace Group " .. i,
         },
     }
     bindings[#bindings + 1] = {
-        key = kb.moveWindowToWorkspaceGroupPrefix .. " + " .. key,
-        action = fn.wsaction("move", "group", i),
+        key = registry.workspace_key(kb.moveWindowToWorkspaceGroupPrefix, key),
+        fallback_key = registry.workspace_key(registry.default_key("moveWindowToWorkspaceGroupPrefix"), key),
+        build_action = function()
+            return fn.wsaction("move", "group", i)
+        end,
         options = {
             description = "Move Window to Workspace Group " .. i,
         },
     }
 end
--- Custom bindings are declarative so they can override defaults before registration.
--- A problem never aborts registration: it is collected, logged, and reported once.
-local problems = {}
-local function report(message)
-    problems[#problems + 1] = message
-    print("[Hyprland config] keybinds: " .. message)
-end
-
-local ok, customBindings = pcall(require, "custom.keybinds")
-if not ok then
-    -- A missing custom module is normal; a syntax/runtime error is reported.
-    if not tostring(customBindings):match("module 'custom%.keybinds' not found") then
-        report("custom.keybinds failed to load: " .. tostring(customBindings))
-    end
-    customBindings = {}
-end
--- An empty (or all-comment) file makes require() return `true`, not a table.
-if type(customBindings) ~= "table" then customBindings = {} end
-
-local function normalizeKey(key)
-    local parts = {}
-    for part in tostring(key):gmatch("[^+]+") do
-        local cleaned = part:gsub("^%s+", ""):gsub("%s+$", ""):lower()
-        if cleaned ~= "" then parts[#parts + 1] = cleaned end
-    end
-    table.sort(parts)
-    return table.concat(parts, "+")
-end
-
--- Validate custom entries; the first one wins on a duplicate.
-local customKeys, validCustom = {}, {}
-for i, entry in ipairs(customBindings) do
-    if type(entry) ~= "table" or type(entry.key) ~= "string" or entry.action == nil then
-        report(("custom entry #%d needs a string `key` and an `action`"):format(i))
-    else
-        local normalized = normalizeKey(entry.key)
-        if customKeys[normalized] then
-            report("duplicate custom keybinding ignored: " .. entry.key)
-        else
-            customKeys[normalized] = true
-            validCustom[#validCustom + 1] = entry
-        end
-    end
-end
-
--- Custom entries replace defaults on the same key; defaults must be unique.
-local finalBindings, seenDefaults = {}, {}
-for _, entry in ipairs(bindings) do
-    local normalized = normalizeKey(entry.key)
-    if not customKeys[normalized] then
-        if seenDefaults[normalized] then
-            report(("duplicate default keybinding ignored: %s (%s)")
-                :format(entry.key, (entry.options and entry.options.description) or "no description"))
-        else
-            seenDefaults[normalized] = true
-            finalBindings[#finalBindings + 1] = entry
-        end
-    end
-end
-for _, entry in ipairs(validCustom) do
-    finalBindings[#finalBindings + 1] = {
-        key     = entry.key,
-        action  = entry.action,
-        options = entry.options or {},
-    }
-end
-
--- Register each binding in isolation so one bad entry cannot block the rest.
-for _, entry in ipairs(finalBindings) do
-    local bound, err = pcall(hl.bind, entry.key, entry.action, entry.options)
-    if not bound then
-        report(("could not bind %s: %s"):format(entry.key, tostring(err)))
-    end
-end
-
-if #problems > 0 then
-    hl.notification.create({
-        text     = ("Keybinds: %d problem(s). Run `hyprctl rollinglog` for details."):format(#problems),
-        duration = 8000,
-        icon     = "warning",
-    })
-end
+-- Custom replacements are attempted first; a failure retains the default.
+return registry.register(bindings, function()
+    return require("custom.keybinds")
+end)

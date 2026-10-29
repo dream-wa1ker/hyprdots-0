@@ -176,7 +176,7 @@ return {
         resizeWindowToScreen = "CTRL + Backslash",
 
         -- Window modes / layout
-        pictureInPicture       = "SUPER + ALT + F",
+        pictureInPicture       = "f6",
         pseudotileWindow       = "F8",
         pinWindow              = "F7",
         fullscreenWindow       = "F10",

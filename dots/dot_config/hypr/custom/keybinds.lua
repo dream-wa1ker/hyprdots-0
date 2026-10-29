@@ -3,6 +3,8 @@
 --
 -- PURPOSE   Add keybindings, or replace a default one.
 -- RETURNS   A list of entries: { key = ..., action = ..., options = { ... } }
+--           Or use build_action = function() return dispatcher_or_callback end.
+--           Builders run once at load time, protected separately for each entry.
 --           Build them with fn.bind(key, action, description [, flags]) (defined in
 --           custom/functions.lua); it fills in the table for you.
 -- LOADED    Evaluated by hyprland/keybinds.lua, which resolves precedence and then
@@ -13,7 +15,8 @@
 --              Modifiers: SUPER, SHIFT, CTRL, ALT. Key names are xkb names
 --              (Return, Space, Page_Up, F11, Print ...). Run `wev` and press a key to see its name.
 --
--- PRECEDENCE   A custom entry REPLACES the default bound to the same combination.
+-- PRECEDENCE   A custom entry replaces its default only after successful registration.
+--              Failed construction/registration falls back to the default.
 --              Two custom entries on one combination: the first is kept, the second is
 --              reported and ignored. A bad entry never stops the others (see hyprctl rollinglog).
 --
@@ -34,24 +37,36 @@
 
 local vars = require("hyprland.variables")
 local fn   = require("hyprland.functions")
-local kb   = vars.keybinds
-
-local cmd     = fn.editor_command()
-local ruleKey = fn.editor_rule_key()
+local kb   = type(vars.keybinds) == "table" and vars.keybinds or {}
 
 return {
     -- Active ---------------------------------------------------------------------
-    fn.bind(kb.editor,
-        hl.dsp.exec_cmd(cmd),
-        "Editor"),
-
-    fn.bind(kb.floatingEditor,
-        hl.dsp.exec_cmd(cmd, fn.floatSpawnRule(ruleKey, { float = true })),
-        "Floating editor"),
-
-    fn.bind(kb.powerSaver,
-        fn.power_saver_toggle,
-        "Power saver: blur, rounding, shadows, animations off; shell stopped"),
+    {
+        key = kb.editor,
+        build_action = function()
+            return hl.dsp.exec_cmd(fn.editor_command())
+        end,
+        options = { description = "Editor" },
+    },
+    {
+        key = kb.floatingEditor,
+        build_action = function()
+            return hl.dsp.exec_cmd(
+                fn.editor_command(),
+                fn.floatSpawnRule(fn.editor_rule_key(), { float = true })
+            )
+        end,
+        options = { description = "Floating editor" },
+    },
+    {
+        key = kb.powerSaver,
+        build_action = function()
+            return fn.power_saver_toggle
+        end,
+        options = {
+            description = "Power saver: blur, rounding, shadows, animations off; shell stopped",
+        },
+    },
 
     -- Examples: remove the leading `--` to enable --------------------------------
     -- fn.bind("SUPER + Q", hl.dsp.window.close(), "Close window"),

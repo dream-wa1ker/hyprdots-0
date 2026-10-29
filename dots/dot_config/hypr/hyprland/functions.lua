@@ -81,30 +81,35 @@ local function resizer(window, pattern, x_percent, y_percent, actions, exact)
 end
 
 local function move_actions(win)
-    local screen = hl.get_active_monitor()
-
-    if screen and screen.width and screen.height and win and win.size then
-        local monitor_height = screen.height / screen.scale
-        local monitor_width  = screen.width / screen.scale
-
-        local scale_factor   = (monitor_height / 4) / win.size.y
-
-        local target_width   = win.size.x * scale_factor
-        local target_height  = win.size.y * scale_factor
-
-        local x_resize = math.floor(math.max(200, target_width))
-        local y_resize = math.floor(math.max(150, target_height))
-
-        local offset = math.min(monitor_width, monitor_height) * 0.03
-
-        local move_x = math.floor(screen.x + monitor_width - x_resize - offset)
-        local move_y = math.floor(screen.y + monitor_height - y_resize - offset)
-
-        return {
-            hl.dsp.window.resize({ x = x_resize, y = y_resize, window = addr(win) }),
-            hl.dsp.window.move({ x = move_x, y = move_y, relative = false, window = addr(win) }),
-        }
+    local screen = win and (win.monitor or hl.get_active_monitor())
+    if not (screen and win.size and win.size.x and win.size.y
+        and win.size.x > 0 and win.size.y > 0) then
+        return nil
     end
+
+    -- In 0.57, mode contains logical dimensions, including scale/rotation.
+    local mode = screen.mode
+    if not (mode and mode.width and mode.height) then return nil end
+    local reserved = screen.reserved or {}
+    local left, top = reserved.left or 0, reserved.top or 0
+    local width = mode.width - left - (reserved.right or 0)
+    local height = mode.height - top - (reserved.bottom or 0)
+    if width <= 0 or height <= 0 then return nil end
+
+    local margin = math.floor(math.min(width, height) * 0.03)
+    -- One scale factor preserves aspect ratio, even for very wide windows.
+    local factor = math.min(height * 0.25 / win.size.y, width * 0.40 / win.size.x)
+    local w = math.max(1, math.floor(win.size.x * factor))
+    local h = math.max(1, math.floor(win.size.y * factor))
+
+    return {
+        hl.dsp.window.resize({ x = w, y = h, relative = false, window = addr(win) }),
+        hl.dsp.window.move({
+            x = math.floor(screen.x + left + width - w - margin),
+            y = math.floor(screen.y + top + height - h - margin),
+            relative = false, window = addr(win),
+        }),
+    }
 end
 
 -- Logical monitor size (accounts for scale), or nil if unavailable.
@@ -153,18 +158,102 @@ end
 -- Migrated Actions from keybinds.lua
 ------------------------------------------------------------------
 
-local toggle_pip = boot.safe_call(function()
-    local a = hl.get_active_window()
-    if a then
-        local pip = move_actions(a) or {}
-        if not a.floating then table.insert(pip, 1, hl.dsp.window.float()) end
-        table.insert(pip, hl.dsp.window.pin({ action = "on", window = addr(a) }))
+-- Snapshots are per window, not a global "PiP enabled" flag.
+local pip_states = {}
 
-        for _, x in ipairs(pip) do
-            hl.dispatch(x)
-        end
+local function pip_dispatch(action)
+    local result = hl.dispatch(action)
+    if type(result) == "table" and result.ok == false then
+        error(result.error or "PiP action failed")
+    end
+end
+
+local function pip_fullscreen(win, internal, client, layout_aware)
+    pip_dispatch(hl.dsp.window.fullscreen_state({
+        window = addr(win), action = "set",
+        internal = internal, client = client, layout_aware = layout_aware,
+    }))
+end
+
+local function restore_pip(win, state)
+    local target = addr(win)
+    -- Unpin before restoring tiling or fullscreen; both can reject pinned windows.
+    pip_fullscreen(win, 0, 0, state.layout_aware)
+    if win.pinned then
+        pip_dispatch(hl.dsp.window.pin({ window = target, action = "off" }))
+    end
+    if state.floating then
+        pip_dispatch(hl.dsp.window.float({ window = target, action = "on" }))
+        pip_dispatch(hl.dsp.window.resize({
+            window = target, x = state.width, y = state.height, relative = false,
+        }))
+        pip_dispatch(hl.dsp.window.move({
+            window = target, x = state.x, y = state.y, relative = false,
+        }))
+    else
+        -- Let the current layout place a formerly tiled window.
+        pip_dispatch(hl.dsp.window.float({ window = target, action = "off" }))
+    end
+    if state.pinned then
+        pip_dispatch(hl.dsp.window.pin({ window = target, action = "on" }))
+    end
+    if state.fullscreen ~= 0 or state.fullscreen_client ~= 0 then
+        pip_fullscreen(win, state.fullscreen, state.fullscreen_client, state.layout_aware)
+    end
+end
+
+local toggle_pip = boot.safe_call(function()
+    local win = hl.get_active_window()
+    if not (win and win.mapped and win.stable_id and win.address) then return end
+
+    local id = win.stable_id
+    local saved = pip_states[id]
+    if saved then
+        restore_pip(win, saved)
+        pip_states[id] = nil -- retain the snapshot if restoration fails
+        return
+    end
+
+    local actions = move_actions(win)
+    if not (actions and win.at and win.at.x and win.at.y) then return end
+    saved = {
+        address = win.address,
+        floating = win.floating, pinned = win.pinned,
+        x = win.at.x, y = win.at.y,
+        width = win.size.x, height = win.size.y,
+        fullscreen = win.fullscreen or 0,
+        fullscreen_client = win.fullscreen_client or 0,
+        layout_aware = win.fullscreen_handler ~= "default",
+    }
+    pip_states[id] = saved
+
+    local ok, err = pcall(function()
+        pip_fullscreen(win, 0, 0, saved.layout_aware)
+        pip_dispatch(hl.dsp.window.float({ window = addr(win), action = "on" }))
+        for _, action in ipairs(actions) do pip_dispatch(action) end
+        pip_dispatch(hl.dsp.window.pin({ window = addr(win), action = "on" }))
+    end)
+    if not ok then
+        -- Roll back partial entry. Keep the snapshot if rollback also fails.
+        local restored = pcall(restore_pip, win, saved)
+        if restored then pip_states[id] = nil end
+        error(err)
     end
 end, "kbWindowPip")
+
+hl.on("window.close", function(win)
+    if win and win.stable_id then pip_states[win.stable_id] = nil end
+end)
+
+-- Lua state is discarded on reload: restore windows before losing their snapshots.
+hl.on("config.unload", function()
+    for id, state in pairs(pip_states) do
+        local win = hl.get_window("address:" .. state.address)
+        if win and win.mapped and win.stable_id == id then
+            boot.safe_call(restore_pip, "PiP restore on unload")(win, state)
+        end
+    end
+end)
 
 local toggle_floating = boot.safe_call(function()
     local vars = require("hyprland.variables")

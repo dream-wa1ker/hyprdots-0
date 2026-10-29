@@ -152,6 +152,11 @@ end
 -- core modules read variables.lua. It should return either a raw variable
 -- table or { variables = { ... } }.
 local vars = boot.safe_require("hyprland.variables")
+-- Keep pristine shortcut strings available if a custom variable is invalid.
+local keybindRegistry = boot.safe_require("hyprland.lib.keybinds")
+if type(vars) == "table" and type(keybindRegistry) == "table" then
+    keybindRegistry.capture_defaults(vars.keybinds)
+end
 local customVars = load_custom_spec("variables")
 if type(vars) == "table" and type(customVars) == "table" then
     boot.deep_merge(vars, customVars.variables or customVars)
