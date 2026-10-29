@@ -4,19 +4,18 @@ config_version = 16
 ui_scale = 1.2000000104308128
 
 [bar]
-order = [ "default" ]
+order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
-    center = [ "widget_2", "ram", "date", "cpu", "special-workspaces", "cat" ]
-    concave_edge_corners = false
-    end = [ "tray", "group:g3", "group:g2", "group:g1" ]
+    center = [ "widget_2", "date", "special-workspaces", "cat" ]
+    end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
-    radius = 0
+    radius = 20
     radius_top_left = 0
     radius_top_right = 0
     scale = 1.0500000081956387
-    start = [ "launcher", "active_window", "workspaces", "media" ]
+    start = [ "launcher", "active_window", "workspaces", "media", "group:g4" ]
     thickness = 40
     widget_spacing = 10
 
@@ -36,8 +35,8 @@ order = [ "default" ]
         padding = 8.0
 
         [[bar.default.capsule_group]]
-        accordion = true
-        accordion_direction = "start"
+        accordion = false
+        accordion_direction = "end"
         border_width = 1.0
         enabled = true
         fill = "surface_container"
@@ -47,15 +46,48 @@ order = [ "default" ]
         padding = 6.0
 
         [[bar.default.capsule_group]]
-        accordion = true
-        accordion_direction = "start"
+        accordion = false
+        accordion_direction = "end"
+        border_width = 1.0
+        enabled = true
+        fill = "surface_container"
+        id = "g4"
+        members = [ "ram", "cpu" ]
+        opacity = 1.0
+        padding = 6.0
+
+        [[bar.default.capsule_group]]
+        accordion = false
+        accordion_direction = "end"
         border_width = 1.0
         enabled = true
         fill = "surface_container"
         id = "g2"
-        members = [ "battery", "input_volume", "volume", "brightness" ]
+        members = [ "input_volume", "volume", "brightness" ]
         opacity = 1.0
         padding = 6.0
+
+    [bar.left]
+    background_opacity = 0.89999997988343239
+    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
+    enabled = true
+    end = [ "privacy" ]
+    margin_ends = 0
+    panel_overlap = 2
+    position = "left"
+    radius = 20
+    radius_bottom_left = 0
+    radius_top_left = 0
+    reserve_space = false
+    scale = 1.1000000089406967
+    show_on_workspace_switch = false
+    smart_auto_hide = true
+    start = []
+    thickness = 40
+    widget_spacing = 15
+
+        [bar.left.dead_zone.actions]
+        right = "exec kitty"
 
 [battery]
 warning_threshold = 25
@@ -75,8 +107,7 @@ widget_order = [
     "desktop-widget-0000000000000004",
     "desktop-widget-0000000000000005",
     "desktop-widget-0000000000000006",
-    "desktop-widget-0000000000000007",
-    "desktop-widget-0000000000000008"
+    "desktop-widget-0000000000000007"
 ]
 
     [desktop_widgets.grid]
@@ -85,10 +116,10 @@ widget_order = [
     visible = true
 
     [desktop_widgets.widget.desktop-widget-0000000000000004]
-    box_height = 80.0
-    box_width = 1568.0
-    cx = 784.0
-    cy = 976.0
+    box_height = 96.0
+    box_width = 336.0
+    cx = 1704.0
+    cy = 984.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -97,19 +128,17 @@ widget_order = [
 
         [desktop_widgets.widget.desktop-widget-0000000000000004.settings]
         background = false
-        bands = 128
+        bands = 32
         centered = true
-        color_2 = "on_primary_container"
         mirrored = true
         reversed = false
-        show_wave = false
         show_when_idle = true
 
     [desktop_widgets.widget.desktop-widget-0000000000000005]
     box_height = 176.0
     box_width = 304.0
-    cx = 376.0
-    cy = 688.0
+    cx = 1552.0
+    cy = 808.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -124,8 +153,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000006]
     box_height = 48.0
     box_width = 320.0
-    cx = 368.0
-    cy = 768.0
+    cx = 1544.0
+    cy = 896.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -141,8 +170,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000007]
     box_height = 80.0
     box_width = 240.0
-    cx = 368.0
-    cy = 824.0
+    cx = 1424.0
+    cy = 976.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -154,32 +183,10 @@ widget_order = [
         font_family = "VictorMono NFM SemiBold"
         format = "{:%A}"
 
-    [desktop_widgets.widget.desktop-widget-0000000000000008]
-    box_height = 0.0
-    box_width = 0.0
-    cx = 1652.0
-    cy = 972.0
-    output = "eDP-1"
-    placement_height = 1200.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "fancy_audio_visualizer"
-
-        [desktop_widgets.widget.desktop-widget-0000000000000008.settings]
-        background = false
-        bar_width = 0.20000000000000001
-        bloom_intensity = 0.0
-        fade_when_idle = false
-        inner_diameter = 1.0
-        primary_color = "secondary"
-        ring_opacity = 0.80000000000000004
-        rotation_speed = 0.5
-        secondary_color = "primary"
-        sensitivity = 1.0
-        visualization_mode = "all"
-        wave_thickness = 0.60000000000000009
-
 [dock]
+auto_hide = true
+enabled = false
+position = "right"
 reserve_space = false
 show_dots = true
 show_instance_count = false
@@ -220,9 +227,8 @@ behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
 address = "Chennai, India"
 
 [lockscreen]
-transition = [ "honeycomb" ]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
+wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
 
 [lockscreen_widgets]
 enabled = true
@@ -368,7 +374,6 @@ enabled = [
     "andrewdems/vpn-manager",
     "h-jangra/region-recorder",
     "noctalia/notes",
-    "blackbartblues/keymap",
     "aristides/udiskie"
 ]
 
@@ -395,12 +400,13 @@ screen_time_enabled = true
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "wallpaper"
+source = "builtin"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
     builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
     community_ids = [
+        "codex",
         "opencode",
         "zen-browser",
         "gimp",
@@ -422,13 +428,13 @@ wallpaper_scheme = "m3-tonal-spot"
 directory = "/home/rev/Pictures/Wallpapers"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/random-anime.jpg"
+    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
@@ -445,7 +451,6 @@ capsule_padding = 10
 show_label = false
 
 [widget.cat]
-enabled = false
 type = "dotnetrob/cat:cat"
 
 [widget.clock]
@@ -472,7 +477,6 @@ show_label = false
 
 [widget.launcher]
 capsule = true
-enabled = false
 
 [widget.media]
 capsule_padding = 10
@@ -515,7 +519,6 @@ type = "aristides/udiskie:status"
 show_label = false
 
 [widget.widget_2]
-enabled = false
 type = "thepunkoff/pomodoro:widget"
 
 [widget.widget_3]
