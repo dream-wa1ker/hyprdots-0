@@ -24,7 +24,7 @@ local bindings = {
         key = kb.keybindCheatsheet,
         fallback_key = registry.default_key("keybindCheatsheet"),
         build_action = function()
-            return noctalia("panel-toggle blackbartblues/keymap:panel")
+            return hl.dsp.exec_cmd('bash "$HOME/.dotfiles/scripts/keybinds.sh"')
         end,
         options = {
             description = "View Keybindings Cheatsheet",
