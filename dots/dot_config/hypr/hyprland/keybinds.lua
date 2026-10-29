@@ -1230,6 +1230,18 @@ local bindings = {
         end,
         options = {description = "Enter Window Placement Mode"},
     },
+    {
+        key = kb.scrollHorizontal,
+        fallback_key = registry.default_key("scrollHorizontal"),
+        action = function() fn.set_scroll_direction("right") end,
+        options = {description = "Scrolling Layout: Horizontal"},
+    },
+    {
+        key = kb.scrollVertical,
+        fallback_key = registry.default_key("scrollVertical"),
+        action = function() fn.set_scroll_direction("down") end,
+        options = {description = "Scrolling Layout: Vertical"},
+    },
 }
 -- Numbered workspace bindings are generated because each action uses the
 -- workspace index while the physical key for workspace 10 is 0.

@@ -349,6 +349,27 @@ local toggle_floating = boot.safe_call(function()
     end
 end, "kbToggleWindowFloating")
 
+-- Change only the active scrolling workspace, including an open special workspace.
+local set_scroll_direction = boot.safe_call(function(direction)
+    assert(direction == "right" or direction == "down", "unsupported scroll direction")
+    local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+    if not workspace or workspace.tiled_layout ~= "scrolling" then return end
+
+    local selector = workspace.addressable_name
+    if not selector or selector == "" then
+        if workspace.special then
+            local name = tostring(workspace.name)
+            selector = name:match("^special:") and name or ("special:" .. name)
+        else
+            selector = tostring(workspace.id)
+        end
+    end
+    hl.workspace_rule({
+        workspace = selector,
+        layout_opts = { direction = direction },
+    })
+end, "setScrollDirection")
+
 local function cycle_workspace_layout(layouts)
     return boot.safe_call(function()
         local workspace = hl.get_active_workspace()
@@ -397,5 +418,6 @@ return {
     toggle_floating       = toggle_floating,
     cycle_all_layouts     = cycle_all_layouts,
     toggle_scroll_layout  = toggle_scroll_layout,
+    set_scroll_direction  = set_scroll_direction,
     noctalia              = noctalia,
 }

@@ -209,6 +209,8 @@ return {
         cycleWorkspaceLayout   = "F12",
         closeWindow            = "SUPER + C",
         toggleScrollLayout     = "SUPER + Space",
+        scrollHorizontal       = "SUPER + ALT + H",
+        scrollVertical         = "SUPER + ALT + V",
 
         -- Applications
         terminal        = "SUPER + Return",
