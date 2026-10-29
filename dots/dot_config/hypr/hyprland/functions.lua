@@ -2,6 +2,7 @@
 -- dream-wa1ker
 
 local boot = require("core.bootstrap")
+local geometry = require("hyprland.lib.geometry")
 
 local function noctalia(command)
     return hl.dsp.exec_cmd("noctalia msg " .. command)
@@ -30,24 +31,58 @@ local function wsaction(action, range, i)
     end
 end
 
-local function resize_by_screen(x, y)
-    local screen = hl.get_active_monitor()
-    if screen and type(screen.width) == "number" and type(screen.height) == "number" then
-        if not (x == 0 and y == 0) then
-            local w = (x and x > 0) and math.floor(screen.width * x / 100) or screen.width
-            local h = (y and y > 0) and math.floor(screen.height * y / 100) or screen.height
-            return { x = w, y = h, relative = false }
-        end
+local function window_monitor(win)
+    return win and win.monitor or hl.get_active_monitor()
+end
+
+local function dispatch_geometry(action)
+    local result = hl.dispatch(action)
+    if type(result) == "table" and result.ok == false then
+        error(result.error or "Window geometry action failed")
+    end
+end
+
+local function resize_by_screen(x, y, win)
+    if x == 0 and y == 0 then return nil end
+    win = win or hl.get_active_window()
+    local monitor = window_monitor(win)
+    local area = geometry.monitor_area(monitor)
+    local bounds = win and win.floating and geometry.monitor_area(monitor, true) or nil
+    local spec = {
+        wp = (type(x) == "number" and x > 0) and x / 100 or 1,
+        hp = (type(y) == "number" and y > 0) and y / 100 or 1,
+    }
+    local size = geometry.resolve_size(spec, area, bounds)
+    if not size then return nil end
+    return { x = size.width, y = size.height, relative = false, window = addr(win) }
+end
+
+local function keep_visible(win, size)
+    if not (win and win.floating and win.at) then return end
+    local monitor = window_monitor(win)
+    local area = geometry.monitor_area(monitor)
+    local bounds = geometry.monitor_area(monitor, true)
+    if not (area and bounds) then return end
+    local position = geometry.resolve_position({
+        x = win.at.x - area.x, y = win.at.y - area.y,
+    }, area, { width = size.x, height = size.y }, bounds)
+    if position and (position.x ~= win.at.x or position.y ~= win.at.y) then
+        dispatch_geometry(hl.dsp.window.move({
+            window = addr(win), x = position.x, y = position.y, relative = false,
+        }))
     end
 end
 
 local function resize_screen(x, y)
-    return function()
-        local res = resize_by_screen(x, y)
+    return boot.safe_call(function()
+        local win = hl.get_active_window()
+        if not (win and win.address) then return end
+        local res = resize_by_screen(x, y, win)
         if res then
-            hl.dispatch(hl.dsp.window.resize(res))
+            dispatch_geometry(hl.dsp.window.resize(res))
+            keep_visible(win, res)
         end
-    end
+    end, "resizeScreen")
 end
 
 local function resize_active_window(x, y)
@@ -55,7 +90,7 @@ local function resize_active_window(x, y)
     if win and win.size and win.size.x and win.size.y then
         local w = win.size.x * (x / 100)
         local h = win.size.y * (y / 100)
-        return { x = w, y = h, relative = true }
+        return { x = w, y = h, relative = true, window = addr(win) }
     end
 end
 
@@ -71,87 +106,38 @@ end
 local function resizer(window, pattern, x_percent, y_percent, actions, exact)
     if (window and window.title) and string.find(window.title, pattern, 1, exact) then
         local disp = (type(actions) == "table") and actions or { actions }
-        for _, a in ipairs(disp) do
-            hl.dispatch(a)
+        for _, action in ipairs(disp) do hl.dispatch(action) end
+        local res = resize_by_screen(x_percent, y_percent, window)
+        if res then
+            dispatch_geometry(hl.dsp.window.resize(res))
+            keep_visible(window, res)
+            dispatch_geometry(hl.dsp.window.set_prop({
+                window = addr(window), prop = "keep_aspect_ratio", value = "true",
+            }))
         end
-
-        hl.dispatch(hl.dsp.window.resize(resize_by_screen(x_percent, y_percent)))
-        hl.dispatch(hl.dsp.window.set_prop({ prop = "keep_aspect_ratio", value = "true" }))
     end
 end
 
 local function move_actions(win)
-    local screen = win and (win.monitor or hl.get_active_monitor())
-    if not (screen and win.size and win.size.x and win.size.y
-        and win.size.x > 0 and win.size.y > 0) then
-        return nil
-    end
-
-    -- In 0.57, mode contains logical dimensions, including scale/rotation.
-    local mode = screen.mode
-    if not (mode and mode.width and mode.height) then return nil end
-    local reserved = screen.reserved or {}
-    local left, top = reserved.left or 0, reserved.top or 0
-    local width = mode.width - left - (reserved.right or 0)
-    local height = mode.height - top - (reserved.bottom or 0)
-    if width <= 0 or height <= 0 then return nil end
-
-    local margin = math.floor(math.min(width, height) * 0.03)
-    -- One scale factor preserves aspect ratio, even for very wide windows.
-    local factor = math.min(height * 0.25 / win.size.y, width * 0.40 / win.size.x)
-    local w = math.max(1, math.floor(win.size.x * factor))
-    local h = math.max(1, math.floor(win.size.y * factor))
-
+    local screen = win and window_monitor(win)
+    local box = geometry.pip_box(geometry.monitor_area(screen, true), win and win.size)
+    if not box then return nil end
     return {
-        hl.dsp.window.resize({ x = w, y = h, relative = false, window = addr(win) }),
+        hl.dsp.window.resize({
+            window = addr(win), x = box.width, y = box.height, relative = false,
+        }),
         hl.dsp.window.move({
-            x = math.floor(screen.x + left + width - w - margin),
-            y = math.floor(screen.y + top + height - h - margin),
-            relative = false, window = addr(win),
+            window = addr(win), x = box.x, y = box.y, relative = false,
         }),
     }
 end
 
--- Logical monitor size (accounts for scale), or nil if unavailable.
-local function monitor_size()
-    local m = hl.get_active_monitor()
-    if m and type(m.width) == "number" and type(m.height) == "number" then
-        local s = (type(m.scale) == "number" and m.scale > 0) and m.scale or 1
-        return m.width / s, m.height / s
-    end
-end
-
--- Pixel size of a float rule on the active monitor.
-local function rule_pixels(r)
-    if r.wp and r.hp then
-        local mw, mh = monitor_size()
-        if mw then
-            return math.floor(mw * r.wp), math.floor(mh * r.hp)
-        end
-    end
-    return r.w or 1000, r.h or 600   -- pixel rule, or fallback without monitor info
-end
-
 local function floatSpawnRule(appKey, extra)
     local vars = require("hyprland.variables")
-    local class = vars.floatCommandClasses[appKey] or appKey
-    local r = vars.floatRules[class] or vars.defaultRule
-    local eff = {}
-    if r.wp and r.hp then
-        eff.size = ("(monitor_w*%s) (monitor_h*%s)"):format(r.wp, r.hp)
-    else
-        eff.size = r.w .. " " .. r.h
-    end
-
-    if r.x and r.y then
-        eff.move = { r.x, r.y }
-    end
-
-    for k, v in pairs(extra or {}) do
-        eff[k] = v
-    end
-
-    return eff
+    local effects, err = geometry.rule_effects(geometry.find_spec(vars, appKey))
+    assert(effects, err)
+    for key, value in pairs(extra or {}) do effects[key] = value end
+    return effects
 end
 
 ------------------------------------------------------------------
@@ -256,21 +242,29 @@ hl.on("config.unload", function()
 end)
 
 local toggle_floating = boot.safe_call(function()
+    local win = hl.get_active_window()
+    if not (win and win.address) then return end
+    dispatch_geometry(hl.dsp.window.float({
+        window = addr(win), action = win.floating and "off" or "on",
+    }))
+    if not win.floating then return end
+
     local vars = require("hyprland.variables")
-    hl.dispatch(hl.dsp.window.float({ action = "toggle" }))
-    local w = hl.get_active_window()
-    if w and w.floating then
-        local class = w.class and w.class:lower() or ""
-        local rule = vars.floatRules[class] or vars.defaultRule
-
-        local w_px, h_px = rule_pixels(rule)
-        hl.dispatch(hl.dsp.window.resize({ exact = true, x = w_px, y = h_px }))
-
-        if rule.x and rule.y then
-            hl.dispatch(hl.dsp.window.move({ exact = true, x = rule.x, y = rule.y }))
-        else
-            hl.dispatch(hl.dsp.window.center())
-        end
+    local spec = geometry.find_spec(vars, win.class)
+    local monitor = window_monitor(win)
+    local area = geometry.monitor_area(monitor)
+    local bounds = geometry.monitor_area(monitor, true)
+    if not (area and bounds) then return end
+    local size, err = geometry.resolve_size(spec, area, bounds)
+    assert(size, err)
+    dispatch_geometry(hl.dsp.window.resize({
+        window = addr(win), x = size.width, y = size.height, relative = false,
+    }))
+    local position = geometry.resolve_position(spec, area, size, bounds)
+    if position then
+        dispatch_geometry(hl.dsp.window.move({
+            window = addr(win), x = position.x, y = position.y, relative = false,
+        }))
     end
 end, "kbToggleWindowFloating")
 

@@ -159,7 +159,12 @@ if type(vars) == "table" and type(keybindRegistry) == "table" then
 end
 local customVars = load_custom_spec("variables")
 if type(vars) == "table" and type(customVars) == "table" then
-    boot.deep_merge(vars, customVars.variables or customVars)
+    local geometry = boot.safe_require("hyprland.lib.geometry")
+    if type(geometry) == "table" then
+        geometry.merge_overrides(vars, customVars.variables or customVars, boot.deep_merge)
+    else
+        boot.deep_merge(vars, customVars.variables or customVars)
+    end
 end
 
 -- Default monitor configuration

@@ -2,6 +2,7 @@
 -- dream-wa1ker
 local vars = require("hyprland.variables")
 local boot = require("core.bootstrap")
+local geometry = require("hyprland.lib.geometry")
 
 ----------------------
 ---- Window rules ----
@@ -23,13 +24,6 @@ local window_rules = {
     { match = { class = "org.quickshell" },      tag = "+opaque_app" },  
     { match = { tag = "opaque_app" },            opaque = true },
 
-    ------------------------------------------------------------------
-    -- Floating utility apps (sized/centered via variables.floatRules,
-    -- applied at spawn time by fn.floatSpawnRule in keybinds.lua — these
-    -- window_rule entries just catch the ones NOT spawned through a keybind,
-    -- e.g. launched from a menu/rofi/fuzzel directly)
-    ------------------------------------------------------------------
-
     -- GTK/portal file pickers and misc system dialogs (xdg-desktop-portal-gtk)
     {
         match = {
@@ -40,34 +34,11 @@ local window_rules = {
 
     { match = { tag = "float" }, float = true },
 
-    ------------------------------------------------------------------
-    -- Proportionally-sized floating utility windows (scale with monitor,
-    -- unlike variables.floatRules which is fixed-pixel)
-    ------------------------------------------------------------------
-    { match = { class = "org.pulseaudio.pavucontrol" },   tag = "+float_60_70" },
-    { match = { class = "dev.geopjr.Tuba" },              tag = "+float_70_80" },
-    { match = { class = "nwg-look" },                     tag = "+float_50_60" },
-    { match = { class = "blueman-manager" },              tag = "+float_60_70" },
-    { match = { class = "org.kde.partitionmanager" },     tag = "+float_70_80" },
-
-    {
-        match  = { tag = "float_60_70" },
-        float  = true,
-        size   = "(monitor_w*0.6) (monitor_h*0.7)",
-        center = true,
-    },
-    {
-        match  = { tag = "float_70_80" },
-        float  = true,
-        size   = "(monitor_w*0.7) (monitor_h*0.8)",
-        center = true,
-    },
-    {
-        match  = { tag = "float_50_60" },
-        float  = true,
-        size   = "(monitor_w*0.5) (monitor_h*0.6)",
-        center = true,
-    },
+    -- Expanded from variables.floatRules at these positions to preserve precedence.
+    { utility = "dev.geopjr.tuba" },
+    { utility = "nwg-look" },
+    { utility = "blueman-manager" },
+    { utility = "org.kde.partitionmanager" },
 
     -- Xwayland empty-title/class popups (menus, tooltips) — don't dim/shadow/blur
     { match = { xwayland = true, title = "win[0-9]+" }, tag = "+xwl_popup" },
@@ -92,25 +63,52 @@ local window_rules = {
     -- File pickers / system dialogs by window title (float + center,
     -- some with an explicit size)
     ------------------------------------------------------------------
-    { match = { title = "^(Open File)(.*)$" },        center = true },
-    { match = { title = "^(Open File)(.*)$" },        float = true },
-    { match = { title = "^(Select a File)(.*)$" },    center = true },
-    { match = { title = "^(Select a File)(.*)$" },    float = true },
-    { match = { title = "^(Choose wallpaper)(.*)$" }, center = true },
-    { match = { title = "^(Choose wallpaper)(.*)$" }, float = true },
-    { match = { title = "^(Choose wallpaper)(.*)$" }, size = { "(monitor_w*0.60)", "(monitor_h*0.65)" } },
-    { match = { title = "^(Open Folder)(.*)$" },      center = true },
-    { match = { title = "^(Open Folder)(.*)$" },      float = true },
-    { match = { title = "^(Save As)(.*)$" },          center = true },
-    { match = { title = "^(Save As)(.*)$" },          float = true },
-    { match = { title = "^(Library)(.*)$" },          center = true },
-    { match = { title = "^(Library)(.*)$" },          float = true },
-    { match = { title = "^(File Upload)(.*)$" },      center = true },
-    { match = { title = "^(File Upload)(.*)$" },      float = true },
-    { match = { title = "^(.*)(wants to save)$" },    center = true },
-    { match = { title = "^(.*)(wants to save)$" },    float = true },
-    { match = { title = "^(.*)(wants to open)$" },    center = true },
-    { match = { title = "^(.*)(wants to open)$" },    float = true },
+    {
+        match = { title = "^(Open File)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(Select a File)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(Choose wallpaper)(.*)$" },
+        center = true,
+        float = true,
+        size = { "(monitor_w*0.60)", "(monitor_h*0.65)" },
+    },
+    {
+        match = { title = "^(Open Folder)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(Save As)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(Library)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(File Upload)(.*)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(.*)(wants to save)$" },
+        center = true,
+        float = true,
+    },
+    {
+        match = { title = "^(.*)(wants to open)$" },
+        center = true,
+        float = true,
+    },
 
     ------------------------------------------------------------------
     -- Misc apps that should always float
@@ -118,18 +116,8 @@ local window_rules = {
     { match = { class = "^(blueberry\\.py)$" }, float = true }, -- Bluetooth manager
     { match = { class = "^(guifetch)$" },       float = true }, -- FlafyDev/guifetch
 
-    -- pavucontrol: float, size, and center (both legacy and portal class names)
-    { match = { class = "^(pavucontrol)$" },                float = true },
-    { match = { class = "^(pavucontrol)$" },                size = { "(monitor_w*0.45)", "(monitor_h*0.45)" } },
-    { match = { class = "^(pavucontrol)$" },                center = true },
-    { match = { class = "^(org.pulseaudio.pavucontrol)$" }, float = true },
-    { match = { class = "^(org.pulseaudio.pavucontrol)$" }, size = { "(monitor_w*0.45)", "(monitor_h*0.45)" } },
-    { match = { class = "^(org.pulseaudio.pavucontrol)$" }, center = true },
-
-    -- NetworkManager connection editor: float, size, and center
-    { match = { class = "^(nm-connection-editor)$" }, float = true },
-    { match = { class = "^(nm-connection-editor)$" }, size = { "(monitor_w*0.45)", "(monitor_h*0.45)" } },
-    { match = { class = "^(nm-connection-editor)$" }, center = true },
+    { utility = "org.pulseaudio.pavucontrol" },
+    { utility = "nm-connection-editor" },
 
     { match = { class = ".*plasmawindowed.*" },        float = true }, -- Plasma applets run standalone
     { match = { class = "kcm_.*" },                    float = true }, -- KDE System Settings modules
@@ -137,20 +125,20 @@ local window_rules = {
     { match = { title = ".*Welcome" },                 float = true },
     { match = { title = ".*Shell conflicts.*" },       float = true },
 
-    { match = { class = "org.freedesktop.impl.portal.desktop.kde" }, float = true },
-    { match = { class = "org.freedesktop.impl.portal.desktop.kde" }, size = { "(monitor_w*0.60)", "(monitor_h*0.65)" } },
-
-    { match = { class = "^(Zotero)$" }, float = true },
-    { match = { class = "^(Zotero)$" }, size = { "(monitor_w*0.45)", "(monitor_h*0.45)" } },
+    { utility = "org.freedesktop.impl.portal.desktop.kde" },
+    { utility = "zotero" },
 
     ------------------------------------------------------------------
     -- Move (offscreen / repositioned windows)
     ------------------------------------------------------------------
     -- kde-material-you-colors spawns a window when changing dark/light theme.
     -- This makes sure it never interferes visually — parked off-screen.
-    { match = { class = "^(plasma-changeicons)$" }, float = true },
-    { match = { class = "^(plasma-changeicons)$" }, no_initial_focus = true },
-    { match = { class = "^(plasma-changeicons)$" }, move = { 999999, 999999 } },
+    {
+        match = { class = "^(plasma-changeicons)$" },
+        float = true,
+        no_initial_focus = true,
+        move = { 999999, 999999 },
+    },
 
     -- Dolphin's copy-progress dialog pops up centered by default; nudge it aside.
     { match = { title = "^(Copying — Dolphin)$" }, move = { 40, 80 } },
@@ -163,18 +151,24 @@ local window_rules = {
     ------------------------------------------------------------------
     -- Picture-in-Picture: float, pinned, fixed size/position, keep aspect
     ------------------------------------------------------------------
-    { match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, float = true },
-    { match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, keep_aspect_ratio = true },
-    { match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, move = { "(monitor_w*0.73)", "(monitor_h*0.72)" } },
-    { match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, size = { "(monitor_w*0.25)", "(monitor_h*0.25)" } },
-    { match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" }, pin = true },
+    {
+        match = { title = "^([Pp]icture[-\\s]?[Ii]n[-\\s]?[Pp]icture)(.*)$" },
+        float = true,
+        keep_aspect_ratio = true,
+        move = { "(monitor_w*0.73)", "(monitor_h*0.72)" },
+        size = { "(monitor_w*0.25)", "(monitor_h*0.25)" },
+        pin = true,
+    },
 
     ------------------------------------------------------------------
     -- Screen sharing indicator: float, pinned, docked at bottom-center
     ------------------------------------------------------------------
-    { match = { title = ".*is sharing (a window|your screen).*" }, float = true },
-    { match = { title = ".*is sharing (a window|your screen).*" }, pin = true },
-    { match = { title = ".*is sharing (a window|your screen).*" }, move = { "(monitor_w*.5-window_w*.5)", "(monitor_h-window_h-12)" } },
+    {
+        match = { title = ".*is sharing (a window|your screen).*" },
+        float = true,
+        pin = true,
+        move = { "(monitor_w*.5-window_w*.5)", "(monitor_h-window_h-12)" },
+    },
 
     ------------------------------------------------------------------
     -- Tearing: force immediate presentation for latency-sensitive/
@@ -186,10 +180,40 @@ local window_rules = {
 
     -- No shadow for tiled windows (only floating windows get shadows)
     { match = { float = false }, no_shadow = true },
-    { match = { class = "dev.noctalia.Noctalia" }, float = true, size = {1080, 920} },
+    { utility = "dev.noctalia.noctalia" },
 }
 
-boot.apply_all(hl.window_rule, window_rules, "rules.window")
+local expanded, handled = {}, {}
+local function add_utility(key)
+    local spec = vars.floatRules[key]
+    if not (spec and spec.auto_float) then return end
+    local effects, err = geometry.rule_effects(spec)
+    if not effects then
+        print("[Hyprland config] geometry: " .. key .. ": " .. tostring(err))
+        return
+    end
+    effects.name = "float." .. key
+    effects.match = { class = geometry.class_pattern(key, spec) }
+    effects.float = true
+    expanded[#expanded + 1] = effects
+end
+
+for _, rule in ipairs(window_rules) do
+    if rule.utility then
+        handled[rule.utility] = true
+        add_utility(rule.utility)
+    else expanded[#expanded + 1] = rule end
+end
+
+-- New custom utility specifications are deterministic and precede custom/rules.lua.
+local additional = {}
+for key, spec in pairs(vars.floatRules) do
+    if spec.auto_float and not handled[key] then additional[#additional + 1] = key end
+end
+table.sort(additional)
+for _, key in ipairs(additional) do add_utility(key) end
+
+boot.apply_all(hl.window_rule, expanded, "rules.window")
 
 -------------------------
 ---- Workspace rules ----

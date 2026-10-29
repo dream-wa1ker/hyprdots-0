@@ -56,16 +56,32 @@ return {
     sleepGestureCmd = "systemctl suspend-then-hibernate",
     shell           = "noctalia",
 
-    -- Float rules, keyed by lowercase window class.
-    -- Size is pixels { w, h } or monitor fractions { wp, hp } (0 to 1).
-    -- Optional { x, y } places the window in pixels; otherwise it is centered.
-    -- Keep the fractions in step with the float_* tags in hyprland/rules.lua.
+    -- Floating geometry in logical pixels (w/h) or full-monitor fractions (wp/hp).
+    -- x/y are monitor-local offsets; omit them to center within the usable area.
+    -- auto_float opts a utility into a native rule; ordinary apps stay tiled.
+    -- classes lists exact aliases when the real class differs from the lowercase key.
     floatRules = {
         ["org.kde.dolphin"]            = { w = 1000, h = 600, x = 100, y = 100 },
-        ["org.pulseaudio.pavucontrol"] = { wp = 0.45, hp = 0.45 },
-        ["blueman-manager"]            = { wp = 0.6,  hp = 0.7 },
-        ["nwg-look"]                   = { wp = 0.5,  hp = 0.6 },
-        ["org.kde.partitionmanager"]   = { wp = 0.7,  hp = 0.8 },
+        ["org.pulseaudio.pavucontrol"] = {
+            wp = 0.45, hp = 0.45, auto_float = true,
+            classes = { "org.pulseaudio.pavucontrol", "pavucontrol" },
+        },
+        ["blueman-manager"]          = { wp = 0.6, hp = 0.7, auto_float = true },
+        ["nwg-look"]                 = { wp = 0.5, hp = 0.6, auto_float = true },
+        ["org.kde.partitionmanager"] = { wp = 0.7, hp = 0.8, auto_float = true },
+        ["dev.geopjr.tuba"] = {
+            wp = 0.7, hp = 0.8, auto_float = true, classes = { "dev.geopjr.Tuba" },
+        },
+        ["nm-connection-editor"] = { wp = 0.45, hp = 0.45, auto_float = true },
+        ["org.freedesktop.impl.portal.desktop.kde"] = {
+            wp = 0.6, hp = 0.65, auto_float = true,
+        },
+        ["zotero"] = {
+            wp = 0.45, hp = 0.45, auto_float = true, classes = { "Zotero" },
+        },
+        ["dev.noctalia.noctalia"] = {
+            w = 1080, h = 920, auto_float = true, classes = { "dev.noctalia.Noctalia" },
+        },
     },
 
     -- Map launch commands to their lowercase window classes, for commands
