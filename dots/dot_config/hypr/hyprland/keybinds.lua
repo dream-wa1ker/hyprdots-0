@@ -13,6 +13,7 @@ local bindings = {
         action = noctalia("panel-toggle launcher"),
         options = {
             description = "Toggle Launcher / Search",
+            release = true,
         },
     },
     {
@@ -389,7 +390,7 @@ local bindings = {
     },
     {
         key = kb.lockActiveGroup,
-        action = hl.dsp.group.lock_active(),
+        action = hl.dsp.group.lock(),
         options = {
             description = "Lock Active Group",
         },
