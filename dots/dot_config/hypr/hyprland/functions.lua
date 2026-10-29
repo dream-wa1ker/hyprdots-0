@@ -146,6 +146,7 @@ end
 
 -- Snapshots are per window, not a global "PiP enabled" flag.
 local pip_states = {}
+local placement_states = {}
 
 local function pip_dispatch(action)
     local result = hl.dispatch(action)
@@ -188,6 +189,41 @@ local function restore_pip(win, state)
     end
 end
 
+local function snapshot(win)
+    local monitor = window_monitor(win)
+    return {
+        address = win.address,
+        floating = win.floating, pinned = win.pinned,
+        x = win.at.x, y = win.at.y,
+        width = win.size.x, height = win.size.y,
+        fullscreen = win.fullscreen or 0,
+        fullscreen_client = win.fullscreen_client or 0,
+        layout_aware = win.fullscreen_handler ~= "default",
+        monitor_name = monitor and monitor.name,
+        monitor_x = monitor and monitor.x or 0,
+        monitor_y = monitor and monitor.y or 0,
+    }
+end
+
+local function restore_placement(win, state)
+    local adjusted = {}
+    for key, value in pairs(state) do adjusted[key] = value end
+    if state.floating then
+        local monitor = state.monitor_name and hl.get_monitor(state.monitor_name)
+        if not monitor or monitor.disabled then monitor = window_monitor(win) end
+        local area = geometry.monitor_area(monitor)
+        local bounds = geometry.monitor_area(monitor, true)
+        assert(area and bounds, "monitor unavailable for placement restoration")
+        local size = assert(geometry.resolve_size({w = state.width, h = state.height}, area, bounds))
+        local position = geometry.resolve_position({
+            x = state.x - state.monitor_x, y = state.y - state.monitor_y,
+        }, area, size, bounds)
+        adjusted.width, adjusted.height = size.width, size.height
+        adjusted.x, adjusted.y = position.x, position.y
+    end
+    restore_pip(win, adjusted)
+end
+
 local toggle_pip = boot.safe_call(function()
     local win = hl.get_active_window()
     if not (win and win.mapped and win.stable_id and win.address) then return end
@@ -200,17 +236,13 @@ local toggle_pip = boot.safe_call(function()
         return
     end
 
+    if placement_states[id] then
+        restore_placement(win, placement_states[id])
+        placement_states[id] = nil
+    end
     local actions = move_actions(win)
     if not (actions and win.at and win.at.x and win.at.y) then return end
-    saved = {
-        address = win.address,
-        floating = win.floating, pinned = win.pinned,
-        x = win.at.x, y = win.at.y,
-        width = win.size.x, height = win.size.y,
-        fullscreen = win.fullscreen or 0,
-        fullscreen_client = win.fullscreen_client or 0,
-        layout_aware = win.fullscreen_handler ~= "default",
-    }
+    saved = snapshot(win)
     pip_states[id] = saved
 
     local ok, err = pcall(function()
@@ -227,12 +259,61 @@ local toggle_pip = boot.safe_call(function()
     end
 end, "kbWindowPip")
 
+local place_window = boot.safe_call(function(preset)
+    local win = hl.get_active_window()
+    if not (win and win.mapped and win.stable_id and win.address and win.at and win.size) then return end
+    local monitor = window_monitor(win)
+    local vars = require("hyprland.variables")
+    local box, err = geometry.preset_box(preset, geometry.monitor_area(monitor, true),
+        vars.defaultRule, geometry.monitor_area(monitor))
+    assert(box, err)
+    local id = win.stable_id
+    if pip_states[id] then
+        restore_pip(win, pip_states[id])
+        pip_states[id] = nil
+    end
+    local saved = placement_states[id] or snapshot(win)
+    placement_states[id] = saved
+    local ok, failure = pcall(function()
+        pip_fullscreen(win, 0, 0, saved.layout_aware)
+        pip_dispatch(hl.dsp.window.float({window = addr(win), action = "on"}))
+        pip_dispatch(hl.dsp.window.resize({
+            window = addr(win), x = box.width, y = box.height, relative = false,
+        }))
+        pip_dispatch(hl.dsp.window.move({
+            window = addr(win), x = box.x, y = box.y, relative = false,
+        }))
+    end)
+    if not ok then
+        if pcall(restore_placement, win, saved) then placement_states[id] = nil end
+        error(failure)
+    end
+end, "windowPlacement")
+
+local restore_window_placement = boot.safe_call(function()
+    local win = hl.get_active_window()
+    if not (win and win.mapped and win.stable_id and win.address) then return end
+    local saved = placement_states[win.stable_id]
+    if saved then
+        restore_placement(win, saved)
+        placement_states[win.stable_id] = nil
+    end
+end, "restoreWindowPlacement")
+
 hl.on("window.close", function(win)
-    if win and win.stable_id then pip_states[win.stable_id] = nil end
+    if win and win.stable_id then
+        pip_states[win.stable_id], placement_states[win.stable_id] = nil, nil
+    end
 end)
 
 -- Lua state is discarded on reload: restore windows before losing their snapshots.
 hl.on("config.unload", function()
+    for id, state in pairs(placement_states) do
+        local win = hl.get_window("address:" .. state.address)
+        if win and win.mapped and win.stable_id == id then
+            boot.safe_call(restore_placement, "Placement restore on unload")(win, state)
+        end
+    end
     for id, state in pairs(pip_states) do
         local win = hl.get_window("address:" .. state.address)
         if win and win.mapped and win.stable_id == id then
@@ -311,6 +392,8 @@ return {
     move_actions          = move_actions,
     floatSpawnRule        = floatSpawnRule,
     toggle_pip            = toggle_pip,
+    place_window          = place_window,
+    restore_window_placement = restore_window_placement,
     toggle_floating       = toggle_floating,
     cycle_all_layouts     = cycle_all_layouts,
     toggle_scroll_layout  = toggle_scroll_layout,

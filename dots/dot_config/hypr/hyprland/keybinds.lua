@@ -1222,6 +1222,14 @@ local bindings = {
             description = "Stop Playback",
         },
     },
+    {
+        key = kb.geometryMode,
+        fallback_key = registry.default_key("geometryMode"),
+        build_action = function()
+            return hl.dsp.submap("geometry")
+        end,
+        options = {description = "Enter Window Placement Mode"},
+    },
 }
 -- Numbered workspace bindings are generated because each action uses the
 -- workspace index while the physical key for workspace 10 is 0.
@@ -1269,6 +1277,43 @@ for i = 1, 10 do
     }
 end
 -- Custom replacements are attempted first; a failure retains the default.
-return registry.register(bindings, function()
+local result = registry.register(bindings, function()
     return require("custom.keybinds")
 end)
+
+-- Letter shortcuts are scoped to this mode; reset before running any action.
+hl.define_submap("geometry", function()
+    local entries = {
+        {key = "Escape", build_action = function() return hl.dsp.submap("reset") end,
+            options = {description = "Cancel Window Placement"}},
+        {key = "catchall", build_action = function() return hl.dsp.submap("reset") end,
+            options = {description = "Cancel Window Placement"}},
+    }
+    local presets = {
+        {"geometryLeft", "left"}, {"geometryRight", "right"},
+        {"geometryTop", "top"}, {"geometryBottom", "bottom"},
+        {"geometryTopLeft", "top_left"}, {"geometryTopRight", "top_right"},
+        {"geometryBottomLeft", "bottom_left"}, {"geometryBottomRight", "bottom_right"},
+        {"geometryCenter", "center"}, {"geometryFill", "fill"},
+        {"geometryRestore", "restore"},
+    }
+    for _, pair in ipairs(presets) do
+        local name, preset = pair[1], pair[2]
+        entries[#entries + 1] = {
+            key = kb[name], fallback_key = registry.default_key(name),
+            action = function()
+                hl.dispatch(hl.dsp.submap("reset"))
+                if preset == "restore" then fn.restore_window_placement()
+                else fn.place_window(preset) end
+            end,
+            options = {description = "Window Placement: " .. preset},
+        }
+    end
+    registry.register(entries)
+end)
+
+hl.on("config.unload", function()
+    if hl.get_current_submap() == "geometry" then hl.dispatch(hl.dsp.submap("reset")) end
+end)
+
+return result

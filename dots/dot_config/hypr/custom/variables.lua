@@ -45,6 +45,8 @@ return {
     -- duplicates, so if the new combination is taken, move the other action too.
     keybinds = {
         powerSaver = "SUPER + ALT + B", -- power saver on/off, see custom/functions.lua
+        -- geometryMode = "SUPER + ALT + Z", -- enter placement mode
+        -- geometryLeft = "Left", -- only inside placement mode
         -- browser         = "SUPER + SHIFT + B",
         -- floatingBrowser = "SUPER + B",
     },

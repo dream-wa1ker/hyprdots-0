@@ -229,4 +229,36 @@ function M.class_pattern(key, spec)
     return "^(" .. table.concat(classes, "|") .. ")$"
 end
 
+-- Fractions describe shared edges, so odd-sized halves meet without gaps.
+local presets = {
+    left = {0, 0, .5, 1}, right = {.5, 0, 1, 1},
+    top = {0, 0, 1, .5}, bottom = {0, .5, 1, 1},
+    top_left = {0, 0, .5, .5}, top_right = {.5, 0, 1, .5},
+    bottom_left = {0, .5, .5, 1}, bottom_right = {.5, .5, 1, 1},
+    fill = {0, 0, 1, 1},
+}
+
+function M.preset_box(name, area, center_spec, full_area)
+    if not (area and finite(area.x) and finite(area.y)
+        and positive(area.width) and area.width >= 1
+        and positive(area.height) and area.height >= 1) then
+        return nil, "usable monitor area unavailable"
+    end
+    if name == "center" then
+        local size, err = M.resolve_size(center_spec or {wp = .55, hp = .6}, full_area or area, area)
+        if not size then return nil, err end
+        local position = M.resolve_position({center = true}, full_area or area, size, area)
+        return {x = position.x, y = position.y, width = size.width, height = size.height}
+    end
+    local edges = presets[name]
+    if not edges then return nil, "unknown placement preset: " .. tostring(name) end
+    local left = math.min(math.floor(area.width * edges[1]), math.floor(area.width) - 1)
+    local top = math.min(math.floor(area.height * edges[2]), math.floor(area.height) - 1)
+    return {
+        x = area.x + left, y = area.y + top,
+        width = math.max(1, math.floor(area.width * edges[3]) - left),
+        height = math.max(1, math.floor(area.height * edges[4]) - top),
+    }
+end
+
 return M

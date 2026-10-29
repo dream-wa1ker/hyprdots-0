@@ -191,15 +191,23 @@ return {
         centerWindow      = "SUPER + Backslash",
         resizeWindowToScreen = "CTRL + Backslash",
 
+        -- Placement submap: press the prefix, release it, then one preset key.
+        geometryMode = "SUPER + Z",
+        geometryLeft = "H", geometryRight = "L",
+        geometryTop = "K", geometryBottom = "J",
+        geometryTopLeft = "Y", geometryTopRight = "U",
+        geometryBottomLeft = "B", geometryBottomRight = "N",
+        geometryCenter = "C", geometryFill = "F", geometryRestore = "R",
+
         -- Window modes / layout
         pictureInPicture       = "f6",
-        pseudotileWindow       = "F8",
         pinWindow              = "F7",
-        fullscreenWindow       = "F10",
+        pseudotileWindow       = "F8",
         maximizedWindow        = "f9",
+        fullscreenWindow       = "F10",
         toggleFloating         = "F11",
-        closeWindow            = "SUPER + C",
         cycleWorkspaceLayout   = "F12",
+        closeWindow            = "SUPER + C",
         toggleScrollLayout     = "SUPER + Space",
 
         -- Applications
