@@ -2,10 +2,11 @@
 -- dream-wa1ker
 
 local vars = require("hyprland.variables")
+local lib = require("hyprland.lib")
 
 hl.on("hyprland.start", function ()
 
-    hl.exec_cmd("noctalia")
+    hl.exec_cmd(lib.shell_quote(vars.shell))
     hl.exec_cmd("hyprctl setcursor " ..vars.cursorTheme.. " "..vars.cursorSize)
     -- Core components (authentication, lock screen, notification daemon)
     hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
@@ -15,7 +16,9 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("mpris-proxy")
     hl.exec_cmd("mpd-mpris")
 
-    -- KDE Connect
-    hl.exec_cmd("kdeconnect-indicator")
+    -- Startup-only setting; changing it does not stop a running indicator.
+    if vars.autostartKdeConnect == true then
+        hl.exec_cmd("kdeconnect-indicator")
+    end
 
 end)

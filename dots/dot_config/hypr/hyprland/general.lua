@@ -6,7 +6,7 @@ local vars = require("hyprland.variables")
 hl.config({
     general = {
         layout        = "dwindle",
-        allow_tearing = false, -- lets the `immediate` window rule work if you add one later
+        allow_tearing = false, -- disable tearing globally, including windows with an immediate rule
 
         gaps_workspaces = vars.workspaceGaps,
         gaps_in         = vars.windowGapsIn,

@@ -32,7 +32,7 @@ return {
     -- blurPasses   = 2,         -- cheaper on integrated graphics
     -- windowGapsIn = 3,
     -- cursorSize   = 24,
-    -- autostartKdeConnect = true, -- opens network listeners at login, see hyprland/execs.lua
+    -- autostartKdeConnect = false, -- disable the indicator at the next login; does not stop a running process
 
     -- Geometry examples (the default values live in hyprland/variables.lua):
     -- floatRules = {

@@ -12,11 +12,18 @@ local function addr(win)
     return win and win.address and ("address:" .. win.address) or nil
 end
 
+-- Canonical selectors cover numbered, named, and special workspaces.
+local function workspace_selector(workspace)
+    local selector = workspace and workspace.addressable_name
+    if type(selector) == "string" and selector ~= "" then return selector end
+end
+
 local function wsaction(action, range, i)
     return function()
         local activews = hl.get_active_workspace()
         if activews then
-            local id = activews.id
+            -- Named workspaces use workspace 1 as the group/slot reference.
+            local id = type(activews.id) == "number" and activews.id or 1
             local slot = ((id - 1) % 10) + 1
             local s = (i - 1) * 10 + slot
             local t  = math.floor((id - 1) / 10) * 10 + i
@@ -210,7 +217,9 @@ local function restore_placement(win, state)
     for key, value in pairs(state) do adjusted[key] = value end
     if state.floating then
         local monitor = state.monitor_name and hl.get_monitor(state.monitor_name)
-        if not monitor or monitor.disabled then monitor = window_monitor(win) end
+        if not monitor or not monitor.enabled then monitor = win.monitor end
+        if not monitor or not monitor.enabled then monitor = hl.get_active_monitor() end
+        assert(monitor and monitor.enabled, "monitor unavailable for placement restoration")
         local area = geometry.monitor_area(monitor)
         local bounds = geometry.monitor_area(monitor, true)
         assert(area and bounds, "monitor unavailable for placement restoration")
@@ -355,15 +364,8 @@ local set_scroll_direction = boot.safe_call(function(direction)
     local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
     if not workspace or workspace.tiled_layout ~= "scrolling" then return end
 
-    local selector = workspace.addressable_name
-    if not selector or selector == "" then
-        if workspace.special then
-            local name = tostring(workspace.name)
-            selector = name:match("^special:") and name or ("special:" .. name)
-        else
-            selector = tostring(workspace.id)
-        end
-    end
+    local selector = workspace_selector(workspace)
+    if not selector then return end
     hl.workspace_rule({
         workspace = selector,
         layout_opts = { direction = direction },
@@ -372,16 +374,11 @@ end, "setScrollDirection")
 
 local function cycle_workspace_layout(layouts)
     return boot.safe_call(function()
-        local workspace = hl.get_active_workspace()
-        if hl.get_active_special_workspace() then
-            workspace = hl.get_active_special_workspace()
-        end
+        local workspace = hl.get_active_special_workspace() or hl.get_active_workspace()
+        local selector = workspace_selector(workspace)
+        if not selector then return end
 
         local next_layout = "dwindle"
-
-        if not workspace then
-            return
-        end
 
         for i = 1, #layouts do
             if layouts[i] == workspace.tiled_layout then
@@ -391,11 +388,7 @@ local function cycle_workspace_layout(layouts)
             end
         end
 
-        if workspace.special then
-            hl.workspace_rule({ workspace = tostring(workspace.name), layout = next_layout })
-        else
-            hl.workspace_rule({ workspace = tostring(workspace.id), layout = next_layout })
-        end
+        hl.workspace_rule({ workspace = selector, layout = next_layout })
     end)
 end
 

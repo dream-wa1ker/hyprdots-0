@@ -54,7 +54,8 @@ return {
     cursorTheme     = "Bibata-Modern-Classic",
     cursorSize      = 14,
     sleepGestureCmd = "systemctl suspend-then-hibernate",
-    shell           = "noctalia",
+    shell           = "noctalia", -- executable name or path, without arguments
+    autostartKdeConnect = true, -- launch the indicator at session startup
 
     -- Floating geometry in logical pixels (w/h) or full-monitor fractions (wp/hp).
     -- x/y are monitor-local offsets; omit them to center within the usable area.

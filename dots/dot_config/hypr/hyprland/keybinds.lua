@@ -290,7 +290,7 @@ local bindings = {
             return hl.dsp.exec_cmd('bash ~/.dotfiles/scripts/profile-switch')
         end,
         options = {
-            description = "Save Monitor Screenshot",
+            description = "Switch Desktop Profile",
         },
     },
 
