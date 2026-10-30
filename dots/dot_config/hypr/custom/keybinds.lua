@@ -37,28 +37,11 @@
 
 local vars = require("hyprland.variables")
 local fn   = require("hyprland.functions")
-local lib  = require("hyprland.lib")
+local apps = require("hyprland.lib.apps")
 local kb   = type(vars.keybinds) == "table" and vars.keybinds or {}
 
 return {
     -- Active ---------------------------------------------------------------------
-    {
-        key = kb.editor,
-        build_action = function()
-            return hl.dsp.exec_cmd(fn.editor_command())
-        end,
-        options = { description = "Editor" },
-    },
-    {
-        key = kb.floatingEditor,
-        build_action = function()
-            return hl.dsp.exec_cmd(
-                fn.editor_command(),
-                fn.floatSpawnRule(fn.editor_rule_key(), { float = true })
-            )
-        end,
-        options = { description = "Floating editor" },
-    },
     {
         key = kb.powerSaver,
         build_action = function()
@@ -74,7 +57,7 @@ return {
         build_action = function()
             local home = assert(os.getenv("HOME"), "HOME is not set")
             local path = home .. "/.config/hypr/custom/keybinds.lua"
-            return hl.dsp.exec_cmd(fn.editor_command() .. " " .. lib.shell_quote(path))
+            return apps.launch("editor", { args = { path } })
         end,
         options = { description = "Edit Custom Keybindings" },
     },
@@ -87,7 +70,7 @@ return {
     },
 
     -- Examples: remove the leading `--` to enable --------------------------------
-    -- fn.bind("SUPER + ALT + T", hl.dsp.exec_cmd(vars.terminal .. " -e btop"), "System monitor"),
+    -- fn.bind("SUPER + ALT + T", apps.launch("terminal", { args = { "-e", "btop" } }), "System monitor"),
     -- fn.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
     --         "Mute", { locked = true }),
 }

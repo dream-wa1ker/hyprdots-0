@@ -2,6 +2,7 @@
 -- Declarative keybinding registry. All shortcut strings live in variables.lua.
 local registry = require("hyprland.lib.keybinds")
 local vars = require("hyprland.variables")
+local apps = require("hyprland.lib.apps")
 local fn = require("hyprland.functions")
 local kb = type(vars.keybinds) == "table" and vars.keybinds or {}
 local noctalia = fn.noctalia
@@ -907,7 +908,7 @@ local bindings = {
         key = kb.terminal,
         fallback_key = registry.default_key("terminal"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.terminal)
+            return apps.launch("terminal")
         end,
         options = {
             description = "Launch Default Terminal",
@@ -917,7 +918,7 @@ local bindings = {
         key = kb.browser,
         fallback_key = registry.default_key("browser"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.browser)
+            return apps.launch("browser")
         end,
         options = {
             description = "Launch Default Web Browser",
@@ -927,7 +928,7 @@ local bindings = {
         key = kb.editor,
         fallback_key = registry.default_key("editor"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.editor)
+            return apps.launch("editor")
         end,
         options = {
             description = "Launch Default Text Editor",
@@ -937,7 +938,7 @@ local bindings = {
         key = kb.fileExplorer,
         fallback_key = registry.default_key("fileExplorer"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.fileExplorer)
+            return apps.launch("fileManager")
         end,
         options = {
             description = "Launch Default File Manager",
@@ -947,7 +948,7 @@ local bindings = {
         key = kb.audioMixer,
         fallback_key = registry.default_key("audioMixer"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.audioSettings)
+            return apps.launch("audioMixer")
         end,
         options = {
             description = "Launch Volume Mixer",
@@ -957,7 +958,7 @@ local bindings = {
         key = kb.floatingTerminal,
         fallback_key = registry.default_key("floatingTerminal"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { float = true }))
+            return apps.launch("terminal", { floating = true })
         end,
         options = {
             description = "Launch Terminal in (Floating)",
@@ -967,7 +968,7 @@ local bindings = {
         key = kb.floatingBrowser,
         fallback_key = registry.default_key("floatingBrowser"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.browser, fn.floatSpawnRule(vars.browser, { float = true }))
+            return apps.launch("browser", { floating = true })
         end,
         options = {
             description = "Launch Web Browser in (Floating)",
@@ -977,7 +978,7 @@ local bindings = {
         key = kb.floatingEditor,
         fallback_key = registry.default_key("floatingEditor"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.editor, fn.floatSpawnRule(vars.editor, { float = true }))
+            return apps.launch("editor", { floating = true })
         end,
         options = {
             description = "Launch Text Editor in (Floating)",
@@ -987,7 +988,7 @@ local bindings = {
         key = kb.floatingFileExplorer,
         fallback_key = registry.default_key("floatingFileExplorer"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.fileExplorer, fn.floatSpawnRule(vars.fileExplorer, { float = true }))
+            return apps.launch("fileManager", { floating = true })
         end,
         options = {
             description = "Launch File Manager in (Floating)",
@@ -997,7 +998,7 @@ local bindings = {
         key = kb.pseudotiledTerminal,
         fallback_key = registry.default_key("pseudotiledTerminal"),
         build_action = function()
-            return hl.dsp.exec_cmd(vars.terminal, fn.floatSpawnRule(vars.terminal, { pseudo = true }))
+            return apps.launch("terminal", { pseudo = true })
         end,
         options = {
             description = "Launch Terminal in (Pseudotiled)",
@@ -1007,7 +1008,7 @@ local bindings = {
         key = kb.colorPicker,
         fallback_key = registry.default_key("colorPicker"),
         build_action = function()
-            return hl.dsp.exec_cmd("hyprpicker -a")
+            return apps.launch("colorPicker")
         end,
         options = {
             description = "Launch Color Picker",

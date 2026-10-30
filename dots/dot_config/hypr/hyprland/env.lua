@@ -2,6 +2,7 @@
 -- dream-wa1ker
 
 local vars = require("hyprland.variables")
+local apps = require("hyprland.lib.apps")
 
 -- Environment variables: put these at the top level of the file
 hl.env("XCURSOR_THEME", vars.cursorTheme)
@@ -28,6 +29,6 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 hl.env("_JAVA_AWT_WM_NONREPARENTING", "1")
 
 -- Default editor
-hl.env("EDITOR", vars.editor)
-hl.env("TERMINAL", vars.terminal)
+hl.env("EDITOR", apps.get("editor").command)
+hl.env("TERMINAL", apps.get("terminal").command)
 hl.env("XDG_MENU_PREFIX", "plasma-")

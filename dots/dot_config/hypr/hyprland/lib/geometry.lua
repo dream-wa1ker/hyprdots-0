@@ -71,42 +71,6 @@ function M.merge_spec(base, patch)
     return candidate
 end
 
--- Preserve ordinary deep merging; handle geometry records as mutually exclusive modes.
-function M.merge_overrides(vars, overrides, deep_merge)
-    local function warn(label, err)
-        print("[Hyprland config] geometry: " .. label .. ": " .. err)
-    end
-    if type(overrides) ~= "table" then
-        warn("variables", "override must be a table")
-        return vars
-    end
-    local ordinary = {}
-    for key, value in pairs(overrides) do
-        if key ~= "floatRules" and key ~= "defaultRule" then ordinary[key] = value end
-    end
-    deep_merge(vars, ordinary)
-    if overrides.defaultRule ~= nil then
-        local spec, err = M.merge_spec(vars.defaultRule, overrides.defaultRule)
-        if spec then vars.defaultRule = spec else warn("defaultRule", err) end
-    end
-    if overrides.floatRules ~= nil then
-        if type(overrides.floatRules) ~= "table" then
-            warn("floatRules", "override must be a table")
-        else
-            for class, patch in pairs(overrides.floatRules) do
-                if type(class) ~= "string" or class == "" then
-                    warn("floatRules", "class keys must be nonempty strings")
-                else
-                    local spec, err = M.merge_spec(vars.floatRules[class], patch)
-                    if spec then vars.floatRules[class] = spec
-                    else warn("floatRules." .. class, err) end
-                end
-            end
-        end
-    end
-    return vars
-end
-
 -- mode.width/height are logical, already accounting for rotation and scale.
 -- Fallback supports monitor snapshots that do not expose mode.
 function M.monitor_area(monitor, usable)
@@ -178,26 +142,6 @@ function M.pip_box(area, size)
         y = math.floor(area.y + area.height - height - margin),
         width = width, height = height,
     }
-end
-
-function M.find_spec(vars, key)
-    local rules = vars.floatRules or {}
-    local class = type(key) == "string" and key or ""
-    local commands = vars.floatCommandClasses or {}
-    class = commands[class] or commands[class:lower()] or class
-    local spec = rules[class:lower()]
-    if not spec then
-        for name, candidate in pairs(rules) do
-            if type(name) == "string" and name:lower() == class:lower() then
-                spec = candidate; break
-            end
-            for _, alias in ipairs(candidate.classes or {}) do
-                if alias:lower() == class:lower() then spec = candidate; break end
-            end
-            if spec then break end
-        end
-    end
-    return spec or vars.defaultRule
 end
 
 function M.rule_effects(spec)

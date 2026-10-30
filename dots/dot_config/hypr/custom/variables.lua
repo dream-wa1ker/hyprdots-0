@@ -1,53 +1,40 @@
 -- ~/.config/hypr/custom/variables.lua
--- dream-wa1ker
---
--- PURPOSE     Override values from hyprland/variables.lua (apps, gaps, blur, sizes,
---             shortcut strings). Every other file reads these values.
--- RETURNS     A table. List ONLY what differs from the default; a value equal to
---             the default is noise. ({ variables = { ... } } is also accepted.)
--- LOADED      First: merged into the defaults before any other module reads them,
---             so one line here changes every file that uses that variable.
--- FIND NAMES  Every overridable name lives in hyprland/variables.lua:
---                 grep -n "=" ~/.config/hypr/hyprland/variables.lua | less
---             Nested tables (keybinds, floatRules) merge key by key, so you can
---             change one shortcut without repeating the others.
---             Float geometry switches cleanly between w/h and wp/hp; invalid overrides
---             are logged and retain the previous valid specification.
---             x/y are logical monitor-local offsets; center = true removes saved offsets.
---             auto_float = false disables an application's generated floating rule.
--- RULE OF THUMB  If a variable exists (windowOpacity, blurPasses, terminal ...) set
---             it here. Options with no variable go in the matching custom file
---             (decoration.lua, input.lua, misc.lua ...).
+-- Override defaults before modules load. Raw tables and { variables = { ... } } work.
+-- Application defaults live in hyprland/variables.lua; helpers live in lib/apps.lua.
+-- apps.<id> fields merge individually; classes and exec_args replace entire lists.
+-- Geometry merges w/h (logical pixels) or wp/hp (full-monitor fractions), never both.
+-- center = true clears saved offsets; x/y are monitor-local and supplied together.
+-- Invalid application/geometry patches are logged and retain the previous valid record.
+-- auto_float = false disables a generated rule, not floating launch shortcuts.
+-- terminal = true wraps an app in apps.terminal; set false when switching to a GUI editor.
+-- Terminal-wrapped apps share the actual terminal's window classes for runtime matching.
 
 return {
-    -- Active overrides ---------------------------------------------------------
-    windowOpacity = 0.85, -- default 0.85
-    blurSize      = 6,    -- default 8
+    windowOpacity = 0.85,
+    blurSize = 6,
 
-    -- Examples: remove the leading `--` to enable --------------------------------
-    -- terminal  = "foot",
-    -- browser   = "firefox",
-    -- editor    = "nvim",       -- terminal editors are wrapped in a terminal by custom/functions.lua
-    -- editorInTerminal = true,  -- force that wrapping for an editor custom/functions.lua does not know
-    -- blurPasses   = 2,         -- cheaper on integrated graphics
-    -- windowGapsIn = 3,
-    -- cursorSize   = 24,
-    -- autostartKdeConnect = false, -- disable the indicator at the next login; does not stop a running process
-
-    -- Geometry examples (the default values live in hyprland/variables.lua):
-    -- floatRules = {
-    --     ["org.kde.dolphin"] = { w = 1100, h = 700, center = true },
-    --     ["nwg-look"] = { wp = 0.55, hp = 0.65 },
+    -- Application examples: uncomment only what you want to change.
+    -- apps = {
+    --     terminal = { command = "foot", classes = { "foot" }, exec_args = { "-e" } },
+    --     browser = { command = "firefox", classes = { "firefox" } },
+    --     editor = { command = "kate", terminal = false },
+    --     fileManager = { geometry = { w = 1100, h = 700, center = true } },
+    --     appearance = { geometry = { wp = 0.55, hp = 0.65 }, auto_float = false },
+    --     myTool = { command = "my-tool", classes = { "my-tool" },
+    --         geometry = { wp = 0.5, hp = 0.6 }, auto_float = true },
     -- },
 
-    -- Shortcuts: the VALUE is the key combination, the NAME is the action. Names are
-    -- listed in the `keybinds` table of hyprland/variables.lua. The loader reports
-    -- duplicates, so if the new combination is taken, move the other action too.
+    -- blurPasses = 2,
+    -- windowGapsIn = 3,
+    -- cursorSize = 24,
+    -- autostartKdeConnect = false, -- next login; does not stop a running process
+
+    -- Shortcut names stay unchanged. Move other actions if a new key is occupied.
     keybinds = {
-        powerSaver = "SUPER + ALT + B", -- power saver on/off, see custom/functions.lua
-        -- geometryMode = "SUPER + ALT + Z", -- enter placement mode
-        -- geometryLeft = "Left", -- only inside placement mode
-        -- browser         = "SUPER + SHIFT + B",
+        powerSaver = "SUPER + ALT + B",
+        -- geometryMode = "SUPER + ALT + Z",
+        -- geometryLeft = "Left",
+        -- browser = "SUPER + SHIFT + B",
         -- floatingBrowser = "SUPER + B",
     },
 }

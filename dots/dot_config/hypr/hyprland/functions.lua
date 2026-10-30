@@ -3,6 +3,7 @@
 
 local boot = require("core.bootstrap")
 local geometry = require("hyprland.lib.geometry")
+local apps = require("hyprland.lib.apps")
 
 local function noctalia(command)
     return hl.dsp.exec_cmd("noctalia msg " .. command)
@@ -140,11 +141,7 @@ local function move_actions(win)
 end
 
 local function floatSpawnRule(appKey, extra)
-    local vars = require("hyprland.variables")
-    local effects, err = geometry.rule_effects(geometry.find_spec(vars, appKey))
-    assert(effects, err)
-    for key, value in pairs(extra or {}) do effects[key] = value end
-    return effects
+    return apps.float_rule(appKey, extra)
 end
 
 ------------------------------------------------------------------
@@ -339,8 +336,7 @@ local toggle_floating = boot.safe_call(function()
     }))
     if not win.floating then return end
 
-    local vars = require("hyprland.variables")
-    local spec = geometry.find_spec(vars, win.class)
+    local spec = apps.geometry_for(win.class)
     local monitor = window_monitor(win)
     local area = geometry.monitor_area(monitor)
     local bounds = geometry.monitor_area(monitor, true)

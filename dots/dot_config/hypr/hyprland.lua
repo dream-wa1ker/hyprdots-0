@@ -9,9 +9,9 @@ local customDir = hypr .. "/custom"
 
 local boot = require("core.bootstrap")
 
--- Internal libraries and services
+-- Internal libraries
 local lib = boot.safe_require("hyprland.lib")
-local services = boot.safe_require("hyprland.services")
+local customConfig = boot.safe_require("hyprland.lib.create_custom_config")
 
 local function is_file_exists(path)
     if type(lib) == "table" and type(lib.is_file_exists) == "function" then
@@ -159,9 +159,9 @@ if type(vars) == "table" and type(keybindRegistry) == "table" then
 end
 local customVars = load_custom_spec("variables")
 if type(vars) == "table" and type(customVars) == "table" then
-    local geometry = boot.safe_require("hyprland.lib.geometry")
-    if type(geometry) == "table" then
-        geometry.merge_overrides(vars, customVars.variables or customVars, boot.deep_merge)
+    local apps = boot.safe_require("hyprland.lib.apps")
+    if type(apps) == "table" then
+        apps.merge_overrides(vars, customVars.variables or customVars, boot.deep_merge)
     else
         boot.deep_merge(vars, customVars.variables or customVars)
     end
@@ -194,9 +194,9 @@ local modules = {
 }
 
 -- Make sure every override file exists (never overwrites).
-if type(services) == "table" and services.create_custom_config then
+if type(customConfig) == "table" then
     local unpack = table.unpack or unpack
-    boot.safe_call(services.create_custom_config.ensure, "services.create_custom_config")(
+    boot.safe_call(customConfig.ensure, "lib.create_custom_config")(
         customDir,
         { "variables", "colors", unpack(modules) }
     )
@@ -254,7 +254,8 @@ end
 -- Declarative custom module contracts:
 --
 -- custom/variables.lua:
---   return { variables = { windowOpacity = 0.95 } }
+--   return { variables = { windowOpacity = 0.95,
+--       apps = { editor = { command = "kate", terminal = false } } } }
 --
 -- custom/env.lua:
 --   return { env = { MY_ENV_VAR = "value" } }

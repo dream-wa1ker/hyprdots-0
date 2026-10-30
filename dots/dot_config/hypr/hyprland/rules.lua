@@ -2,7 +2,7 @@
 -- dream-wa1ker
 local vars = require("hyprland.variables")
 local boot = require("core.bootstrap")
-local geometry = require("hyprland.lib.geometry")
+local apps = require("hyprland.lib.apps")
 
 ----------------------
 ---- Window rules ----
@@ -34,11 +34,11 @@ local window_rules = {
 
     { match = { tag = "float" }, float = true },
 
-    -- Expanded from variables.floatRules at these positions to preserve precedence.
-    { utility = "dev.geopjr.tuba" },
-    { utility = "nwg-look" },
-    { utility = "blueman-manager" },
-    { utility = "org.kde.partitionmanager" },
+    -- Expanded from variables.apps at these positions to preserve precedence.
+    { utility = "tuba" },
+    { utility = "appearance" },
+    { utility = "bluetooth" },
+    { utility = "partitionManager" },
 
     -- Xwayland empty-title/class popups (menus, tooltips) — don't dim/shadow/blur
     { match = { xwayland = true, title = "win[0-9]+" }, tag = "+xwl_popup" },
@@ -116,8 +116,8 @@ local window_rules = {
     { match = { class = "^(blueberry\\.py)$" }, float = true }, -- Bluetooth manager
     { match = { class = "^(guifetch)$" },       float = true }, -- FlafyDev/guifetch
 
-    { utility = "org.pulseaudio.pavucontrol" },
-    { utility = "nm-connection-editor" },
+    { utility = "audioMixer" },
+    { utility = "networkEditor" },
 
     { match = { class = ".*plasmawindowed.*" },        float = true }, -- Plasma applets run standalone
     { match = { class = "kcm_.*" },                    float = true }, -- KDE System Settings modules
@@ -125,7 +125,7 @@ local window_rules = {
     { match = { title = ".*Welcome" },                 float = true },
     { match = { title = ".*Shell conflicts.*" },       float = true },
 
-    { utility = "org.freedesktop.impl.portal.desktop.kde" },
+    { utility = "kdePortal" },
     { utility = "zotero" },
 
     ------------------------------------------------------------------
@@ -180,22 +180,13 @@ local window_rules = {
 
     -- No shadow for tiled windows (only floating windows get shadows)
     { match = { float = false }, no_shadow = true },
-    { utility = "dev.noctalia.noctalia" },
+    { utility = "noctalia" },
 }
 
 local expanded, handled = {}, {}
-local function add_utility(key)
-    local spec = vars.floatRules[key]
-    if not (spec and spec.auto_float) then return end
-    local effects, err = geometry.rule_effects(spec)
-    if not effects then
-        print("[Hyprland config] geometry: " .. key .. ": " .. tostring(err))
-        return
-    end
-    effects.name = "float." .. key
-    effects.match = { class = geometry.class_pattern(key, spec) }
-    effects.float = true
-    expanded[#expanded + 1] = effects
+local function add_utility(id)
+    local rule = apps.floating_rule(id)
+    if rule then expanded[#expanded + 1] = rule end
 end
 
 for _, rule in ipairs(window_rules) do
@@ -206,12 +197,9 @@ for _, rule in ipairs(window_rules) do
 end
 
 -- New custom utility specifications are deterministic and precede custom/rules.lua.
-local additional = {}
-for key, spec in pairs(vars.floatRules) do
-    if spec.auto_float and not handled[key] then additional[#additional + 1] = key end
+for _, id in ipairs(apps.ids()) do
+    if not handled[id] then add_utility(id) end
 end
-table.sort(additional)
-for _, key in ipairs(additional) do add_utility(key) end
 
 boot.apply_all(hl.window_rule, expanded, "rules.window")
 
