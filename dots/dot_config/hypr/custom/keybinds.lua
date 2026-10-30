@@ -1,49 +1,32 @@
--- ~/.config/hypr/custom/keybinds.lua
--- dream-wa1ker
+-- HOW TO ADD A SHORTCUT (edit the existing tables; do not replace either file):
+-- 1. In custom/variables.lua, inside keybinds = { ... }, add:
+--      myShortcut = { key = "SUPER + ALT + Y" },
+-- 2. In THIS file, inside return { ... }, add:
+--      {
+--          id = "myShortcut",
+--          description = "Open system monitor",
+--          build_action = function() return hl.dsp.exec_cmd("kitty -e btop") end,
+--      },
+-- The setting name and id must match. End each entry with a comma, then save both files.
 --
--- PURPOSE   Add keybindings, or replace a default one.
--- RETURNS   A list of entries: { key = ..., action = ..., options = { ... } }
---           Or use build_action = function() return dispatcher_or_callback end.
---           Builders run once at load time, protected separately for each entry.
---           Build them with fn.bind(key, action, description [, flags]) (defined in
---           custom/functions.lua); it fills in the table for you.
--- LOADED    Evaluated by hyprland/keybinds.lua, which resolves precedence and then
---           registers every binding once. Do not call hl.bind yourself here.
+-- CHANGE KEYS: change only the matching entry in custom/variables.lua.
+-- CHANGE BEHAVIOR: add an entry here using an existing core id (e.g. "terminal").
+-- DISABLE: put mediaStop = { enabled = false } in custom/variables.lua's keybinds table.
+-- Core IDs/behavior: hyprland/keybinds.lua. Core shortcut defaults: hyprland/variables.lua.
 --
--- KEY SYNTAX   Modifiers and key joined with " + ":
---                "SUPER + SHIFT + B"   "ALT + Tab"   "XF86AudioMute"   "SUPER + mouse:272"
---              Modifiers: SUPER, SHIFT, CTRL, ALT. Key names are xkb names
---              (Return, Space, Page_Up, F11, Print ...). Run `wev` and press a key to see its name.
---
--- PRECEDENCE   A custom entry replaces its default only after successful registration.
---              Failed construction/registration falls back to the default.
---              Two custom entries on one combination: the first is kept, the second is
---              reported and ignored. A bad entry never stops the others (see hyprctl rollinglog).
---
--- OPTIONS      All optional. `description` feeds the keybind cheatsheet, so always set it.
---                description = "text"
---                repeating   = true   -- keep firing while the key is held (volume, resize)
---                locked      = true   -- also works while the screen is locked (media keys)
---                release     = true   -- fire when the key is released
---                mouse       = true   -- a mouse binding (drag / resize)
---
--- DEFAULT NAMES  `kb.<name>` is the default shortcut of an action, e.g. kb.editor.
---              The full list is the `keybinds` table in hyprland/variables.lua.
---              Using kb.<name> as the key replaces that default; a literal string adds a new one.
---
--- CAUTION      exec_cmd runs a shell command with your full privileges. Never build the
---              command from untrusted text (a window title, a filename): shell characters
---              in it would execute.
+-- build_action runs during loading and RETURNS a dispatcher/callback; do not launch then.
+-- action = function() ... end runs WHEN PRESSED; use it for multiple operations.
+-- apps.launch("browser") builds a launch dispatcher using the configured application.
+-- Reusable callbacks from custom/functions.lua are available through fn.
+-- Failed replacements fall back to their built-in definition. Do not call hl.bind here.
 
-local vars = require("hyprland.variables")
 local fn   = require("hyprland.functions")
 local apps = require("hyprland.lib.apps")
-local kb   = type(vars.keybinds) == "table" and vars.keybinds or {}
 
 return {
     -- Active ---------------------------------------------------------------------
     {
-        key = kb.powerSaver,
+        id = "powerSaver",
         build_action = function()
             return fn.power_saver_toggle
         end,
@@ -53,7 +36,7 @@ return {
     },
 
     {
-        key = kb.customEditKeybinds,
+        id = "customEditKeybinds",
         build_action = function()
             local home = assert(os.getenv("HOME"), "HOME is not set")
             local path = home .. "/.config/hypr/custom/keybinds.lua"
@@ -62,15 +45,15 @@ return {
         options = { description = "Edit Custom Keybindings" },
     },
     {
-        key = kb.customCloseWindow,
+        id = "customCloseWindow",
         build_action = function()
             return hl.dsp.window.close()
         end,
         options = { description = "Close Active Window" },
     },
 
-    -- Examples: remove the leading `--` to enable --------------------------------
-    -- fn.bind("SUPER + ALT + T", apps.launch("terminal", { args = { "-e", "btop" } }), "System monitor"),
-    -- fn.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
-    --         "Mute", { locked = true }),
+    -- Named override example: keeps the browser shortcut configured in variables.lua.
+    -- browser = {
+    --     build_action = function() return apps.launch("browser", { floating = true }) end,
+    -- },
 }

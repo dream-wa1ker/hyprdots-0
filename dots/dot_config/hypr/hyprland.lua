@@ -167,6 +167,11 @@ if type(vars) == "table" and type(customVars) == "table" then
     end
 end
 
+-- Keep kb.<id> strings available to custom files; richer policies stay in the registry.
+if type(vars) == "table" and type(keybindRegistry) == "table" then
+    keybindRegistry.resolve_settings(vars)
+end
+
 -- Default monitor configuration
 hl.monitor({
     output   = "",
