@@ -250,7 +250,11 @@ function M.register(definitions, custom_loader)
     local occupied, handled, cache = {}, {}, {}
     local function try_entry(entry, plan)
         local key = identity(entry)
-        if occupied[key] then report("binding '" .. (plan.id or entry.key) .. "': shortcut already registered: " .. entry.key); return false, "collision" end
+        if occupied[key] then
+            report("binding '" .. (plan.id or entry.key) .. "': shortcut " .. entry.key
+                .. " in submap '" .. scope_name(entry.submap) .. "' conflicts with '" .. occupied[key] .. "'")
+            return false, "collision"
+        end
         local options = copy(entry.options or {})
         if entry.description ~= nil then options.description = entry.description end
         local action
@@ -280,12 +284,12 @@ function M.register(definitions, custom_loader)
         if not ok or handle == nil or handle == false then
             report("binding '" .. (plan.id or entry.key) .. "': registration failed: " .. tostring(handle)); return false, "failure"
         end
-        occupied[key] = true; result.registered = result.registered + 1
+        occupied[key] = plan.id or entry.id or ("anonymous shortcut " .. entry.key); result.registered = result.registered + 1
         if plan.id then result.handles[plan.id] = handle end
         return true
     end
+    local pending = {}
     for _, scope in ipairs(scope_order) do
-        local pending = {}
         for _, plan in ipairs(scopes[scope]) do
             local entry, base = plan.preferred, plan.base
             local key = identity(entry)
@@ -305,16 +309,32 @@ function M.register(definitions, custom_loader)
                 bound, reason = try_entry(candidate, plan)
                 if bound or reason == "collision" then break end
             end
-            if not bound and reason ~= "collision" and base and not validate(base, false, false) and identity(base) ~= key then
-                pending[#pending + 1] = plan
+            if not bound and base and not validate(base, false, false) and identity(base) ~= key then
+                pending[#pending + 1] = {plan = plan, reason = reason}
             end
         end
         for _, entry in ipairs(legacy_order) do
             local key = identity(entry)
             if scope_name(entry.submap) == scope and not handled[key] then try_entry(entry, {}) end
         end
-        -- Preserve valid configured keys before recovering failed remaps to core keys.
-        for _, plan in ipairs(pending) do try_entry(plan.base, plan) end
+    end
+    -- Process requested keys in EVERY submap before recovering original shortcuts.
+    for _, recovery in ipairs(pending) do
+        local plan = recovery.plan
+        local bound, reason
+        if recovery.reason == "collision" then
+            -- A collision invalidates the requested location, not the customized behavior.
+            local restored = copy(plan.preferred)
+            restored.key, restored.submap = plan.base.key, plan.base.submap
+            bound, reason = try_entry(restored, plan)
+        end
+        if not bound and reason ~= "collision" then
+            bound = try_entry(plan.base, plan)
+        end
+        if bound and recovery.reason == "collision" then
+            report("binding '" .. plan.id .. "': recovered at " .. plan.base.key
+                .. " in submap '" .. scope_name(plan.base.submap) .. "'")
+        end
     end
     if #result.problems > 0 then
         pcall(hl.notification.create, {text = ("Keybinds: %d problem(s). Run hyprctl rollinglog for details."):format(#result.problems),
