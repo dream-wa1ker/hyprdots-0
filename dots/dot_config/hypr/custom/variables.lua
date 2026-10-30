@@ -29,22 +29,5 @@ return {
     -- cursorSize = 24,
     -- autostartKdeConnect = false, -- next login; does not stop a running process
 
-    -- EDIT A SHORTCUT: terminal = { key = "SUPER + ALT + Return" },
-    -- ADD A SHORTCUT: myShortcut = { key = "SUPER + ALT + Y" },
-    -- Then add { id = "myShortcut", description = "...", build_action = function() ... end }
-    -- inside the existing return table in custom/keybinds.lua. See its complete example.
-    -- DISABLE AN ACTION: mediaStop = { enabled = false },
-    -- Settings allow key, enabled, description, and options (Hyprland bind flags).
-    -- Only list overrides here; defaults are in hyprland/variables.lua.
-    keybinds = {
-        -- browser = { key = "SUPER + B" },
-        -- mediaStop = { enabled = false },
-        -- volumeUp = { options = { repeating = false } },
-        -- goToWorkspacePrefix = { enabled = false }, -- all ten focus bindings
-        -- ["workspace.focus.3"] = { key = "SUPER + F3" },
-        -- powerSaver = { enabled = false },
-        -- geometryMode = { key = "SUPER + ALT + Z" },
-        -- geometryLeft = { key = "Left" },
-        -- terminal = { key = "SUPER + Return" },
-    },
+    -- All keybindings are configured in custom/keybinds.lua.
 }

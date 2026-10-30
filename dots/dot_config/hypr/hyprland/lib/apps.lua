@@ -86,7 +86,9 @@ function M.merge_overrides(target, overrides, deep_merge)
     end
     local ordinary = {}
     for key, value in pairs(overrides) do
-        if key ~= "apps" and key ~= "defaultRule" then ordinary[key] = value end
+        if key == "keybinds" then
+            warn("keybinds", "move shortcut overrides to custom/keybinds.lua; this obsolete setting is ignored")
+        elseif key ~= "apps" and key ~= "defaultRule" then ordinary[key] = value end
     end
     deep_merge(target, ordinary)
     if overrides.defaultRule ~= nil then

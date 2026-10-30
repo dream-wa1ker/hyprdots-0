@@ -152,11 +152,6 @@ end
 -- core modules read variables.lua. It should return either a raw variable
 -- table or { variables = { ... } }.
 local vars = boot.safe_require("hyprland.variables")
--- Keep pristine shortcut strings available if a custom variable is invalid.
-local keybindRegistry = boot.safe_require("hyprland.lib.keybinds")
-if type(vars) == "table" and type(keybindRegistry) == "table" then
-    keybindRegistry.capture_defaults(vars.keybinds)
-end
 local customVars = load_custom_spec("variables")
 if type(vars) == "table" and type(customVars) == "table" then
     local apps = boot.safe_require("hyprland.lib.apps")
@@ -165,11 +160,6 @@ if type(vars) == "table" and type(customVars) == "table" then
     else
         boot.deep_merge(vars, customVars.variables or customVars)
     end
-end
-
--- Keep kb.<id> strings available to custom files; richer policies stay in the registry.
-if type(vars) == "table" and type(keybindRegistry) == "table" then
-    keybindRegistry.resolve_settings(vars)
 end
 
 -- Default monitor configuration
@@ -289,7 +279,8 @@ end
 --   Reference as `fn.my_action` from custom/keybinds.lua.
 --
 -- custom/keybinds.lua:
---   Return an array of { key = ..., action = ..., options = {...} } records.
+--   Return records containing id, key, enabled, description, build_action/action, options.
+--   New bindings need a key and behavior; core overrides may contain only changed fields.
 --   hyprland.keybinds.lua loads this module and gives custom records precedence.
 --
 -- custom/colors.lua:

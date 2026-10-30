@@ -1,24 +1,30 @@
--- HOW TO ADD A SHORTCUT (edit the existing tables; do not replace either file):
--- 1. In custom/variables.lua, inside keybinds = { ... }, add:
---      myShortcut = { key = "SUPER + ALT + Y" },
--- 2. In THIS file, inside return { ... }, add:
---      {
---          id = "myShortcut",
---          description = "Open system monitor",
---          build_action = function() return hl.dsp.exec_cmd("kitty -e btop") end,
---      },
--- The setting name and id must match. End each entry with a comma, then save both files.
+-- YOUR ONLY KEYBINDING CONFIGURATION FILE. Add records inside the return table below.
+-- ADD NEW: give a unique id, key, description, and build_action (or action):
+-- {
+--     id = "myShortcut",
+--     key = "SUPER + ALT + Y",
+--     description = "Open system monitor",
+--     build_action = function() return hl.dsp.exec_cmd("kitty -e btop") end,
+-- },
+-- EDIT CORE: { id = "terminal", key = "SUPER + ALT + Return" },
+-- DISABLE CORE: { id = "mediaStop", enabled = false },
+-- Omitted fields inherit the core record. Edit existing custom records in place;
+-- do not add a second record with the same id. First duplicate wins, with a warning.
 --
--- CHANGE KEYS: change only the matching entry in custom/variables.lua.
--- CHANGE BEHAVIOR: add an entry here using an existing core id (e.g. "terminal").
--- DISABLE: put mediaStop = { enabled = false } in custom/variables.lua's keybinds table.
--- Core IDs/behavior: hyprland/keybinds.lua. Core shortcut defaults: hyprland/variables.lua.
---
--- build_action runs during loading and RETURNS a dispatcher/callback; do not launch then.
--- action = function() ... end runs WHEN PRESSED; use it for multiple operations.
--- apps.launch("browser") builds a launch dispatcher using the configured application.
--- Reusable callbacks from custom/functions.lua are available through fn.
--- Failed replacements fall back to their built-in definition. Do not call hl.bind here.
+-- key: XKB shortcut string. enabled: false skips registration and builder construction.
+-- description: cheatsheet label. options: key-press flags, merged individually:
+--   repeating, locked, release, mouse, etc. Explicit false clears an inherited flag.
+-- Floating is WINDOW behavior: use apps.launch("terminal", { floating = true })
+-- inside build_action. Geometry/app commands remain in custom/variables.lua's apps table.
+-- build_action runs on LOAD and RETURNS a dispatcher/callback; do not execute commands then.
+-- action = function() ... end runs WHEN PRESSED. Use hl.dispatch(...) for multiple actions.
+-- Defining one clears an inherited counterpart; never supply both.
+-- New bindings may set submap = "geometry" (or a named submap) to limit their scope.
+-- Workspace prefix IDs affect all ten generated children; a disabled family stays disabled.
+-- Placement Escape/catchall exits are protected against custom overrides.
+-- Invalid overrides fall back to their core binding; one bad entry does not stop others.
+-- Save this file to reload. Inspect errors with hyprctl configerrors / hyprctl rollinglog.
+-- Core defaults: hyprland/keybinds.lua. Do not call hl.bind directly here.
 
 local fn   = require("hyprland.functions")
 local apps = require("hyprland.lib.apps")
@@ -27,33 +33,45 @@ return {
     -- Active ---------------------------------------------------------------------
     {
         id = "powerSaver",
+        key = "SUPER + ALT + B",
         build_action = function()
             return fn.power_saver_toggle
         end,
-        options = {
-            description = "Power saver: blur, rounding, shadows, animations off; shell stopped",
-        },
+        description = "Power saver: blur, rounding, shadows, animations off; shell stopped",
     },
 
     {
         id = "customEditKeybinds",
+        key = "CTRL + SUPER + ALT + Slash",
         build_action = function()
             local home = assert(os.getenv("HOME"), "HOME is not set")
             local path = home .. "/.config/hypr/custom/keybinds.lua"
             return apps.launch("editor", { args = { path } })
         end,
-        options = { description = "Edit Custom Keybindings" },
+        description = "Edit Custom Keybindings",
     },
     {
         id = "customCloseWindow",
+        key = "SUPER + Q",
         build_action = function()
             return hl.dsp.window.close()
         end,
-        options = { description = "Close Active Window" },
+        description = "Close Active Window",
     },
 
-    -- Named override example: keeps the browser shortcut configured in variables.lua.
-    -- browser = {
+    -- Change only a core shortcut (inherits its behavior):
+    -- { id = "terminal", key = "SUPER + ALT + Return" },
+    -- Disable a core binding:
+    -- { id = "mediaStop", enabled = false },
+    -- Change behavior and flags, keeping the core shortcut:
+    -- {
+    --     id = "browser",
     --     build_action = function() return apps.launch("browser", { floating = true }) end,
+    --     options = { release = true },
     -- },
+    -- Change a numbered-workspace family or just one generated binding:
+    -- { id = "goToWorkspacePrefix", key = "SUPER + ALT" },
+    -- { id = "workspace.focus.3", key = "SUPER + F3" },
+    -- Remap a placement preset (still scoped to placement mode):
+    -- { id = "geometryLeft", key = "Left" },
 }
