@@ -5,11 +5,13 @@ return {
       format = {
         formatting_options = { tabSize = 4, insertSpaces = true },
       },
-      -- Register settings without starting servers. Enable on demand with :lsp enable <name>.
+      -- Start clangd and LuaLS normally; keep Bash and Python on demand.
       setup = {
         ["*"] = function(server, opts)
-          vim.lsp.config(server, opts)
-          return true -- Skip LazyVim/Mason automatic activation.
+          if server == "bashls" or server == "pyright" then
+            vim.lsp.config(server, opts)
+            return true -- Skip automatic activation; use :lsp enable <name>.
+          end
         end,
       },
       servers = {
