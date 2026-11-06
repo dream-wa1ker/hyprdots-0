@@ -1,20 +1,35 @@
 return {
-    {
-        -- enable only specific lspservers
-        -- I dont need all.
-        "neovim/nvim-lspconfig",
-        enabled = true,
-        opts = {
-            servers = {
-                clangd = {
-                    enable = false, 
-                    on_attach = function(client)
-                        client.server_capabilities.documentFormattingProvider = false
-                        client.server_capabilities.documentRangeFormattingProvider = false
-                    end,                    
-                },  -- only for by beloved C
-                lua_ls = { enabled = false }, -- disable lua lsp server
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      format = {
+        formatting_options = { tabSize = 4, insertSpaces = true },
+      },
+      -- Register settings without starting servers. Enable on demand with :lsp enable <name>.
+      setup = {
+        ["*"] = function(server, opts)
+          vim.lsp.config(server, opts)
+          return true -- Skip LazyVim/Mason automatic activation.
+        end,
+      },
+      servers = {
+        clangd = { enabled = true },
+        bashls = { enabled = true },
+        pyright = { enabled = true },
+        lua_ls = {
+          enabled = true,
+          settings = {
+            Lua = {
+              format = {
+                defaultConfig = {
+                  indent_style = "space",
+                  indent_size = "4",
+                },
+              },
             },
+          },
         },
+      },
     },
+  },
 }

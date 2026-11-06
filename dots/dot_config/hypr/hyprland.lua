@@ -84,11 +84,9 @@ local function apply_custom_spec(name, spec)
                 boot.safe_call(hl.env, "custom.env")(key, value)
             end
         end
-
     elseif name == "general" or name == "input" or name == "misc"
         or name == "decoration" or name == "group" then
         apply_config(spec, "custom." .. name)
-
     elseif name == "animations" then
         if spec.config then
             apply_config(spec, "custom.animations")
@@ -106,18 +104,15 @@ local function apply_custom_spec(name, spec)
             end
         end
         apply_rule_list(hl.animation, spec.animations, "custom.animations.animation")
-
     elseif name == "rules" then
         apply_rule_list(hl.window_rule, spec.window or spec.window_rules, "custom.rules.window")
         apply_rule_list(hl.workspace_rule, spec.workspace or spec.workspace_rules, "custom.rules.workspace")
         apply_rule_list(hl.layer_rule, spec.layer or spec.layer_rules, "custom.rules.layer")
-
     elseif name == "gestures" then
         if spec.config then
             apply_config(spec, "custom.gestures")
         end
         apply_rule_list(hl.gesture, spec.gestures, "custom.gestures.gesture")
-
     elseif name == "execs" then
         -- Startup commands are declarative strings, run when Hyprland starts.
         local startup = as_array(spec.startup)
@@ -140,7 +135,6 @@ local function apply_custom_spec(name, spec)
                 hl.on(eventSpec.event, eventSpec.callback)
             end
         end
-
     elseif name == "colors" then
         -- Applied after Noctalia's generated theme, so explicit custom color
         -- overrides win rather than being overwritten by apply_theme().
@@ -285,4 +279,3 @@ end
 --
 -- custom/colors.lua:
 --   return { config = { general = { col = { active_border = "rgb(...)" } } } }
-

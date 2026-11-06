@@ -23,7 +23,7 @@ end
 -- Standard Lua has no mkdir, so this is the one place we shell out.
 function M.ensure_dir(path)
     local ok = os.execute("mkdir -p -- " .. M.shell_quote(path))
-    return ok == true or ok == 0   -- 5.2+ returns true, 5.1 returns 0
+    return ok == true or ok == 0 -- 5.2+ returns true, 5.1 returns 0
 end
 
 -- Create a file only if it does not exist. Never overwrites.

@@ -4,8 +4,14 @@ local vars = require("hyprland.variables")
 local geometry = require("hyprland.lib.geometry")
 local lib = require("hyprland.lib")
 local M = {}
-local fields = {command = true, terminal = true, classes = true,
-    geometry = true, auto_float = true, exec_args = true}
+local fields = {
+    command = true,
+    terminal = true,
+    classes = true,
+    geometry = true,
+    auto_float = true,
+    exec_args = true
+}
 
 local function copy(value)
     if type(value) ~= "table" then return value end
@@ -37,10 +43,10 @@ local function validate(app)
     if app.command ~= nil and (type(app.command) ~= "string" or not app.command:match("%S")) then
         return nil, "command must be a nonempty string"
     end
-    for _, key in ipairs({"terminal", "auto_float"}) do
+    for _, key in ipairs({ "terminal", "auto_float" }) do
         if app[key] ~= nil and type(app[key]) ~= "boolean" then return nil, key .. " must be a boolean" end
     end
-    for _, key in ipairs({"classes", "exec_args"}) do
+    for _, key in ipairs({ "classes", "exec_args" }) do
         if app[key] ~= nil then
             local ok, err = string_list(app[key], key)
             if not ok then return nil, err end
@@ -88,7 +94,9 @@ function M.merge_overrides(target, overrides, deep_merge)
     for key, value in pairs(overrides) do
         if key == "keybinds" then
             warn("keybinds", "move shortcut overrides to custom/keybinds.lua; this obsolete setting is ignored")
-        elseif key ~= "apps" and key ~= "defaultRule" then ordinary[key] = value end
+        elseif key ~= "apps" and key ~= "defaultRule" then
+            ordinary[key] = value
+        end
     end
     deep_merge(target, ordinary)
     if overrides.defaultRule ~= nil then
@@ -96,10 +104,12 @@ function M.merge_overrides(target, overrides, deep_merge)
         if spec then target.defaultRule = spec else warn("defaultRule", err) end
     end
     if overrides.apps ~= nil then
-        if type(overrides.apps) ~= "table" then warn("apps", "must be a table")
+        if type(overrides.apps) ~= "table" then
+            warn("apps", "must be a table")
         else
             for id, patch in pairs(overrides.apps) do
-                if type(id) ~= "string" or id == "" then warn("apps", "IDs must be nonempty strings")
+                if type(id) ~= "string" or id == "" then
+                    warn("apps", "IDs must be nonempty strings")
                 else
                     local app, err = M.merge_app(target.apps[id], patch)
                     if app then target.apps[id] = app else warn(id, err) end
@@ -157,7 +167,7 @@ function M.command(id, args)
     if app.terminal then
         assert(id ~= "terminal", "The terminal application cannot wrap itself")
         local terminal = M.get("terminal")
-        local prefix = append_args(assert(terminal.command, "Terminal has no command"), terminal.exec_args or {"-e"})
+        local prefix = append_args(assert(terminal.command, "Terminal has no command"), terminal.exec_args or { "-e" })
         command = prefix .. " " .. command
     end
     return command
@@ -175,7 +185,7 @@ function M.launch(id, options)
     options = options or {}
     local effects
     if options.floating or options.pseudo then
-        effects = M.float_rule(id, {float = options.floating, pseudo = options.pseudo})
+        effects = M.float_rule(id, { float = options.floating, pseudo = options.pseudo })
     end
     return hl.dsp.exec_cmd(M.command(id, options.args), effects)
 end
@@ -185,9 +195,9 @@ function M.floating_rule(id)
     if not app.auto_float then return nil end
     local ok, err = validate(app)
     assert(ok, id .. ": " .. tostring(err))
-    local effects = M.float_rule(id, {float = true})
+    local effects = M.float_rule(id, { float = true })
     effects.name = "float." .. id
-    effects.match = {class = geometry.class_pattern(id, {classes = app.classes})}
+    effects.match = { class = geometry.class_pattern(id, { classes = app.classes }) }
     return effects
 end
 

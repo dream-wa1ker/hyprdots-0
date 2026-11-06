@@ -24,11 +24,11 @@ local function wsaction(action, range, i)
         local activews = hl.get_active_workspace()
         if activews then
             -- Named workspaces use workspace 1 as the group/slot reference.
-            local id = type(activews.id) == "number" and activews.id or 1
+            local id   = type(activews.id) == "number" and activews.id or 1
             local slot = ((id - 1) % 10) + 1
-            local s = (i - 1) * 10 + slot
-            local t  = math.floor((id - 1) / 10) * 10 + i
-            local z  = (range == "group") and s or t
+            local s    = (i - 1) * 10 + slot
+            local t    = math.floor((id - 1) / 10) * 10 + i
+            local z    = (range == "group") and s or t
 
             if action == "move" then
                 return hl.dispatch(hl.dsp.window.move({ workspace = z }))
@@ -161,8 +161,11 @@ end
 
 local function pip_fullscreen(win, internal, client, layout_aware)
     pip_dispatch(hl.dsp.window.fullscreen_state({
-        window = addr(win), action = "set",
-        internal = internal, client = client, layout_aware = layout_aware,
+        window = addr(win),
+        action = "set",
+        internal = internal,
+        client = client,
+        layout_aware = layout_aware,
     }))
 end
 
@@ -197,9 +200,12 @@ local function snapshot(win)
     local monitor = window_monitor(win)
     return {
         address = win.address,
-        floating = win.floating, pinned = win.pinned,
-        x = win.at.x, y = win.at.y,
-        width = win.size.x, height = win.size.y,
+        floating = win.floating,
+        pinned = win.pinned,
+        x = win.at.x,
+        y = win.at.y,
+        width = win.size.x,
+        height = win.size.y,
         fullscreen = win.fullscreen or 0,
         fullscreen_client = win.fullscreen_client or 0,
         layout_aware = win.fullscreen_handler ~= "default",
@@ -220,7 +226,7 @@ local function restore_placement(win, state)
         local area = geometry.monitor_area(monitor)
         local bounds = geometry.monitor_area(monitor, true)
         assert(area and bounds, "monitor unavailable for placement restoration")
-        local size = assert(geometry.resolve_size({w = state.width, h = state.height}, area, bounds))
+        local size = assert(geometry.resolve_size({ w = state.width, h = state.height }, area, bounds))
         local position = geometry.resolve_position({
             x = state.x - state.monitor_x, y = state.y - state.monitor_y,
         }, area, size, bounds)
@@ -282,7 +288,7 @@ local place_window = boot.safe_call(function(preset)
     placement_states[id] = saved
     local ok, failure = pcall(function()
         pip_fullscreen(win, 0, 0, saved.layout_aware)
-        pip_dispatch(hl.dsp.window.float({window = addr(win), action = "on"}))
+        pip_dispatch(hl.dsp.window.float({ window = addr(win), action = "on" }))
         pip_dispatch(hl.dsp.window.resize({
             window = addr(win), x = box.width, y = box.height, relative = false,
         }))
@@ -392,21 +398,21 @@ local cycle_all_layouts = cycle_workspace_layout({ "scrolling", "dwindle", "mast
 local toggle_scroll_layout = cycle_workspace_layout({ "scrolling", "dwindle" })
 
 return {
-    addr                  = addr,
-    resizer               = resizer,
-    resize_by_screen      = resize_by_screen,
-    resize_screen         = resize_screen,
-    resize_active_window  = resize_active_window,
-    resize_active         = resize_active,
-    wsaction              = wsaction,
-    move_actions          = move_actions,
-    floatSpawnRule        = floatSpawnRule,
-    toggle_pip            = toggle_pip,
-    place_window          = place_window,
+    addr                     = addr,
+    resizer                  = resizer,
+    resize_by_screen         = resize_by_screen,
+    resize_screen            = resize_screen,
+    resize_active_window     = resize_active_window,
+    resize_active            = resize_active,
+    wsaction                 = wsaction,
+    move_actions             = move_actions,
+    floatSpawnRule           = floatSpawnRule,
+    toggle_pip               = toggle_pip,
+    place_window             = place_window,
     restore_window_placement = restore_window_placement,
-    toggle_floating       = toggle_floating,
-    cycle_all_layouts     = cycle_all_layouts,
-    toggle_scroll_layout  = toggle_scroll_layout,
-    set_scroll_direction  = set_scroll_direction,
-    noctalia              = noctalia,
+    toggle_floating          = toggle_floating,
+    cycle_all_layouts        = cycle_all_layouts,
+    toggle_scroll_layout     = toggle_scroll_layout,
+    set_scroll_direction     = set_scroll_direction,
+    noctalia                 = noctalia,
 }

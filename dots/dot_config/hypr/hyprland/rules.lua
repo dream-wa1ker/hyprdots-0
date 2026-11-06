@@ -18,11 +18,11 @@ local window_rules = {
     -- video/image/screenshot content and shell UI look wrong blurred/see-
     -- through; everything else stays universally transparent as you asked.
     ------------------------------------------------------------------
-    { match = { class = "mpv" },                tag = "+opaque_app" }, -- video playback
-    { match = { class = "org.kde.okular" },      tag = "+opaque_app" }, -- document/image reader
-    { match = { class = "swappy" },              tag = "+opaque_app" }, -- screenshot editor
-    { match = { class = "org.quickshell" },      tag = "+opaque_app" },  
-    { match = { tag = "opaque_app" },            opaque = true },
+    { match = { class = "mpv" },                  tag = "+opaque_app" }, -- video playback
+    { match = { class = "org.kde.okular" },       tag = "+opaque_app" }, -- document/image reader
+    { match = { class = "swappy" },               tag = "+opaque_app" }, -- screenshot editor
+    { match = { class = "org.quickshell" },       tag = "+opaque_app" },
+    { match = { tag = "opaque_app" },             opaque = true },
 
     -- GTK/portal file pickers and misc system dialogs (xdg-desktop-portal-gtk)
     {
@@ -32,7 +32,7 @@ local window_rules = {
         tag = "+float",
     },
 
-    { match = { tag = "float" }, float = true },
+    { match = { tag = "float" },                        float = true },
 
     -- Expanded from variables.apps at these positions to preserve precedence.
     { utility = "tuba" },
@@ -56,8 +56,8 @@ local window_rules = {
     },
 
     -- Communication -> special workspace (element-desktop is your matrix client)
-    { match = { class = "dev.geopjr.Tuba|Element" },        workspace = "special:communication" },
-    { match = { class = "org.kde.plasma-systemmonitor" },   workspace = "special:sysmon" },
+    { match = { class = "dev.geopjr.Tuba|Element" },      workspace = "special:communication" },
+    { match = { class = "org.kde.plasma-systemmonitor" }, workspace = "special:sysmon" },
 
     ------------------------------------------------------------------
     -- File pickers / system dialogs by window title (float + center,
@@ -113,17 +113,17 @@ local window_rules = {
     ------------------------------------------------------------------
     -- Misc apps that should always float
     ------------------------------------------------------------------
-    { match = { class = "^(blueberry\\.py)$" }, float = true }, -- Bluetooth manager
-    { match = { class = "^(guifetch)$" },       float = true }, -- FlafyDev/guifetch
+    { match = { class = "^(blueberry\\.py)$" },  float = true }, -- Bluetooth manager
+    { match = { class = "^(guifetch)$" },        float = true }, -- FlafyDev/guifetch
 
     { utility = "audioMixer" },
     { utility = "networkEditor" },
 
-    { match = { class = ".*plasmawindowed.*" },        float = true }, -- Plasma applets run standalone
-    { match = { class = "kcm_.*" },                    float = true }, -- KDE System Settings modules
-    { match = { class = ".*bluedevilwizard" },         float = true }, -- Bluetooth pairing wizard
-    { match = { title = ".*Welcome" },                 float = true },
-    { match = { title = ".*Shell conflicts.*" },       float = true },
+    { match = { class = ".*plasmawindowed.*" },  float = true }, -- Plasma applets run standalone
+    { match = { class = "kcm_.*" },              float = true }, -- KDE System Settings modules
+    { match = { class = ".*bluedevilwizard" },   float = true }, -- Bluetooth pairing wizard
+    { match = { title = ".*Welcome" },           float = true },
+    { match = { title = ".*Shell conflicts.*" }, float = true },
 
     { utility = "kdePortal" },
     { utility = "zotero" },
@@ -174,12 +174,12 @@ local window_rules = {
     -- Tearing: force immediate presentation for latency-sensitive/
     -- frame-perfect content (games, .exe under wine/proton)
     ------------------------------------------------------------------
-    { match = { title = ".*\\.exe" },         immediate = true },
-    { match = { title = ".*minecraft.*" },    immediate = true },
-    { match = { class = "^(steam_app).*" },   immediate = true },
+    { match = { title = ".*\\.exe" },       immediate = true },
+    { match = { title = ".*minecraft.*" },  immediate = true },
+    { match = { class = "^(steam_app).*" }, immediate = true },
 
     -- No shadow for tiled windows (only floating windows get shadows)
-    { match = { float = false }, no_shadow = true },
+    { match = { float = false },            no_shadow = true },
     { utility = "noctalia" },
 }
 
@@ -193,7 +193,9 @@ for _, rule in ipairs(window_rules) do
     if rule.utility then
         handled[rule.utility] = true
         add_utility(rule.utility)
-    else expanded[#expanded + 1] = rule end
+    else
+        expanded[#expanded + 1] = rule
+    end
 end
 
 -- New custom utility specifications are deterministic and precede custom/rules.lua.
@@ -217,8 +219,8 @@ local workspace_rules = {
     -- them behaves like paging through full-screen apps rather than tiling
     -- side-by-side.
     {
-        workspace = "special:communication",
-        layout    = "scrolling",
+        workspace   = "special:communication",
+        layout      = "scrolling",
         layout_opts = {
             column_width     = 1.0, -- 1.0 = full monitor width per column
             focus_fit_method = 1,   -- 1 = fit (scroll the focused column fully into view, not just centered)
@@ -240,32 +242,32 @@ local layer_rules = {
     ------------------------------------------------------------------
     -- Fade-only animations for transient/system-level surfaces
     ------------------------------------------------------------------
-    { match = { namespace = "hyprpicker" },     animation = "fade" },
-    { match = { namespace = "logout_dialog" },  animation = "fade" },
-    { match = { namespace = "selection" },      animation = "fade" }, -- slurp
-    { match = { namespace = "wayfreeze" },      animation = "fade" },
-    { match = { namespace = "launcher" },       animation = "popin 80%", blur = true }, -- fuzzel/wofi
+    { match = { namespace = "hyprpicker" },       animation = "fade" },
+    { match = { namespace = "logout_dialog" },    animation = "fade" },
+    { match = { namespace = "selection" },        animation = "fade" },                   -- slurp
+    { match = { namespace = "wayfreeze" },        animation = "fade" },
+    { match = { namespace = "launcher" },         animation = "popin 80%", blur = true }, -- fuzzel/wofi
 
     ------------------------------------------------------------------
     -- Global xray, then per-namespace opt-outs of animation
     ------------------------------------------------------------------
-    { match = { namespace = ".*" },        xray = true },
-    { match = { namespace = "walker" },    no_anim = true },
-    { match = { namespace = "selection" }, no_anim = true },
-    { match = { namespace = "overview" },  no_anim = true },
-    { match = { namespace = "anyrun" },    no_anim = true },
-    { match = { namespace = "indicator.*" }, no_anim = true },
-    { match = { namespace = "osk" },       no_anim = true },
-    { match = { namespace = "hyprpicker" }, no_anim = true },
+    { match = { namespace = ".*" },               xray = true },
+    { match = { namespace = "walker" },           no_anim = true },
+    { match = { namespace = "selection" },        no_anim = true },
+    { match = { namespace = "overview" },         no_anim = true },
+    { match = { namespace = "anyrun" },           no_anim = true },
+    { match = { namespace = "indicator.*" },      no_anim = true },
+    { match = { namespace = "osk" },              no_anim = true },
+    { match = { namespace = "hyprpicker" },       no_anim = true },
 
-    { match = { namespace = "noanim" },         no_anim = true },
-    { match = { namespace = "gtk-layer-shell" }, blur = true },
-    { match = { namespace = "gtk-layer-shell" }, ignore_alpha = 0 },
-    { match = { namespace = "launcher" },       blur = true },
-    { match = { namespace = "launcher" },       ignore_alpha = 0.5 },
-    { match = { namespace = "notifications" },  blur = true },
-    { match = { namespace = "notifications" },  ignore_alpha = 0.69 },
-    { match = { namespace = "logout_dialog" },  blur = true }, -- wlogout
+    { match = { namespace = "noanim" },           no_anim = true },
+    { match = { namespace = "gtk-layer-shell" },  blur = true },
+    { match = { namespace = "gtk-layer-shell" },  ignore_alpha = 0 },
+    { match = { namespace = "launcher" },         blur = true },
+    { match = { namespace = "launcher" },         ignore_alpha = 0.5 },
+    { match = { namespace = "notifications" },    blur = true },
+    { match = { namespace = "notifications" },    ignore_alpha = 0.69 },
+    { match = { namespace = "logout_dialog" },    blur = true }, -- wlogout
 
 
     -- Launchers need to be FAST — no animation delay before first paint
@@ -274,16 +276,14 @@ local layer_rules = {
 
 -- add this new layer rule : noctalia specific; don't bunch apply.
 hl.layer_rule({
-  name = "noctalia",
-  match = {
-    namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
-  },
-  no_anim = true,
-  ignore_alpha = 0.5,
-  blur = true,
-  blur_popups = true,
+    name = "noctalia",
+    match = {
+        namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd|window-switcher)$",
+    },
+    no_anim = true,
+    ignore_alpha = 0.5,
+    blur = true,
+    blur_popups = true,
 })
 
 boot.apply_all(hl.layer_rule, layer_rules, "rules.layer")
-
-

@@ -5,8 +5,8 @@ local vars = require("hyprland.variables")
 
 hl.config({
     general = {
-        layout        = "dwindle",
-        allow_tearing = false, -- disable tearing globally, including windows with an immediate rule
+        layout          = "dwindle",
+        allow_tearing   = false, -- disable tearing globally, including windows with an immediate rule
 
         gaps_workspaces = vars.workspaceGaps,
         gaps_in         = vars.windowGapsIn,
@@ -30,13 +30,10 @@ hl.config({
 
 
 -- case for noctalia; pre number workspaces.
--- if needed, can be created more than that; 
+-- if needed, can be created more than that;
 for i = 1, 5 do
     hl.workspace_rule({
         workspace = tostring(i),
         persistent = true,
     })
 end
-
-
-

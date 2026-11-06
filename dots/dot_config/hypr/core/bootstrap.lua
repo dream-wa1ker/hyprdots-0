@@ -48,7 +48,6 @@ function M.deep_merge(base, overrides)
     return base
 end
 
-
 function M.apply_all(fn, specs, label)
     for i, spec in ipairs(specs) do
         local ok, err = pcall(fn, spec)

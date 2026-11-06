@@ -77,7 +77,8 @@ local power_saver_toggle = boot.safe_call(function()
     if not STATE_FILE then
         pcall(hl.notification.create, {
             text = "Power saver unavailable: XDG_RUNTIME_DIR is not set",
-            duration = 4000, icon = "warning",
+            duration = 4000,
+            icon = "warning",
         })
         return
     end
@@ -89,7 +90,8 @@ local power_saver_toggle = boot.safe_call(function()
     -- Hyprland's own notification: the shell's daemon may be stopped.
     pcall(hl.notification.create, {
         text = turn_on and "Power saver ON (shell stopped)" or "Power saver OFF",
-        duration = 2500, icon = "info",
+        duration = 2500,
+        icon = "info",
     })
 end, "powerSaverToggle")
 

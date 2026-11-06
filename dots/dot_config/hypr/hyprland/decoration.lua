@@ -5,14 +5,14 @@ local vars = require("hyprland.variables")
 
 hl.config({
     decoration = {
-        rounding = vars.windowRounding,
+        rounding           = vars.windowRounding,
 
         active_opacity     = vars.windowOpacity,
-        inactive_opacity    = vars.windowOpacity,
-        fullscreen_opacity  = 1.0, -- fullscreen content (video, games) stays fully solid
+        inactive_opacity   = vars.windowOpacity,
+        fullscreen_opacity = 1.0,  -- fullscreen content (video, games) stays fully solid
 
         -- Universal blur: applies to every window's background by default.
-        blur = {
+        blur               = {
             enabled           = vars.blurEnabled,
             xray              = vars.blurXray,
             special           = vars.blurSpecialWs,
@@ -24,7 +24,7 @@ hl.config({
             passes            = vars.blurPasses,
         },
 
-        shadow = {
+        shadow             = {
             enabled      = vars.shadowEnabled,
             range        = vars.shadowRange,
             render_power = vars.shadowRenderPower,
@@ -32,5 +32,3 @@ hl.config({
         },
     },
 })
-
-

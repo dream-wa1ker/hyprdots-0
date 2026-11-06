@@ -15,3 +15,9 @@ map({ "n", "i", "v", "x" }, "<C-S-s>", "<Cmd>wq<CR>", { desc = "Save and Quit" }
 
 -- Ctrl+Shift+X exit without saving in any mode
 map({ "n", "i", "v", "x" }, "<C-S-x>", "<Cmd>q!<CR>", { desc = "Force Quit" })
+
+-- Delete the current buffer, or use a count (e.g. 3<leader>bd) for a buffer number.
+map("n", "<leader>bd", function()
+  local count = vim.v.count
+  Snacks.bufdelete(count > 0 and count or nil)
+end, { desc = "Delete Buffer" })

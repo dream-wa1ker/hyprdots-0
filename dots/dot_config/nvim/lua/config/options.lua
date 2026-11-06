@@ -9,6 +9,7 @@ vim.opt.relativenumber = false
 
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
 vim.opt.expandtab = true
 
 -- disable the animations : annoys me. 
@@ -18,5 +19,3 @@ vim.g.snacks_animate = false
 
 vim.opt.wrap = true
 vim.opt.linebreak = true
-
-

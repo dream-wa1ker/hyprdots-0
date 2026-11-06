@@ -353,6 +353,9 @@ hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
 
+[plugin_settings."noctalia/notes"]
+notes_dir = "/home/rev/Workspace/notes/scratchpad"
+
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
 panel_position = "center"

@@ -20,7 +20,7 @@ function M.validate_spec(spec)
         return nil, "w and h must be positive finite numbers"
     end
     if fractions and not (positive(spec.wp) and spec.wp <= 1
-        and positive(spec.hp) and spec.hp <= 1) then
+            and positive(spec.hp) and spec.hp <= 1) then
         return nil, "wp and hp must be greater than 0 and at most 1"
     end
     if (spec.x ~= nil or spec.y ~= nil)
@@ -84,7 +84,9 @@ function M.monitor_area(monitor, usable)
         width, height = monitor.width / scale, monitor.height / scale
         local transform = finite(monitor.transform) and monitor.transform or 0
         if transform % 2 == 1 then width, height = height, width end
-    else return nil end
+    else
+        return nil
+    end
     local x = finite(monitor.x) and monitor.x or 0
     local y = finite(monitor.y) and monitor.y or 0
     if usable then
@@ -124,7 +126,9 @@ function M.resolve_position(spec, area, size, bounds)
     elseif spec.center ~= false then
         x = bounds.x + (bounds.width - size.width) / 2
         y = bounds.y + (bounds.height - size.height) / 2
-    else return nil end
+    else
+        return nil
+    end
     x = math.max(bounds.x, math.min(x, bounds.x + math.max(0, bounds.width - size.width)))
     y = math.max(bounds.y, math.min(y, bounds.y + math.max(0, bounds.height - size.height)))
     return { x = math.max(bounds.x, math.floor(x)), y = math.max(bounds.y, math.floor(y)) }
@@ -140,7 +144,8 @@ function M.pip_box(area, size)
     return {
         x = math.floor(area.x + area.width - width - margin),
         y = math.floor(area.y + area.height - height - margin),
-        width = width, height = height,
+        width = width,
+        height = height,
     }
 end
 
@@ -153,11 +158,15 @@ function M.rule_effects(spec)
             "(monitor_w*" .. tostring(spec.wp) .. ")",
             "(monitor_h*" .. tostring(spec.hp) .. ")",
         }
-    else effects.size = { math.max(1, math.floor(spec.w)), math.max(1, math.floor(spec.h)) } end
+    else
+        effects.size = { math.max(1, math.floor(spec.w)), math.max(1, math.floor(spec.h)) }
+    end
     if spec.x ~= nil then
         effects.move = { spec.x, spec.y } -- native rule coordinates are monitor-local
         effects.center = false
-    else effects.center = spec.center ~= false end
+    else
+        effects.center = spec.center ~= false
+    end
     return effects
 end
 
@@ -175,31 +184,36 @@ end
 
 -- Fractions describe shared edges, so odd-sized halves meet without gaps.
 local presets = {
-    left = {0, 0, .5, 1}, right = {.5, 0, 1, 1},
-    top = {0, 0, 1, .5}, bottom = {0, .5, 1, 1},
-    top_left = {0, 0, .5, .5}, top_right = {.5, 0, 1, .5},
-    bottom_left = {0, .5, .5, 1}, bottom_right = {.5, .5, 1, 1},
-    fill = {0, 0, 1, 1},
+    left = { 0, 0, .5, 1 },
+    right = { .5, 0, 1, 1 },
+    top = { 0, 0, 1, .5 },
+    bottom = { 0, .5, 1, 1 },
+    top_left = { 0, 0, .5, .5 },
+    top_right = { .5, 0, 1, .5 },
+    bottom_left = { 0, .5, .5, 1 },
+    bottom_right = { .5, .5, 1, 1 },
+    fill = { 0, 0, 1, 1 },
 }
 
 function M.preset_box(name, area, center_spec, full_area)
     if not (area and finite(area.x) and finite(area.y)
-        and positive(area.width) and area.width >= 1
-        and positive(area.height) and area.height >= 1) then
+            and positive(area.width) and area.width >= 1
+            and positive(area.height) and area.height >= 1) then
         return nil, "usable monitor area unavailable"
     end
     if name == "center" then
-        local size, err = M.resolve_size(center_spec or {wp = .55, hp = .6}, full_area or area, area)
+        local size, err = M.resolve_size(center_spec or { wp = .55, hp = .6 }, full_area or area, area)
         if not size then return nil, err end
-        local position = M.resolve_position({center = true}, full_area or area, size, area)
-        return {x = position.x, y = position.y, width = size.width, height = size.height}
+        local position = M.resolve_position({ center = true }, full_area or area, size, area)
+        return { x = position.x, y = position.y, width = size.width, height = size.height }
     end
     local edges = presets[name]
     if not edges then return nil, "unknown placement preset: " .. tostring(name) end
     local left = math.min(math.floor(area.width * edges[1]), math.floor(area.width) - 1)
     local top = math.min(math.floor(area.height * edges[2]), math.floor(area.height) - 1)
     return {
-        x = area.x + left, y = area.y + top,
+        x = area.x + left,
+        y = area.y + top,
         width = math.max(1, math.floor(area.width * edges[3]) - left),
         height = math.max(1, math.floor(area.height * edges[4]) - top),
     }
