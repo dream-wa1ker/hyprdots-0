@@ -21,3 +21,36 @@ map("n", "<leader>bd", function()
   local count = vim.v.count
   Snacks.bufdelete(count > 0 and count or nil)
 end, { desc = "Delete Buffer" })
+
+-- Browse installed Unix manual pages, with exact section filters.
+require("which-key").add({ { "<leader>m", group = "man pages" } })
+
+map("n", "<leader>mm", function()
+  Snacks.picker.man()
+end, { desc = "All Man Pages" })
+
+local man_sections = {
+  ["1"] = "Commands",
+  ["2"] = "System Calls",
+  ["3"] = "Library Functions",
+  ["4"] = "Devices",
+  ["5"] = "File Formats",
+  ["6"] = "Games",
+  ["7"] = "Overviews and Conventions",
+  ["8"] = "Administration",
+  ["3type"] = "Types and Structs",
+}
+
+for section, description in pairs(man_sections) do
+  local key = section == "3type" and "t" or section
+  map("n", "<leader>m" .. key, function()
+    Snacks.picker.man({
+      title = "Man " .. section .. ": " .. description,
+      transform = function(item)
+        return item.section == section
+      end,
+    })
+  end, { desc = "Man " .. section .. ": " .. description })
+end
+
+map("n", "<leader>mk", "<cmd>vertical Man<cr>", { desc = "Man Page for Word" })
