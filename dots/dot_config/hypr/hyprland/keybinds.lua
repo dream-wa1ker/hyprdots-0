@@ -117,7 +117,7 @@ local bindings = {
         id = "pomodoro",
         key = "SUPER + F",
         description = "Toggle Focus Pomodoro",
-        build_action = function() return noctalia("panel-toggle thepunkoff/pomodoro:panel") end,
+        build_action = function() return noctalia("panel-toggle adam-gassem/pomodoro-heatmap:panel") end,
     },
     {
         id = "notes",
@@ -204,7 +204,46 @@ local bindings = {
         id = "wallpaperSelector",
         key = "SUPER + W",
         description = "Toggle Wallpaper Selector",
+        build_action = function() return noctalia("panel-toggle ashur-d/wallpaper-widget:hub") end,
+    },
+    {
+        id = "builtinWallpaperSelector",
+        key = "SUPER + ALT + W",
+        description = "Toggle Built-in Wallpaper Selector",
         build_action = function() return noctalia("panel-toggle wallpaper") end,
+    },
+    {
+        id = "wallhavenBrowser",
+        key = "SUPER + ALT + SHIFT + W",
+        description = "Toggle Wallhaven Wallpaper Browser",
+        build_action = function()
+            return noctalia("panel-toggle noctalia/wallhaven:browser")
+        end,
+    },
+    {
+        id = "mpvpaperPicker",
+        key = "SUPER + SHIFT + W",
+        description = "Open mpvpaper Wallpaper Picker",
+        build_action = function()
+            return hl.dsp.exec_cmd("noctalia msg panel-toggle noctalia/mpvpaper:picker")
+        end,
+    },
+
+    {
+        id = "androidConnectPanel",
+        key = "SUPER + SHIFT + D",
+        description = "Toggle Android Connect Panel",
+        build_action = function()
+            return noctalia("panel-toggle demencia89/androidconnect:panel")
+        end,
+    },
+    {
+        id = "mediaDownloader",
+        key = "SUPER + semicolon",
+        description = "Toggle Media Downloader Panel",
+        build_action = function()
+            return noctalia("panel-toggle omerfuyar/media-downloader:panel")
+        end,
     },
     {
         id = "randomWallpaper",

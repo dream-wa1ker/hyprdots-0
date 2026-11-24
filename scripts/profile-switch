@@ -13,7 +13,7 @@
 #   2. copy the profile's Noctalia settings (and Obsidian appearance, if a vault exists)
 #   3. write the profile name to profiles/.current BEFORE any reload, so that
 #      ~/.config/hypr/custom/colors.lua reads the NEW profile when Hyprland reloads
-#   4. Noctalia reloads and regenerates its templates; wait for the Hyprland theme file
+#   4. Noctalia reloads and regenerates its templates; verify the intended palette and required app outputs
 #   5. hyprctl reload, run the profile's post-apply.sh, capture the result with chezmoi
 # If anything fails before step 5 the previous state is restored.
 set -Eeuo pipefail
@@ -33,15 +33,16 @@ readonly HYPR_THEME="${HOME}/.config/hypr/noctalia.lua"
 readonly STATE_DIR="${HOME}/.local/state/hyprdots"
 readonly BACKUP_DIR="${STATE_DIR}/backups"
 readonly KEEP_BACKUPS=10
-readonly TEMPLATE_TIMEOUT=20 # seconds to wait for Noctalia to rewrite the theme
+readonly TEMPLATE_TIMEOUT=45 # fail if required palette outputs do not converge
+readonly THEME_HELPER="${REPO_ROOT}/scripts/profile-theme.py"
 
 PROGRAM="${0##*/}"
 
 # Rollback state.
-PREVIOUS_PROFILE=''
-SETTINGS_BACKUP=''
-OBSIDIAN_BACKUP=''
 ROLLBACK_ARMED=0
+SNAPSHOT_DIR=""
+EXPECTED_PALETTE=""
+STAMP=""
 
 log() { printf '[%s] %s\n' "$PROGRAM" "$*"; }
 warn() { printf '[%s] warning: %s\n' "$PROGRAM" "$*" >&2; }
@@ -83,7 +84,10 @@ safe_to_run() {
 
 list_profiles() {
     [[ -d "$PROFILES_DIR" ]] || die "Profiles directory not found: $PROFILES_DIR"
-    find "$PROFILES_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
+    find "$PROFILES_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' |
+        while IFS= read -r name; do
+            [[ ! -s "$PROFILES_DIR/$name/noctalia/settings.toml" ]] || printf '%s\n' "$name"
+        done | sort
 }
 
 select_profile() {
@@ -94,13 +98,6 @@ select_profile() {
     printf '%s\n' "$selected"
 }
 
-read_current() {
-    local line
-    [[ -f "$CURRENT_FILE" ]] || return 1
-    IFS= read -r line <"$CURRENT_FILE" || true
-    [[ "$line" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] || return 1
-    printf '%s\n' "$line"
-}
 
 # Atomic: write a temporary file next to the target, then rename it.
 write_current() {
@@ -142,55 +139,60 @@ obsidian_available() {
 }
 
 prune_backups() {
-    local f
-    # Newest first; delete everything after the first KEEP_BACKUPS files.
-    while IFS= read -r f; do
-        rm -f -- "$f"
-    done < <(find "$BACKUP_DIR" -maxdepth 1 -type f -printf '%T@ %p\n' 2>/dev/null |
-        sort -rn | tail -n "+$((KEEP_BACKUPS + 1))" | cut -d' ' -f2-)
+    python3 "$THEME_HELPER" prune "$BACKUP_DIR" "$KEEP_BACKUPS"
 }
 
 # Runs on every exit; does something only while a switch is half-finished.
 rollback() {
-    ((ROLLBACK_ARMED)) || return 0
-    ROLLBACK_ARMED=0
-    warn 'The switch failed; restoring the previous state.'
-    if [[ -n "$SETTINGS_BACKUP" && -f "$SETTINGS_BACKUP" ]]; then
-        cp -- "$SETTINGS_BACKUP" "$NOCTALIA_TARGET" || true
+    local status=$?
+    if ((ROLLBACK_ARMED)); then
+        ROLLBACK_ARMED=0
+        warn 'The switch failed; restoring the previous settings and theme files.'
+        # Restore settings first so queued generation uses the previous profile.
+        python3 "$THEME_HELPER" restore "$SNAPSHOT_DIR" ||
+            warn "Recovery incomplete; backup is in $SNAPSHOT_DIR"
+        noctalia msg config-reload >/dev/null 2>&1 ||
+            warn 'Could not reload restored Noctalia settings.'
+        noctalia msg templates-apply >/dev/null 2>&1 ||
+            warn 'Could not regenerate restored Noctalia templates.'
+        # IPC acknowledgements are not completion: wait for coherent recovery too.
+        local recovery_stamp recovery_expected
+        recovery_stamp="$(mktemp)"
+        recovery_expected="$(mktemp)"
+        printf '{}\n' >"$recovery_expected"
+        noctalia msg templates-apply >/dev/null 2>&1 || true
+        if ! python3 "$THEME_HELPER" wait "$NOCTALIA_TARGET" "$recovery_expected" "$recovery_stamp" "$TEMPLATE_TIMEOUT"; then
+            warn "Could not regenerate the previous theme; restoring saved output files. Backup: $SNAPSHOT_DIR"
+            python3 "$THEME_HELPER" restore "$SNAPSHOT_DIR" || true
+        fi
+        rm -f -- "$recovery_stamp" "$recovery_expected"
+        if command -v hyprctl >/dev/null 2>&1; then
+            hyprctl reload >/dev/null 2>&1 || true
+        fi
     fi
-    if [[ -n "$OBSIDIAN_BACKUP" && -f "$OBSIDIAN_BACKUP" ]]; then
-        cp -- "$OBSIDIAN_BACKUP" "$OBSIDIAN_TARGET" || true
-    fi
-    if [[ -n "$PREVIOUS_PROFILE" ]]; then
-        write_current "$PREVIOUS_PROFILE" || true
-    fi
-    noctalia msg config-reload >/dev/null 2>&1 || true
+    [[ -z "$STAMP" ]] || rm -f -- "$STAMP"
+    [[ -z "$EXPECTED_PALETTE" ]] || rm -f -- "$EXPECTED_PALETTE"
+    return "$status"
 }
 trap rollback EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
-# Wait until Noctalia has rewritten the Hyprland theme file after $1 (a stamp file).
 wait_for_theme() {
-    local stamp="$1" waited=0
-    while [[ ! "$HYPR_THEME" -nt "$stamp" ]]; do
-        if ((waited >= TEMPLATE_TIMEOUT)); then
-            warn "Noctalia did not rewrite ${HYPR_THEME} within ${TEMPLATE_TIMEOUT}s; continuing."
-            return 0
-        fi
-        sleep 1
-        waited=$((waited + 1))
-    done
+    python3 "$THEME_HELPER" wait "$NOCTALIA_TARGET" "$EXPECTED_PALETTE" "$1" "$TEMPLATE_TIMEOUT"
 }
 
 apply_profile() {
     local profile="$1"
     local profile_dir="${PROFILES_DIR}/${profile}"
     local post_apply="${profile_dir}/post-apply.sh"
-    local ts stamp f
+    local ts f
     local -a capture=()
     local -a candidates=(
         "$HOME/.config/btop/themes/noctalia.theme"
         "$HOME/.config/cava/themes/noctalia"
         "$HOME/.config/fastfetch/themes/noctalia.jsonc"
+        "$HOME/.config/fastfetch/config.jsonc"
         "$HOME/.config/foot/themes/noctalia"
         "$HOME/.config/fuzzel/themes/noctalia"
         "$HOME/.config/hypr/noctalia.lua"
@@ -203,22 +205,23 @@ apply_profile() {
     validate_profile_name "$profile"
     validate_profile "$profile"
     validate_destinations
-    require_command cp chezmoi noctalia mktemp find sort
+    require_command cp chezmoi noctalia mktemp find sort python3 flock
+    mkdir -p -- "$STATE_DIR"
+    # All profile switches share this lock, including switches from the launcher.
+    exec 9>"$STATE_DIR/profile-switch.lock"
+    flock -n 9 || die "Another profile switch is already running."
+    EXPECTED_PALETTE="$(mktemp)"
+    python3 "$THEME_HELPER" preflight "$profile_dir/noctalia/settings.toml" "$EXPECTED_PALETTE" ||
+        die "Profile palette validation failed."
+    noctalia msg status >/dev/null || die "Noctalia is not running."
 
     log "Applying profile: $profile"
 
-    # 1. Back up the live files.
+    # Snapshot all tracked template outputs and main files their hooks edit.
     ts="$(date +%Y%m%d-%H%M%S)"
     mkdir -p -- "$BACKUP_DIR"
-    PREVIOUS_PROFILE="$(read_current || true)"
-    if [[ -f "$NOCTALIA_TARGET" ]]; then
-        SETTINGS_BACKUP="${BACKUP_DIR}/noctalia-settings-${ts}.toml"
-        cp -- "$NOCTALIA_TARGET" "$SETTINGS_BACKUP"
-    fi
-    if obsidian_available && [[ -f "$OBSIDIAN_TARGET" ]]; then
-        OBSIDIAN_BACKUP="${BACKUP_DIR}/obsidian-appearance-${ts}.json"
-        cp -- "$OBSIDIAN_TARGET" "$OBSIDIAN_BACKUP"
-    fi
+    SNAPSHOT_DIR="$(mktemp -d "$BACKUP_DIR/switch-${ts}-XXXXXX")"
+    python3 "$THEME_HELPER" snapshot "$SNAPSHOT_DIR"
     ROLLBACK_ARMED=1
 
     # 2. Copy the profile files into place.
@@ -236,15 +239,19 @@ apply_profile() {
     write_current "$profile"
 
     # 4. Let Noctalia reload and regenerate its templates.
-    stamp="$(mktemp)"
+    STAMP="$(mktemp)"
     noctalia msg config-reload
     noctalia msg templates-apply
-    wait_for_theme "$stamp"
-    rm -f -- "$stamp"
+    wait_for_theme "$STAMP" || die "Theme generation did not finish; rolling back."
+    rm -f -- "$STAMP"
+    STAMP=""
 
     # 5. Hyprland re-reads the generated theme, then custom/colors.lua wins over it.
     if command -v hyprctl >/dev/null 2>&1; then
-        hyprctl reload >/dev/null || warn 'hyprctl reload failed; reload Hyprland manually.'
+        hyprctl reload >/dev/null || die 'Hyprland reload failed.'
+        local errors
+        errors="$(hyprctl configerrors)" || die 'Could not check Hyprland config errors.'
+        [[ -z "$errors" ]] || die "Hyprland reported config errors: $errors"
     fi
     ROLLBACK_ARMED=0 # the profile is now active; later problems are warnings only
 

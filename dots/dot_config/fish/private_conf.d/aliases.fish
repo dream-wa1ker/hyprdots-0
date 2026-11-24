@@ -13,6 +13,7 @@ end
 
 alias grep='grep --color=auto'
 alias cdir='cd ~/Workspace/c'
+alias cpdir='cd ~/Workspace/c++'
 alias git_downloads='cd ~/Downloads/git'
 alias workspace='cd ~/Workspace'
 alias github='cd ~/Workspace/github'

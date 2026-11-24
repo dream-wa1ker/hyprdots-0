@@ -1,4 +1,4 @@
-config_version = 16
+config_version = 20
 
 [accessibility]
 ui_scale = 1.2000000104308128
@@ -8,7 +8,7 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
-    center = [ "widget_2", "date", "special-workspaces", "cat" ]
+    center = [ "widget_2", "date", "special-workspaces", "widget" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
     radius = 20
@@ -69,7 +69,7 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.89999997988343239
-    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
+    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "custom_button_2", "notes", "status", "bar_2" ]
     enabled = true
     end = [ "privacy" ]
     margin_ends = 0
@@ -100,6 +100,9 @@ enabled = true
 
     [calendar.account.personal_google]
     type = "google"
+
+[control_center.calendar]
+show_events_location = true
 
 [desktop_widgets]
 schema_version = 2
@@ -207,6 +210,7 @@ enabled = true
 
 [idle]
 behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
+pre_action_fade_seconds = 10
 
     [idle.behavior.lock]
     action = "lock"
@@ -228,7 +232,7 @@ address = "Chennai, India"
 
 [lockscreen]
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/archlinux.png"
+wallpaper = "/home/rev/Pictures/Wallpapers/nord/archlinux.png"
 
 [lockscreen_widgets]
 enabled = true
@@ -342,6 +346,10 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
+[plugin_settings."adam-gassem/pomodoro-heatmap"]
+panel_placement = "floating"
+panel_position = "top_center"
+
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
 panel_placement = "floating"
@@ -350,15 +358,37 @@ panel_position = "top_right"
 [plugin_settings."aristides/udiskie"]
 manager_open_near_click = true
 
+[plugin_settings."ashur-d/wallpaper-widget"]
+hub_position = "bottom_center"
+wallpaper_dir = "/home/rev/Pictures/Wallpapers/nord"
+
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
 hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
+[plugin_settings."cero800/arch-audit"]
+panel_placement = "floating"
+panel_position = "top_center"
+
+[plugin_settings."demencia89/androidconnect"]
+panel_placement = "floating"
+panel_position = "center"
+
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
 
+[plugin_settings."noctalia/mpvpaper"]
+picker_placement = "floating"
+picker_position = "center"
+video_directory = "/home/rev/Pictures/Videos"
+
 [plugin_settings."noctalia/notes"]
 notes_dir = "/home/rev/Workspace/notes/scratchpad"
+
+[plugin_settings."omerfuyar/media-downloader"]
+panel_placement = "floating"
+panel_position = "bottom_center"
+whole_playlist = true
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
@@ -366,15 +396,20 @@ panel_position = "center"
 
 [plugins]
 enabled = [
-    "dotnetrob/cat",
     "fel/ocr",
     "yuuto/arch-updater",
-    "thepunkoff/pomodoro",
     "jamesfeeder/special-workspaces",
     "andrewdems/vpn-manager",
     "h-jangra/region-recorder",
     "noctalia/notes",
-    "aristides/udiskie"
+    "aristides/udiskie",
+    "noctalia/mpvpaper",
+    "demencia89/androidconnect",
+    "cero800/arch-audit",
+    "omerfuyar/media-downloader",
+    "adam-gassem/pomodoro-heatmap",
+    "noctalia/wallhaven",
+    "ashur-d/wallpaper-widget"
 ]
 
 [shell]
@@ -396,6 +431,9 @@ screen_time_enabled = true
     pipe_command = "swappy -f -"
     show_cursor = true
 
+[system.monitor]
+disk_used_activity_threshold = 40
+
 [theme]
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
@@ -404,7 +442,7 @@ source = "builtin"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
-    builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
+    builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt" ]
     community_ids = [
         "codex",
         "opencode",
@@ -413,7 +451,6 @@ wallpaper_scheme = "m3-tonal-spot"
         "inkscape",
         "libreoffice",
         "neovim",
-        "obsidian",
         "zed",
         "fuzzel",
         "fastfetch",
@@ -421,20 +458,20 @@ wallpaper_scheme = "m3-tonal-spot"
         "bat",
         "fzf",
         "konsole",
-        "tmux"
+        "starship",
     ]
 
 [wallpaper]
-directory = "/home/rev/Pictures/Wallpapers"
+directory = "/home/rev/Pictures/Wallpapers/nord"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
 
 [widget.active_window]
 enabled = false
@@ -443,15 +480,15 @@ show_empty_label = true
 [widget.bar]
 type = "andrewdems/vpn-manager:bar"
 
+[widget.bar_2]
+type = "demencia89/androidconnect:bar"
+
 [widget.battery]
 capsule = true
 capsule_padding = 10
 
 [widget.brightness]
 show_label = false
-
-[widget.cat]
-type = "dotnetrob/cat:cat"
 
 [widget.clock]
 capsule = true
@@ -518,8 +555,11 @@ type = "aristides/udiskie:status"
 [widget.volume]
 show_label = false
 
+[widget.widget]
+type = "cero800/arch-audit:widget"
+
 [widget.widget_2]
-type = "thepunkoff/pomodoro:widget"
+type = "adam-gassem/pomodoro-heatmap:widget"
 
 [widget.widget_3]
 type = "h-jangra/region-recorder:widget"

@@ -1,4 +1,4 @@
-config_version = 16
+config_version = 20
 
 [accessibility]
 ui_scale = 1.2000000104308128
@@ -8,7 +8,7 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
-    center = [ "widget_2", "workspaces", "special-workspaces" ]
+    center = [ "widget_2", "workspaces", "special-workspaces", "widget_4" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "privacy", "group:g1" ]
     margin_ends = 20
     position = "bottom"
@@ -69,7 +69,7 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.89999997988343239
-    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "widget", "custom_button_2", "notes", "status" ]
+    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "custom_button_2", "notes", "status" ]
     enabled = true
     end = []
     margin_ends = 820
@@ -263,8 +263,9 @@ behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
 address = "Chennai, India"
 
 [lockscreen]
+blurred_desktop = true
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/forest.jpg"
+wallpaper = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
 
 [lockscreen_widgets]
 enabled = true
@@ -378,6 +379,10 @@ max_visible = 3
 offset_x = 10
 offset_y = 10
 
+[plugin_settings."adam-gassem/pomodoro-heatmap"]
+panel_placement = "floating"
+panel_position = "bottom_center"
+
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
 panel_placement = "floating"
@@ -386,31 +391,61 @@ panel_position = "top_right"
 [plugin_settings."aristides/udiskie"]
 manager_open_near_click = true
 
+[plugin_settings."ashur-d/wallpaper-widget"]
+hub_position = "top_center"
+wallpaper_dir = "/home/rev/Pictures/Wallpapers/foresto"
+
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
 hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
+[plugin_settings."cero800/arch-audit"]
+panel_placement = "floating"
+panel_position = "bottom_center"
+
+[plugin_settings."demencia89/androidconnect"]
+panel_placement = "floating"
+panel_position = "top_center"
+
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
+
+[plugin_settings."noctalia/mpvpaper"]
+picker_placement = "floating"
+picker_position = "top_center"
+video_directory = "/home/rev/Pictures/Videos"
+
+[plugin_settings."noctalia/wallhaven"]
+browser_placement = "floating"
+browser_position = "top_center"
+
+[plugin_settings."omerfuyar/media-downloader"]
+panel_placement = "floating"
+panel_position = "top_center"
 
 [plugin_settings."thepunkoff/pomodoro"]
 panel_position = "auto"
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
-panel_position = "center"
+panel_position = "top_center"
 
 [plugins]
 enabled = [
-    "dotnetrob/cat",
     "fel/ocr",
     "yuuto/arch-updater",
-    "thepunkoff/pomodoro",
     "jamesfeeder/special-workspaces",
     "andrewdems/vpn-manager",
     "h-jangra/region-recorder",
     "noctalia/notes",
-    "aristides/udiskie"
+    "aristides/udiskie",
+    "demencia89/androidconnect",
+    "cero800/arch-audit",
+    "omerfuyar/media-downloader",
+    "adam-gassem/pomodoro-heatmap",
+    "noctalia/mpvpaper",
+    "noctalia/wallhaven",
+    "ashur-d/wallpaper-widget"
 ]
 
 [shell]
@@ -443,7 +478,7 @@ source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
-    builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt", "starship" ]
+    builtin_ids = [ "alacritty", "btop", "cava", "foot", "gtk3", "gtk4", "hyprland", "kcolorscheme", "kitty", "qt" ]
     community_ids = [
         "codex",
         "opencode",
@@ -452,7 +487,6 @@ wallpaper_scheme = "m3-tonal-spot"
         "inkscape",
         "libreoffice",
         "neovim",
-        "obsidian",
         "zed",
         "fuzzel",
         "fastfetch",
@@ -460,20 +494,20 @@ wallpaper_scheme = "m3-tonal-spot"
         "bat",
         "fzf",
         "konsole",
-        "tmux"
+        "starship",
     ]
 
 [wallpaper]
-directory = "/home/rev/Pictures/Wallpapers"
+directory = "/home/rev/Pictures/Wallpapers/foresto"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
 
 [widget.active_window]
 enabled = false
@@ -556,10 +590,13 @@ type = "aristides/udiskie:status"
 show_label = false
 
 [widget.widget_2]
-type = "thepunkoff/pomodoro:widget"
+type = "adam-gassem/pomodoro-heatmap:widget"
 
 [widget.widget_3]
 type = "h-jangra/region-recorder:widget"
+
+[widget.widget_4]
+type = "cero800/arch-audit:widget"
 
 [widget.workspaces]
 capsule = true
