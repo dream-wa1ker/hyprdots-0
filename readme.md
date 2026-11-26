@@ -6,7 +6,7 @@ My Arch Linux desktop, built around **Hyprland, Noctalia, Lua, and chezmoi**. Hy
 
 This is my daily configuration. Some paths and application choices are personal, so read the scripts and preview `chezmoi diff` before applying it to another machine. Run the installer as your normal user.
 
-Last checked against the local setup on **25 November 2026**, with **Hyprland 0.57.2** and **Noctalia 5.6.0** installed. Screenshots show earlier states of the desktop, mostly Nord.
+Last checked against the local setup on **26 November 2026**, with **Hyprland 0.57.2** and **Noctalia 5.6.0** installed. Screenshots show earlier states of the desktop, mostly Nord. The existing images are kept as placeholders until I replace them.
 
 ## Contents
 
@@ -35,7 +35,7 @@ Last checked against the local setup on **25 November 2026**, with **Hyprland 0.
 - Binding IDs for remapping, disabling, or replacing shortcuts without copying every field.
 - Workspace groups, special workspaces, placement presets, and four layouts.
 - Noctalia panels for wallpapers, notes, focus timing, recording, OCR, and other desktop controls.
-- Three profiles: **Nord**, **Black**, and **Foresto**.
+- Four profiles: **Malachite** (current default), **Nord**, **Black**, and **Foresto**.
 - Profile switching with locking, palette verification, file snapshots, and recovery.
 - Kitty and Foot, Fish with Starship, and Neovim built on LazyVim.
 - MPD/rmpc configuration on the client side, CAVA, and desktop media controls.
@@ -108,8 +108,17 @@ Noctalia generates the application colors. Profiles store the shell settings use
 | `nord` | Built-in Nord | `nord/nord_alone_tree.png` |
 | `black` | Monochrome wallpaper palette with pure-black dark surfaces | `black/deer.jpg` |
 | `foresto` | Wallpaper-derived tonal-spot palette | `foresto/blush.jpg` |
+| `malachite` (default) | Wallpaper-derived tonal-spot palette | `malachite/malachite.jpg` |
 
 Wallpaper paths are relative to `~/Pictures/Wallpapers/`.
+
+**Malachite is the current default.** `profiles/.current` names it, and the managed Noctalia settings use its wallpaper. The profile name comes from the saved settings, not the inactive `theme.builtin = "Nord"` value: `theme.source = "wallpaper"` selects the wallpaper palette.
+
+### Malachite
+
+![Malachite screenshot placeholder](assets/desktop.png)
+
+*Previous desktop image, kept here until I replace it with a Malachite screenshot.*
 
 ### Nord
 
@@ -128,6 +137,7 @@ The Black profile also has a Hyprland border override, applied when the generate
 ~/.dotfiles/scripts/profile-switch nord
 ~/.dotfiles/scripts/profile-switch black
 ~/.dotfiles/scripts/profile-switch foresto
+~/.dotfiles/scripts/profile-switch malachite
 ~/.dotfiles/scripts/profile-switch --list
 ```
 
@@ -406,7 +416,8 @@ git -C ~/.dotfiles commit -m "Update Hyprland keybindings"
 │   ├── .current
 │   ├── nord/
 │   ├── black/
-│   └── foresto/
+│   ├── foresto/
+│   └── malachite/
 ├── scripts/
 │   ├── profile-switch
 │   ├── profile-theme.py
@@ -450,7 +461,7 @@ systemctl --user status mpd.service
 python3 ~/.dotfiles/tests/profile-switch.py
 ```
 
-The profile test uses mocks and temporary files; it does not change the running desktop. The three saved profiles were also tested live during the switcher update.
+The profile test uses mocks and temporary files; it does not change the running desktop. Nord, Black, and Foresto were tested live during the earlier switcher update. Malachite was checked against its saved, managed, and live wallpaper settings during this documentation update; the switcher was not rerun.
 
 ## Current limits
 
