@@ -106,85 +106,14 @@ show_events_location = true
 
 [desktop_widgets]
 schema_version = 2
-widget_order = [
-    "desktop-widget-0000000000000004",
-    "desktop-widget-0000000000000005",
-    "desktop-widget-0000000000000006",
-    "desktop-widget-0000000000000007"
-]
+widget_order = []
 
     [desktop_widgets.grid]
     cell_size = 16
     major_interval = 4
     visible = true
 
-    [desktop_widgets.widget.desktop-widget-0000000000000004]
-    box_height = 96.0
-    box_width = 336.0
-    cx = 1704.0
-    cy = 984.0
-    output = "eDP-1"
-    placement_height = 1200.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "audio_visualizer"
-
-        [desktop_widgets.widget.desktop-widget-0000000000000004.settings]
-        background = false
-        bands = 32
-        centered = true
-        mirrored = true
-        reversed = false
-        show_when_idle = true
-
-    [desktop_widgets.widget.desktop-widget-0000000000000005]
-    box_height = 176.0
-    box_width = 304.0
-    cx = 1552.0
-    cy = 808.0
-    output = "eDP-1"
-    placement_height = 1200.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "clock"
-
-        [desktop_widgets.widget.desktop-widget-0000000000000005.settings]
-        background = false
-        clock_style = "digital"
-        font_family = "CaskaydiaCove Nerd Font"
-
-    [desktop_widgets.widget.desktop-widget-0000000000000006]
-    box_height = 48.0
-    box_width = 320.0
-    cx = 1544.0
-    cy = 896.0
-    output = "eDP-1"
-    placement_height = 1200.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "clock"
-
-        [desktop_widgets.widget.desktop-widget-0000000000000006.settings]
-        background = false
-        clock_style = "digital"
-        font_family = "VictorMono NFP Thin"
-        format = "{:%d %b, %Y}"
-
-    [desktop_widgets.widget.desktop-widget-0000000000000007]
-    box_height = 80.0
-    box_width = 240.0
-    cx = 1424.0
-    cy = 976.0
-    output = "eDP-1"
-    placement_height = 1200.0
-    placement_width = 1920.0
-    rotation = 0.0
-    type = "clock"
-
-        [desktop_widgets.widget.desktop-widget-0000000000000007.settings]
-        background = false
-        font_family = "VictorMono NFM SemiBold"
-        format = "{:%A}"
+    [desktop_widgets.widget]
 
 [dock]
 auto_hide = true
@@ -231,6 +160,7 @@ pre_action_fade_seconds = 10
 address = "Chennai, India"
 
 [lockscreen]
+blurred_desktop = true
 transition_duration = 500
 wallpaper = "/home/rev/Pictures/Wallpapers/nord/archlinux.png"
 
@@ -360,7 +290,7 @@ manager_open_near_click = true
 
 [plugin_settings."ashur-d/wallpaper-widget"]
 hub_position = "bottom_center"
-wallpaper_dir = "/home/rev/Pictures/Wallpapers/nord"
+wallpaper_dir = "/home/rev/Pictures/Wallpapers/malachite"
 
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
@@ -438,7 +368,7 @@ disk_used_activity_threshold = 40
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "builtin"
+source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
@@ -458,20 +388,20 @@ wallpaper_scheme = "m3-tonal-spot"
         "bat",
         "fzf",
         "konsole",
-        "starship",
+        "starship"
     ]
 
 [wallpaper]
-directory = "/home/rev/Pictures/Wallpapers/nord"
+directory = "/home/rev/Pictures/Wallpapers/malachite"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/malachite/malachite.jpg"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/malachite/malachite.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/malachite/malachite.jpg"
 
 [widget.active_window]
 enabled = false
