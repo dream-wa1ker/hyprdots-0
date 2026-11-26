@@ -494,20 +494,20 @@ wallpaper_scheme = "m3-tonal-spot"
         "bat",
         "fzf",
         "konsole",
-        "starship",
+        "starship"
     ]
 
 [wallpaper]
 directory = "/home/rev/Pictures/Wallpapers/foresto"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
 [widget.active_window]
 enabled = false

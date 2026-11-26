@@ -8,14 +8,13 @@ order = [ "default", "left" ]
 
     [bar.default]
     background_opacity = 0.89999997988343239
-    center = [ "widget_2", "date", "special-workspaces", "widget" ]
-    end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
-    margin_ends = 0
+    center = [ "widget_2", "workspaces", "special-workspaces", "widget_4" ]
+    end = [ "tray", "group:g3", "group:g2", "battery", "privacy", "group:g1" ]
+    margin_ends = 20
+    position = "bottom"
     radius = 20
-    radius_top_left = 0
-    radius_top_right = 0
     scale = 1.0500000081956387
-    start = [ "launcher", "active_window", "workspaces", "media", "group:g4" ]
+    start = [ "launcher", "active_window", "date", "media", "group:g4" ]
     thickness = 40
     widget_spacing = 10
 
@@ -28,10 +27,11 @@ order = [ "default", "left" ]
         accordion_direction = "start"
         border_width = 1.0
         enabled = true
-        fill = "secondary"
+        fill = "primary"
+        foreground = "on_secondary"
         id = "g1"
         members = [ "session", "settings" ]
-        opacity = 0.44999998807907104
+        opacity = 0.80000001192092896
         padding = 8.0
 
         [[bar.default.capsule_group]]
@@ -69,15 +69,12 @@ order = [ "default", "left" ]
 
     [bar.left]
     background_opacity = 0.89999997988343239
-    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "custom_button_2", "notes", "status", "bar_2" ]
+    center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "custom_button_2", "notes", "status" ]
     enabled = true
-    end = [ "privacy" ]
-    margin_ends = 0
+    end = []
+    margin_ends = 820
     panel_overlap = 2
-    position = "left"
     radius = 20
-    radius_bottom_left = 0
-    radius_top_left = 0
     reserve_space = false
     scale = 1.1000000089406967
     show_on_workspace_switch = false
@@ -101,16 +98,15 @@ enabled = true
     [calendar.account.personal_google]
     type = "google"
 
-[control_center.calendar]
-show_events_location = true
-
 [desktop_widgets]
 schema_version = 2
 widget_order = [
     "desktop-widget-0000000000000004",
     "desktop-widget-0000000000000005",
     "desktop-widget-0000000000000006",
-    "desktop-widget-0000000000000007"
+    "desktop-widget-0000000000000007",
+    "desktop-widget-0000000000000008",
+    "desktop-widget-0000000000000009"
 ]
 
     [desktop_widgets.grid]
@@ -120,9 +116,9 @@ widget_order = [
 
     [desktop_widgets.widget.desktop-widget-0000000000000004]
     box_height = 96.0
-    box_width = 336.0
-    cx = 1704.0
-    cy = 984.0
+    box_width = 144.0
+    cx = 1368.0
+    cy = 440.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -140,8 +136,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000005]
     box_height = 176.0
     box_width = 304.0
-    cx = 1552.0
-    cy = 808.0
+    cx = 1568.0
+    cy = 304.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -156,8 +152,8 @@ widget_order = [
     [desktop_widgets.widget.desktop-widget-0000000000000006]
     box_height = 48.0
     box_width = 320.0
-    cx = 1544.0
-    cy = 896.0
+    cx = 1568.0
+    cy = 384.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -172,9 +168,9 @@ widget_order = [
 
     [desktop_widgets.widget.desktop-widget-0000000000000007]
     box_height = 80.0
-    box_width = 240.0
-    cx = 1424.0
-    cy = 976.0
+    box_width = 272.0
+    cx = 1568.0
+    cy = 448.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -186,10 +182,47 @@ widget_order = [
         font_family = "VictorMono NFM SemiBold"
         format = "{:%A}"
 
+    [desktop_widgets.widget.desktop-widget-0000000000000008]
+    box_height = 96.0
+    box_width = 144.0
+    cx = 1768.0
+    cy = 448.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "audio_visualizer"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000008.settings]
+        background = false
+        bands = 32
+        centered = true
+        mirrored = true
+        reversed = false
+        show_when_idle = true
+
+    [desktop_widgets.widget.desktop-widget-0000000000000009]
+    box_height = 80.0
+    box_width = 144.0
+    cx = 96.0
+    cy = 80.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "weather"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000009.settings]
+        background = false
+
 [dock]
 auto_hide = true
-enabled = false
-position = "right"
+enabled = true
+launcher_icon = "hyprland"
+launcher_position = "start"
+pinned = [ "kitty" ]
+position = "left"
+radius = 20
 reserve_space = false
 show_dots = true
 show_instance_count = false
@@ -210,7 +243,6 @@ enabled = true
 
 [idle]
 behavior_order = [ "lock", "screen-off", "lock-and-suspend" ]
-pre_action_fade_seconds = 10
 
     [idle.behavior.lock]
     action = "lock"
@@ -231,8 +263,9 @@ pre_action_fade_seconds = 10
 address = "Chennai, India"
 
 [lockscreen]
+blurred_desktop = true
 transition_duration = 500
-wallpaper = "/home/rev/Pictures/Wallpapers/nord/archlinux.png"
+wallpaper = "/home/rev/Pictures/Wallpapers/foresto/forest.jpg"
 
 [lockscreen_widgets]
 enabled = true
@@ -348,7 +381,7 @@ offset_y = 10
 
 [plugin_settings."adam-gassem/pomodoro-heatmap"]
 panel_placement = "floating"
-panel_position = "top_center"
+panel_position = "bottom_center"
 
 [plugin_settings."andrewdems/vpn-manager"]
 panel_open_near_click = false
@@ -359,8 +392,8 @@ panel_position = "top_right"
 manager_open_near_click = true
 
 [plugin_settings."ashur-d/wallpaper-widget"]
-hub_position = "bottom_center"
-wallpaper_dir = "/home/rev/Pictures/Wallpapers/nord"
+hub_position = "top_center"
+wallpaper_dir = "/home/rev/Pictures/Wallpapers/foresto"
 
 [plugin_settings."blackbartblues/keymap"]
 compositor = "hyprland"
@@ -368,31 +401,34 @@ hyprland_config = "/home/rev/.config/hypr/hyprland/keybinds.lua"
 
 [plugin_settings."cero800/arch-audit"]
 panel_placement = "floating"
-panel_position = "top_center"
+panel_position = "bottom_center"
 
 [plugin_settings."demencia89/androidconnect"]
 panel_placement = "floating"
-panel_position = "center"
+panel_position = "top_center"
 
 [plugin_settings."h-jangra/region-recorder"]
 audio_source = "both"
 
 [plugin_settings."noctalia/mpvpaper"]
 picker_placement = "floating"
-picker_position = "center"
+picker_position = "top_center"
 video_directory = "/home/rev/Pictures/Videos"
 
-[plugin_settings."noctalia/notes"]
-notes_dir = "/home/rev/Workspace/notes/scratchpad"
+[plugin_settings."noctalia/wallhaven"]
+browser_placement = "floating"
+browser_position = "top_center"
 
 [plugin_settings."omerfuyar/media-downloader"]
 panel_placement = "floating"
-panel_position = "bottom_center"
-whole_playlist = true
+panel_position = "top_center"
+
+[plugin_settings."thepunkoff/pomodoro"]
+panel_position = "auto"
 
 [plugin_settings."yuuto/arch-updater"]
 panel_placement = "floating"
-panel_position = "center"
+panel_position = "top_center"
 
 [plugins]
 enabled = [
@@ -403,21 +439,24 @@ enabled = [
     "h-jangra/region-recorder",
     "noctalia/notes",
     "aristides/udiskie",
-    "noctalia/mpvpaper",
     "demencia89/androidconnect",
     "cero800/arch-audit",
     "omerfuyar/media-downloader",
     "adam-gassem/pomodoro-heatmap",
+    "noctalia/mpvpaper",
     "noctalia/wallhaven",
     "ashur-d/wallpaper-widget"
 ]
 
 [shell]
+panel_anchor_bar = "default"
 password_style = "random"
 polkit_agent = true
 screen_time_enabled = true
 
     [shell.panel]
+    control_center_position = "auto"
+    open_near_click_control_center = true
     transparency_mode = "soft"
     wallpaper_placement = "floating"
     wallpaper_position = "center"
@@ -431,14 +470,11 @@ screen_time_enabled = true
     pipe_command = "swappy -f -"
     show_cursor = true
 
-[system.monitor]
-disk_used_activity_threshold = 40
-
 [theme]
 builtin = "Nord"
 community_palette = "Catppuccin Macchiato Blue"
 mode = "dark"
-source = "builtin"
+source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
     [theme.templates]
@@ -458,20 +494,20 @@ wallpaper_scheme = "m3-tonal-spot"
         "bat",
         "fzf",
         "konsole",
-        "starship",
+        "starship"
     ]
 
 [wallpaper]
-directory = "/home/rev/Pictures/Wallpapers/nord"
+directory = "/home/rev/Pictures/Wallpapers/foresto"
 
     [wallpaper.default]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
     [wallpaper.last]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
     [wallpaper.monitors.eDP-1]
-    path = "/home/rev/Pictures/Wallpapers/nord/nord_alone_tree.png"
+    path = "/home/rev/Pictures/Wallpapers/foresto/blush.jpg"
 
 [widget.active_window]
 enabled = false
@@ -479,9 +515,6 @@ show_empty_label = true
 
 [widget.bar]
 type = "andrewdems/vpn-manager:bar"
-
-[widget.bar_2]
-type = "demencia89/androidconnect:bar"
 
 [widget.battery]
 capsule = true
@@ -531,6 +564,7 @@ capsule = true
 capsule_fill = "primary"
 capsule_opacity = 0.80000000000000004
 capsule_padding = 10
+hide_inactive = true
 icon_spacing = 10
 
 [widget.ram]
@@ -555,14 +589,14 @@ type = "aristides/udiskie:status"
 [widget.volume]
 show_label = false
 
-[widget.widget]
-type = "cero800/arch-audit:widget"
-
 [widget.widget_2]
 type = "adam-gassem/pomodoro-heatmap:widget"
 
 [widget.widget_3]
 type = "h-jangra/region-recorder:widget"
+
+[widget.widget_4]
+type = "cero800/arch-audit:widget"
 
 [widget.workspaces]
 capsule = true

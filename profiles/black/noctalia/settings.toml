@@ -451,7 +451,7 @@ wallpaper_scheme = "m3-monochrome"
         "bat",
         "fzf",
         "konsole",
-        "starship",
+        "starship"
     ]
 
 [wallpaper]
