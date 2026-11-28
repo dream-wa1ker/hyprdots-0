@@ -7,7 +7,7 @@ ui_scale = 1.2000000104308128
 order = [ "default", "left" ]
 
     [bar.default]
-    background_opacity = 0.89999997988343239
+    background_opacity = 0.8999999798834324
     center = [ "widget_2", "date", "special-workspaces", "widget" ]
     end = [ "tray", "group:g3", "group:g2", "battery", "group:g1" ]
     margin_ends = 0
@@ -68,7 +68,7 @@ order = [ "default", "left" ]
         padding = 6.0
 
     [bar.left]
-    background_opacity = 0.89999997988343239
+    background_opacity = 0.8999999798834324
     center = [ "screenshot", "ocr", "widget_3", "caffeine", "power_profile", "custom_button_2", "notes", "status", "bar_2" ]
     enabled = true
     end = [ "privacy" ]
@@ -106,14 +106,51 @@ show_events_location = true
 
 [desktop_widgets]
 schema_version = 2
-widget_order = []
+widget_order = [ "desktop-widget-0000000000000001", "desktop-widget-0000000000000002" ]
 
     [desktop_widgets.grid]
     cell_size = 16
     major_interval = 4
     visible = true
 
-    [desktop_widgets.widget]
+    [desktop_widgets.widget.desktop-widget-0000000000000001]
+    box_height = 432.0
+    box_width = 624.0
+    cx = 1568.0
+    cy = 792.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "ankitkumar/shloka:verse"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000001.settings]
+        background = false
+        background_opacity = 0.15
+        background_padding = 0
+        background_radius = 0
+        font_size = 30
+        mode = "random"
+        show_controls = false
+        show_credit = false
+        show_sanskrit = false
+        show_transliteration = false
+        teachings_only = false
+
+    [desktop_widgets.widget.desktop-widget-0000000000000002]
+    box_height = 0.0
+    box_width = 0.0
+    cx = 1565.5999755859375
+    cy = 600.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "clock"
+
+        [desktop_widgets.widget.desktop-widget-0000000000000002.settings]
+        background = false
+        font_family = "Iosevka NF Thin"
 
 [dock]
 auto_hide = true
@@ -172,7 +209,8 @@ widget_order = [
     "lockscreen-widget-0000000000000001",
     "lockscreen-widget-0000000000000002",
     "lockscreen-widget-0000000000000003",
-    "lockscreen-widget-0000000000000004"
+    "lockscreen-widget-0000000000000004",
+    "lockscreen-widget-0000000000000005"
 ]
 
     [lockscreen_widgets.grid]
@@ -203,30 +241,32 @@ widget_order = [
         show_keyboard_layout = true
         show_login_button = true
         show_media = true
+        show_media_controls = true
+        show_password_reveal = true
         show_session_buttons = true
         show_unlock_hint = true
         show_weather = true
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000001]
-    box_height = 224.0
-    box_width = 368.0
-    cx = 960.0
-    cy = 440.0
+    box_height = 48.0
+    box_width = 112.0
+    cx = 1008.0
+    cy = 1144.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
-    rotation = 0.0
+    rotation = -0.0
     type = "clock"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000001.settings]
         background = false
-        font_family = "Hack"
+        font_family = "Iosevka Nerd Font"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000002]
-    box_height = 64.0
-    box_width = 448.0
-    cx = 960.0
-    cy = 536.0
+    box_height = 32.0
+    box_width = 416.0
+    cx = 832.0
+    cy = 1144.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -239,14 +279,14 @@ widget_order = [
         format = "{:%d %B, 2026}"
 
     [lockscreen_widgets.widget.lockscreen-widget-0000000000000003]
-    box_height = 96.0
-    box_width = 272.0
-    cx = 960.0
-    cy = 616.0
+    box_height = 48.0
+    box_width = 112.0
+    cx = 1128.0
+    cy = 1144.0
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
-    rotation = 0.0
+    rotation = -0.0
     type = "clock"
 
         [lockscreen_widgets.widget.lockscreen-widget-0000000000000003.settings]
@@ -258,7 +298,7 @@ widget_order = [
     box_height = 0.0
     box_width = 0.0
     cx = 960.0
-    cy = 275.20001220703125
+    cy = 782.4000244140625
     output = "eDP-1"
     placement_height = 1200.0
     placement_width = 1920.0
@@ -270,8 +310,25 @@ widget_order = [
         bands = 32
         show_when_idle = true
 
+    [lockscreen_widgets.widget.lockscreen-widget-0000000000000005]
+    box_height = 0.0
+    box_width = 0.0
+    cx = 960.0
+    cy = 668.0
+    output = "eDP-1"
+    placement_height = 1200.0
+    placement_width = 1920.0
+    rotation = 0.0
+    type = "ankitkumar/shloka:verse"
+
+        [lockscreen_widgets.widget.lockscreen-widget-0000000000000005.settings]
+        background = false
+        show_controls = false
+        show_credit = false
+        teachings_only = false
+
 [notification]
-background_opacity = 0.89999997988343239
+background_opacity = 0.8999999798834324
 max_visible = 3
 offset_x = 10
 offset_y = 10
@@ -339,7 +396,8 @@ enabled = [
     "omerfuyar/media-downloader",
     "adam-gassem/pomodoro-heatmap",
     "noctalia/wallhaven",
-    "ashur-d/wallpaper-widget"
+    "ashur-d/wallpaper-widget",
+    "ankitkumar/shloka"
 ]
 
 [shell]
@@ -459,7 +517,7 @@ type = "fel/ocr:ocr"
 active_color = "on_secondary"
 capsule = true
 capsule_fill = "primary"
-capsule_opacity = 0.80000000000000004
+capsule_opacity = 0.8
 capsule_padding = 10
 icon_spacing = 10
 
